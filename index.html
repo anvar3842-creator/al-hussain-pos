@@ -296,7 +296,6 @@
         </div>
     </div>
 
-    <!-- Daily Item Report Modal -->
     <div id="item-report-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -344,7 +343,7 @@
         </div>
     </div>
 
-    <!-- Print Templates (Bold & Clear) -->
+    <!-- Print Templates -->
     <div id="print-receipt">
         <div style="text-align: center; margin-bottom: 6px;">
             <h2 style="margin: 0; font-size: 16px; font-weight: bold;">AL HUSSAIN RESTAURANT</h2>
@@ -429,28 +428,112 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // --- FULL RESTAURANT MENU DATA ---
         const defaultMenuData = [
+            // Hot Drinks
             { id: 1, name: "Tea", price: 1.00, category: "Hot Drinks", icon: "☕" },
             { id: 2, name: "Teh Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
             { id: 3, name: "Teh Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 4, name: "Teh Halia", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 5, name: "Teh O", price: 0.80, category: "Hot Drinks", icon: "🍵" },
+            { id: 6, name: "Teh O Limau", price: 1.00, category: "Hot Drinks", icon: "🍋" },
+            { id: 7, name: "Teh C", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 8, name: "Teh C Special", price: 1.80, category: "Hot Drinks", icon: "☕" },
+            { id: 9, name: "Nescafe", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 10, name: "Nescafe O", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 11, name: "Nescafe C", price: 1.60, category: "Hot Drinks", icon: "☕" },
             { id: 12, name: "Kopi", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 59, name: "Milo Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 13, name: "Kopi O", price: 0.80, category: "Hot Drinks", icon: "☕" },
+            { id: 14, name: "Kopi C", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 15, name: "Milo", price: 1.50, category: "Hot Drinks", icon: "🥛" },
+            { id: 16, name: "Milo O", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 17, name: "Horlicks", price: 1.50, category: "Hot Drinks", icon: "🥛" },
+            { id: 18, name: "Sirap Bandung", price: 1.50, category: "Hot Drinks", icon: "🌹" },
+            { id: 19, name: "Lemon Tea", price: 1.50, category: "Hot Drinks", icon: "🍋" },
+            { id: 20, name: "Masala Tea", price: 1.50, category: "Hot Drinks", icon: "☕" },
+
+            // Sejuk (Cold Drinks)
+            { id: 50, name: "Teh Ais", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 51, name: "Teh O Ais", price: 1.10, category: "Sejuk", icon: "🧊" },
+            { id: 52, name: "Teh O Ais Limau", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 53, name: "Teh C Ais", price: 1.50, category: "Sejuk", icon: "🧊" },
+            { id: 54, name: "Kopi Ais", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 55, name: "Kopi O Ais", price: 1.10, category: "Sejuk", icon: "🧊" },
+            { id: 56, name: "Nescafe Ais", price: 1.80, category: "Sejuk", icon: "🧊" },
+            { id: 57, name: "Nescafe C Ais", price: 2.00, category: "Sejuk", icon: "🧊" },
+            { id: 58, name: "Milo Ais", price: 1.80, category: "Sejuk", icon: "🧊" },
+            { id: 59, name: "Milo Ping", price: 1.80, category: "Sejuk", icon: "🧊" },
+            { id: 60, name: "Sirap Ais", price: 1.00, category: "Sejuk", icon: "🧊" },
+            { id: 61, name: "Sirap Bandung Ais", price: 1.80, category: "Sejuk", icon: "🧊" },
+            { id: 62, name: "Sirap Limau Ais", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 63, name: "Limau Ais", price: 1.20, category: "Sejuk", icon: "🧊" },
+            { id: 64, name: "Barley Ais", price: 1.50, category: "Sejuk", icon: "🌾" },
+            { id: 65, name: "Chrysanthemum Tea", price: 1.50, category: "Sejuk", icon: "🌼" },
+            { id: 66, name: "Mineral Water", price: 1.00, category: "Sejuk", icon: "💧" },
+
+            // Fresh Juice
+            { id: 80, name: "Orange Juice", price: 2.50, category: "Fresh Juice", icon: "🍊" },
+            { id: 81, name: "Watermelon Juice", price: 2.20, category: "Fresh Juice", icon: "🍉" },
+            { id: 82, name: "Pineapple Juice", price: 2.50, category: "Fresh Juice", icon: "🍍" },
+            { id: 83, name: "Carrot Milk", price: 2.80, category: "Fresh Juice", icon: "🥕" },
+            { id: 84, name: "Mango Lassi", price: 3.50, category: "Fresh Juice", icon: "🥭" },
             { id: 85, name: "Fresh Apple Juice", price: 2.50, category: "Fresh Juice", icon: "🧃" },
+
+            // Nasi (Rice)
             { id: 280, name: "Nasi Ayam Penyet", price: 4.00, category: "Nasi", icon: "🍗" },
+            { id: 281, name: "Nasi Goreng Kampung", price: 3.00, category: "Nasi", icon: "🍛" },
+            { id: 282, name: "Nasi Goreng USA", price: 4.50, category: "Nasi", icon: "🍛" },
             { id: 283, name: "Nasi Lemak Biasa", price: 1.50, category: "Nasi", icon: "🍛" },
+            { id: 284, name: "Nasi Lemak Ayam", price: 4.50, category: "Nasi", icon: "🍛" },
+            { id: 285, name: "Nasi Lemak Daging", price: 5.00, category: "Nasi", icon: "🍛" },
+            { id: 286, name: "Nasi Putih", price: 1.00, category: "Nasi", icon: "🍚" },
             { id: 287, name: "Nasi Goreng Biasa", price: 2.50, category: "Nasi", icon: "🍛" },
+            { id: 288, name: "Nasi Goreng Ayam", price: 4.00, category: "Nasi", icon: "🍛" },
+            { id: 289, name: "Nasi Goreng Paprik", price: 4.50, category: "Nasi", icon: "🍛" },
             { id: 301, name: "Nasi Briyani Biasa", price: 3.00, category: "Nasi", icon: "🥘" },
             { id: 302, name: "Nasi Briyani Kambing", price: 7.50, category: "Nasi", icon: "🥘" },
             { id: 303, name: "Nasi Briyani Ayam", price: 5.50, category: "Nasi", icon: "🥘" },
+            { id: 304, name: "Mandy Rice with Chicken", price: 6.00, category: "Nasi", icon: "🍗" },
+            { id: 305, name: "Mandy Rice with Mutton", price: 8.00, category: "Nasi", icon: "🥩" },
+
+            // Curry & Gravy / Side Dishes
             { id: 401, name: "Chicken Curry (Kari Ayam)", price: 3.50, category: "Curry & Gravy", icon: "🍲" },
             { id: 402, name: "Mutton Varuval", price: 6.00, category: "Curry & Gravy", icon: "🥩" },
             { id: 403, name: "Chicken 65", price: 4.50, category: "Curry & Gravy", icon: "🍗" },
             { id: 404, name: "Fish Curry (Kari Ikan)", price: 4.00, category: "Curry & Gravy", icon: "🐟" },
             { id: 405, name: "Chicken Varuval", price: 5.00, category: "Curry & Gravy", icon: "🍗" },
-            { id: 106, name: "Butter Chicken", price: 6.00, category: "Special", icon: "🍗" },
-            { id: 125, name: "Mee Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 406, name: "Chicken Chettinadu", price: 5.50, category: "Curry & Gravy", icon: "🍛" },
+            { id: 407, name: "Dhal Curry", price: 1.50, category: "Curry & Gravy", icon: "🍲" },
+            { id: 408, name: "Sambar", price: 1.50, category: "Curry & Gravy", icon: "🍲" },
+
+            // Roti / Bread
             { id: 240, name: "Roti Kosong", price: 0.80, category: "Roti", icon: "🫓" },
-            { id: 243, name: "Roti Telur", price: 1.40, category: "Roti", icon: "🫓" }
+            { id: 241, name: "Roti Canai", price: 0.80, category: "Roti", icon: "🫓" },
+            { id: 242, name: "Roti Tissue", price: 2.50, category: "Roti", icon: "🫓" },
+            { id: 243, name: "Roti Telur", price: 1.40, category: "Roti", icon: "🫓" },
+            { id: 244, name: "Roti Bawang", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 245, name: "Roti Planta", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 246, name: "Roti Sardin", price: 3.00, category: "Roti", icon: "🫓" },
+            { id: 247, name: "Murtabak Ayam", price: 5.00, category: "Roti", icon: "🫓" },
+            { id: 248, name: "Murtabak Kambing", price: 7.00, category: "Roti", icon: "🫓" },
+            { id: 249, name: "Thosai Plain", price: 1.20, category: "Roti", icon: "🥞" },
+            { id: 250, name: "Thosai Masala", price: 2.50, category: "Roti", icon: "🥞" },
+            { id: 251, name: "Chapati", price: 1.20, category: "Roti", icon: "🫓" },
+
+            // Mee Goreng & Noodles
+            { id: 125, name: "Mee Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 126, name: "Mee Goreng Mamak", price: 3.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 127, name: "Maggi Goreng", price: 2.80, category: "Mee Goreng", icon: "🍜" },
+            { id: 128, name: "Maggi Goreng Ayam", price: 4.50, category: "Mee Goreng", icon: "🍜" },
+            { id: 129, name: "Kuey Teow Goreng", price: 3.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 130, name: "Bihun Goreng", price: 3.00, category: "Mee Goreng", icon: "🍝" },
+
+            // Special & Fast Food
+            { id: 106, name: "Butter Chicken", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 107, name: "Grilled Chicken Mosahab", price: 5.50, category: "Special", icon: "🍗" },
+            { id: 108, name: "Spicy Chicken Delite Pizza", price: 8.00, category: "Special", icon: "🍕" },
+            { id: 109, name: "Ayam Goreng McD Spicy", price: 4.00, category: "Special", icon: "🍗" },
+            { id: 110, name: "Malaysian Spiced Fried Chicken", price: 4.50, category: "Special", icon: "🍗" }
         ];
 
         const defaultRawMaterials = [

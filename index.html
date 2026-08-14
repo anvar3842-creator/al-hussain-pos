@@ -61,7 +61,16 @@
         td { padding: 10px 6px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
         
         .cart-item-name { font-weight: 700; font-size: 14px; color: #0f172a; margin-bottom: 3px; }
-        .comment-input { width: 95%; padding: 4px 6px; margin-top: 2px; border: 1px dashed #cbd5e1; border-radius: 4px; font-size: 12px; outline: none; }
+        
+        .note-checkboxes { display: flex; gap: 6px; margin-top: 4px; overflow-x: auto; white-space: nowrap; padding-bottom: 3px; width: 100%; max-width: 220px; }
+        .note-checkboxes::-webkit-scrollbar { height: 4px; }
+        .note-checkboxes::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .note-label { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; }
+        .note-label input { accent-color: #4f46e5; cursor: pointer; width: 13px; height: 13px; }
+        
+        .comment-input { width: 95%; padding: 4px 6px; margin-top: 3px; border: 1px dashed #cbd5e1; border-radius: 4px; font-size: 12px; outline: none; }
+        
         .price-input { width: 65px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: right; font-weight: bold; font-size: 13px; outline: none; }
         
         .qty-controls { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
@@ -74,24 +83,29 @@
         
         .action-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
         .btn-hold { flex: 1; background: #f59e0b; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .btn-kitchen { flex: 1.2; background: #0284c7; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .btn-pay { flex: 1.5; background: #10b981; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .btn-kitchen { flex: 1; background: #0284c7; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-print-bill { flex: 1; background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-pay { flex: 1; background: #10b981; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-drawer { flex: 100%; background: #6366f1; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; margin-top: 2px; }
         
         .admin-section { margin-top: 15px; display: none; background: #f8fafc; padding: 10px; border-radius: 8px; }
         .btn-small { background: #4f46e5; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn-cat-add { background: #059669; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; white-space: nowrap; }
         .stat-box { background: white; padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #e2e8f0; margin-top: 6px; font-size: 15px; font-weight: bold; color: #4f46e5; }
         
-        .visual-tables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; max-height: 180px; overflow-y: auto; }
-        .v-table-card { padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; font-size: 12px; color: white; border: none; position: relative; }
+        .visual-tables-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; max-height: 140px; overflow-y: auto; }
+        .v-table-card { padding: 8px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; font-size: 12px; color: white; border: none; position: relative; }
         .v-table-free { background: #10b981; }
         .v-table-occupied { background: #ef4444; }
+
+        .visual-takeaway-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; max-height: 140px; overflow-y: auto; }
+        .v-takeaway-card { padding: 8px; border-radius: 8px; text-align: center; cursor: pointer; font-weight: bold; font-size: 12px; color: white; background: #d97706; border: none; position: relative; }
 
         .history-btn, .manage-menu-btn, .close-day-btn, .stock-btn, .qr-btn, .report-btn { background: #475569; color: white; border: none; padding: 7px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; width: 100%; margin-top: 6px; }
         .manage-menu-btn { background: #0284c7; }
         .stock-btn { background: #8b5cf6; }
         .qr-btn { background: #059669; }
-        .report-btn { background: #d97706; }
+        .report-btn { background: #0d9488; }
         .close-day-btn { background: #dc2626; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; box-sizing: border-box; }
@@ -100,7 +114,17 @@
         .modal-body { overflow-y: auto; margin-top: 8px; max-height: 65vh; }
         .close-modal { background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* --- THERMAL RECEIPT PRINTER FIX --- */
+        /* --- Custom Payment Modal Styles --- */
+        .pay-modal-box { background: white; width: 100%; max-width: 420px; border-radius: 16px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.25); box-sizing: border-box; text-align: center; }
+        .pay-modal-box h2 { color: #4f46e5; margin-top: 0; margin-bottom: 20px; font-size: 22px; }
+        .pay-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #334155; background: #f8fafc; padding: 12px 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .pay-row span.val { font-size: 24px; color: #0f172a; }
+        .pay-input-box { width: 100%; padding: 12px; font-size: 22px; font-weight: bold; text-align: right; border: 2px solid #4f46e5; border-radius: 10px; outline: none; box-sizing: border-box; color: #1e293b; background: #fff; margin-bottom: 15px; }
+        .pay-btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .pay-btn-confirm { flex: 1; background: #10b981; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .pay-btn-cancel { flex: 1; background: #ef4444; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        /* --- THERMAL RECEIPT PRINTER STYLES (LARGE & BOLD FONT) --- */
         #print-receipt, #print-kitchen, #print-drawer, #print-sales-history, #print-item-report { display: none; }
 
         @media print {
@@ -115,31 +139,33 @@
             }
             body * { visibility: hidden !important; }
             
+            /* Customer Bill Print */
             body.print-customer #print-receipt, body.print-customer #print-receipt * { visibility: visible !important; }
             body.print-customer #print-receipt { 
                 display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; 
-                font-family: 'Courier New', Courier, monospace !important; font-weight: bold !important; font-size: 13px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
+                font-family: 'Courier New', Courier, monospace !important; font-weight: 900 !important; font-size: 16px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
             }
 
+            /* Kitchen KOT Print */
             body.print-kitchen-mode #print-kitchen, body.print-kitchen-mode #print-kitchen * { visibility: visible !important; }
             body.print-kitchen-mode #print-kitchen { 
                 display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; 
-                font-family: 'Courier New', Courier, monospace !important; font-weight: bold !important; font-size: 14px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
+                font-family: 'Courier New', Courier, monospace !important; font-weight: 900 !important; font-size: 20px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
             }
 
             body.print-drawer-mode #print-drawer, body.print-drawer-mode #print-drawer * { visibility: visible !important; }
-            body.print-drawer-mode #print-drawer { display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; font-weight: bold !important; background: white !important; margin: 0 !important; padding: 2mm !important; }
+            body.print-drawer-mode #print-drawer { display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; font-weight: 900 !important; font-size: 16px !important; background: white !important; margin: 0 !important; padding: 2mm !important; }
 
             body.print-history-mode #print-sales-history, body.print-history-mode #print-sales-history * { visibility: visible !important; }
             body.print-history-mode #print-sales-history { 
                 display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; 
-                font-family: 'Courier New', Courier, monospace !important; font-weight: bold !important; font-size: 12px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
+                font-family: 'Courier New', Courier, monospace !important; font-weight: 900 !important; font-size: 15px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
             }
 
             body.print-item-report-mode #print-item-report, body.print-item-report-mode #print-item-report * { visibility: visible !important; }
             body.print-item-report-mode #print-item-report { 
                 display: block !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 78mm !important; 
-                font-family: 'Courier New', Courier, monospace !important; font-weight: bold !important; font-size: 12px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
+                font-family: 'Courier New', Courier, monospace !important; font-weight: 900 !important; font-size: 15px !important; color: #000 !important; background: white !important; margin: 0 !important; padding: 2mm !important;
             }
         }
     </style>
@@ -184,11 +210,11 @@
                 <h3>Current Order</h3>
                 
                 <div class="order-controls">
-                    <select id="order-type">
+                    <select id="order-type" onchange="onOrderTypeChange()">
                         <option value="Dine-In">Dine-In</option>
                         <option value="Takeaway">Takeaway</option>
                     </select>
-                    <select id="table-no">
+                    <select id="table-no" onchange="onTableChange()">
                         <option value="Table 1">Table 1</option><option value="Table 2">Table 2</option><option value="Table 3">Table 3</option>
                         <option value="Table 4">Table 4</option><option value="Table 5">Table 5</option><option value="Table 6">Table 6</option>
                         <option value="Table 7">Table 7</option><option value="Table 8">Table 8</option><option value="Table 9">Table 9</option>
@@ -231,13 +257,21 @@
                 <div class="action-buttons">
                     <button class="btn-hold" onclick="saveOrderToTable()">Hold</button>
                     <button class="btn-kitchen" onclick="printKitchenKOT()">🍳 Kitchen</button>
-                    <button id="btn-pay-elem" class="btn-pay" onclick="processBill()">Print & Pay</button>
+                    <button id="btn-print-bill-elem" class="btn-print-bill" onclick="printCustomerBillOnly()">🖨️ Print Bill</button>
+                    <button id="btn-pay-elem" class="btn-pay" onclick="openPaymentModal()">💵 Pay</button>
                     <button id="btn-drawer-elem" class="btn-drawer" onclick="openCashDrawerOnly()">🔓 Open Cash Drawer</button>
                 </div>
 
-                <div style="margin-top: 12px;">
-                    <h3 style="font-size: 14px; margin-bottom:6px;">🪑 Visual Table Status (13 Tables)</h3>
+                <div style="margin-top: 10px;">
+                    <h3 style="font-size: 14px; margin-bottom:4px;">🪑 Visual Tables (Dine-In)</h3>
                     <div id="visual-tables-grid" class="visual-tables-grid"></div>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <h3 style="font-size: 14px; margin-bottom:4px;">📦 Visual Takeaway Orders (<span id="takeaway-count">0</span>)</h3>
+                    <div id="visual-takeaway-grid" class="visual-takeaway-grid">
+                        <div style="grid-column: span 3; text-align: center; color: #94a3b8; font-size: 12px; padding: 6px;">No Active Takeaways</div>
+                    </div>
                 </div>
 
                 <!-- Admin Panel -->
@@ -245,12 +279,15 @@
                     <h3>Admin Dashboard</h3>
                     
                     <div style="margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-                        <b style="font-size:13px; color:#475569;">➕ Add New Menu Item & Category:</b>
-                        <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                        <b style="font-size:13px; color:#475569;">➕ Add New Menu Item:</b>
+                        <div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center;">
                             <input type="text" id="add-m-name" placeholder="Item Name" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; flex: 2; outline: none; font-size: 12px;">
-                            <select id="add-m-cat" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; flex: 2; outline: none; font-size: 12px; background: white; font-weight: bold; color: #4f46e5;"></select>
-                            <input type="number" id="add-m-price" placeholder="Price" step="0.50" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; width: 60px; outline: none; font-size: 12px;">
+                            <select id="add-m-cat" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; flex: 2; outline: none; font-size: 12px; font-weight: bold; color: #4f46e5; background: white;"></select>
+                            <input type="number" id="add-m-price" placeholder="Price" step="0.50" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; width: 55px; outline: none; font-size: 12px;">
                             <button class="btn-small" onclick="addNewMenuItem()">Add</button>
+                        </div>
+                        <div style="margin-top: 6px; text-align: right;">
+                            <button class="btn-cat-add" onclick="addNewCategoryPrompt()">+ Add New Category</button>
                         </div>
                     </div>
 
@@ -275,6 +312,31 @@
         </div>
     </div>
 
+    <!-- CUSTOM LARGE PAYMENT MODAL -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="pay-modal-box">
+            <h2>💵 Complete Payment</h2>
+            
+            <div class="pay-row">
+                <span>Grand Total:</span>
+                <span class="val">$<span id="modal-grand-total">0.00</span></span>
+            </div>
+
+            <div style="text-align: left; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 5px;">Enter Customer Paid Amount:</div>
+            <input type="number" id="modal-paid-input" class="pay-input-box" step="0.50" oninput="calculateChangePreview()">
+
+            <div class="pay-row" style="background: #e0e7ff; border-color: #c7d2fe;">
+                <span style="color: #3730a3;">Return Change:</span>
+                <span class="val" style="color: #4338ca;">$<span id="modal-change-amount">0.00</span></span>
+            </div>
+
+            <div class="pay-btn-group">
+                <button class="pay-btn-cancel" onclick="closePaymentModal()">Cancel</button>
+                <button class="pay-btn-confirm" onclick="confirmPaymentProcess()">Confirm & Pay</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modals -->
     <div id="menu-manager-modal" class="modal-overlay">
         <div class="modal-content">
@@ -283,12 +345,12 @@
                 <button class="close-modal" onclick="closeMenuManagerModal()">X</button>
             </div>
             <div class="modal-body">
-                <p style="font-size: 12px; color: #64748b; margin-top: 0;">You can select categories from existing list dropdown or edit item details directly.</p>
+                <p style="font-size: 12px; color: #64748b; margin-top: 0;">You can edit item names, categories, or prices directly.</p>
                 <table style="width:100%; font-size:12px;">
                     <thead>
                         <tr>
                             <th>Item Name</th>
-                            <th>Category (Select from Dropdown)</th>
+                            <th>Category</th>
                             <th style="text-align:right;">Price ($)</th>
                             <th style="text-align:center;">Action</th>
                         </tr>
@@ -362,84 +424,83 @@
         </div>
     </div>
 
-    <!-- Print Templates (Includes Auto Cash Drawer Kick Command) -->
+    <!-- Print Templates (Large & Bold Font) -->
     <div id="print-receipt">
         <div style="text-align: center; margin-bottom: 6px;">
-            <h2 style="margin: 0; font-size: 15px; font-weight: bold;">AL HUSSAIN RESTAURANT</h2>
-            <p style="margin: 2px 0; font-size: 11px; font-weight: bold;">Nagara Brunei Darussalam.</p>
-            <hr style="border-top: 2px solid black; margin: 4px 0;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2>
+            <p style="margin: 2px 0; font-size: 15px; font-weight: 900;">Nagara Brunei Darussalam.</p>
+            <hr style="border-top: 3px solid black; margin: 4px 0;">
         </div>
-        <div style="font-size: 11px; font-weight: bold; margin-bottom: 6px;">
-            <div><b>Type:</b> <span id="p-order-type"></span> | <b>Ref:</b> <span id="p-table"></span></div>
+        <div style="font-size: 15px; font-weight: 900; margin-bottom: 6px;">
+            <div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" style="font-size: 17px; background: #000; color: #fff; padding: 0 4px;"></span></div>
             <div><b>Pay:</b> <span id="p-method"></span> | <b>Time:</b> <span id="p-time"></span></div>
         </div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 11px; font-weight: bold; margin-bottom: 6px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px; font-weight: 900; margin-bottom: 6px;">
             <thead>
-                <tr style="border-bottom: 2px solid black;">
-                    <th style="text-align: left; padding: 2px 0;">Item</th>
-                    <th style="text-align: center; padding: 2px 0;">Qty</th>
-                    <th style="text-align: right; padding: 2px 0;">Price</th>
+                <tr style="border-bottom: 3px solid black;">
+                    <th style="text-align: left; padding: 2px 0; font-size: 15px;">Item</th>
+                    <th style="text-align: center; padding: 2px 0; font-size: 15px;">Qty</th>
+                    <th style="text-align: right; padding: 2px 0; font-size: 15px;">Price</th>
                 </tr>
             </thead>
             <tbody id="p-items"></tbody>
         </table>
-        <hr style="border-top: 2px solid black; margin: 4px 0;">
-        <div style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>$<span id="p-subtotal">0.00</span></span></div>
-        <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-top: 4px;">
+        <hr style="border-top: 3px solid black; margin: 4px 0;">
+        <div style="font-size: 15px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>$<span id="p-subtotal">0.00</span></span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 900; margin-top: 4px;">
             <span>TOTAL:</span><span>$<span id="p-total">0.00</span></span>
         </div>
-        <div style="font-size: 11px; font-weight: bold; margin-top: 6px; border-top: 2px solid black; padding-top: 4px;">
+        <div style="font-size: 15px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;">
             <div style="display: flex; justify-content: space-between;"><span>Paid:</span><span>$<span id="p-paid">0.00</span></span></div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span>Change:</span><span>$<span id="p-change">0.00</span></span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 16px;"><span>Change:</span><span>$<span id="p-change">0.00</span></span></div>
         </div>
-        <div style="text-align: center; margin-top: 8px; font-size: 11px; font-weight: bold;"><p>Thank you! Please come again.</p></div>
-        <!-- ESC/POS Cash Drawer Kick Command (Hex: 27, 112, 0, 25, 250) -->
+        <div style="text-align: center; margin-top: 8px; font-size: 15px; font-weight: 900;"><p>Thank you! Please come again.</p></div>
         <div style="display:none;">\x1B\x70\x00\x19\xFA</div>
     </div>
 
     <div id="print-kitchen">
         <div style="text-align: center; margin-bottom: 6px;">
-            <h2 style="margin: 0; font-size: 16px; font-weight: bold;">*** KITCHEN ORDER ***</h2>
-            <hr style="border-top: 2px solid black; margin: 4px 0;">
+            <h2 style="margin: 0; font-size: 24px; font-weight: 900;">*** KITCHEN ORDER ***</h2>
+            <hr style="border-top: 4px solid black; margin: 4px 0;">
         </div>
-        <div style="font-size: 12px; font-weight: bold; margin-bottom: 6px;">
-            <div><b>Type:</b> <span id="k-order-type"></span> | <b>Ref:</b> <span id="k-table"></span></div>
+        <div style="font-size: 18px; font-weight: 900; margin-bottom: 8px;">
+            <div><b>Type:</b> <span id="k-order-type"></span> | <b>No:</b> <span id="k-table" style="font-size: 22px; background: #000; color: #fff; padding: 0 4px;"></span></div>
         </div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: bold;">
-            <thead><tr style="border-bottom: 2px solid black;"><th style="text-align: left;">Item</th><th style="text-align: center;">Qty</th></tr></thead>
+        <table style="width: 100%; border-collapse: collapse; font-size: 20px; font-weight: 900;">
+            <thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 20px;">Item & Notes</th><th style="text-align: center; font-size: 20px;">Qty</th></tr></thead>
             <tbody id="k-items"></tbody>
         </table>
     </div>
 
     <div id="print-drawer">
-        <div style="text-align: center; font-size: 11px; font-weight: bold;"><p>*** OPEN CASH DRAWER ***</p></div>
+        <div style="text-align: center; font-size: 16px; font-weight: 900;"><p>*** OPEN CASH DRAWER ***</p></div>
         <div style="display:none;">\x1B\x70\x00\x19\xFA</div>
     </div>
 
     <div id="print-sales-history">
         <div style="text-align: center; margin-bottom: 6px;">
-            <h2 style="margin: 0; font-size: 14px; font-weight: bold;">AL HUSSAIN RESTAURANT</h2>
-            <p style="margin: 2px 0; font-size: 11px;"><b>SALES HISTORY REPORT</b></p>
-            <hr style="border-top: 2px solid black; margin: 4px 0;">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2>
+            <p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>SALES HISTORY REPORT</b></p>
+            <hr style="border-top: 3px solid black; margin: 4px 0;">
         </div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px; font-weight: bold;">
-            <thead><tr style="border-bottom: 2px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900;">
+            <thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 13px;">Time / Ref</th><th style="text-align: right; font-size: 13px;">Amount</th></tr></thead>
             <tbody id="print-history-items"></tbody>
         </table>
-        <hr style="border-top: 2px solid black; margin: 4px 0;">
-        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
+        <hr style="border-top: 3px solid black; margin: 4px 0;">
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;">
             <span>TOTAL:</span><span>$<span id="print-history-grand-total">0.00</span></span>
         </div>
     </div>
 
     <div id="print-item-report">
         <div style="text-align: center; margin-bottom: 6px;">
-            <h2 style="margin: 0; font-size: 14px; font-weight: bold;">AL HUSSAIN RESTAURANT</h2>
-            <p style="margin: 2px 0; font-size: 11px;"><b>DAILY ITEM SOLD REPORT</b></p>
-            <hr style="border-top: 2px solid black; margin: 4px 0;">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2>
+            <p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>DAILY ITEM SOLD REPORT</b></p>
+            <hr style="border-top: 3px solid black; margin: 4px 0;">
         </div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px; font-weight: bold;">
-            <thead><tr style="border-bottom: 2px solid black;"><th style="text-align: left;">Item Name</th><th style="text-align: right;">Qty Sold</th></tr></thead>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900;">
+            <thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 13px;">Item Name</th><th style="text-align: right; font-size: 13px;">Qty Sold</th></tr></thead>
             <tbody id="print-item-report-items"></tbody>
         </table>
     </div>
@@ -452,143 +513,305 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // --- AL HUSSAIN RESTAURANT MENU DATA ---
+        // --- AL HUSSAIN RESTAURANT COMPLETE MENU DATA ---
         const defaultMenuData = [
-            { id: 145, name: "Roti kosong", price: 0.80, category: "Roti", icon: "🫓" },
-            { id: 146, name: "Roti Kosong Cheese", price: 1.50, category: "Roti", icon: "🫓" },
-            { id: 147, name: "Roti Kosong Bawang", price: 1.20, category: "Roti", icon: "🫓" },
-            { id: 148, name: "Roti Telur", price: 1.40, category: "Roti", icon: "🫓" },
-            { id: 149, name: "Roti Telur Bawang", price: 1.70, category: "Roti", icon: "🫓" },
-            { id: 150, name: "Roti Telur Cheese", price: 2.00, category: "Roti", icon: "🫓" },
-            { id: 151, name: "Roti Jantan", price: 2.00, category: "Roti", icon: "🫓" },
-            { id: 152, name: "Roti plastar", price: 1.40, category: "Roti", icon: "🫓" },
-            { id: 153, name: "Roti Bomb", price: 1.50, category: "Roti", icon: "🫓" },
-            { id: 154, name: "Roti Tissue", price: 1.70, category: "Roti", icon: "🫓" },
-            { id: 155, name: "Roti Kuning Biasa", price: 1.00, category: "Roti", icon: "🫓" },
-            { id: 156, name: "Roti Kuning Cheese", price: 1.50, category: "Roti", icon: "🫓" },
-            { id: 157, name: "Roti Kuning plastar", price: 1.50, category: "Roti", icon: "🫓" },
-            { id: 158, name: "Roti Kahwin", price: 0.70, category: "Roti", icon: "🫓" },
-            { id: 159, name: "Roti Kahwin Cheese", price: 1.20, category: "Roti", icon: "🫓" },
-            { id: 160, name: "Roti John Telur", price: 2.00, category: "Roti", icon: "🫓" },
-            { id: 161, name: "Roti John Ayam", price: 3.00, category: "Roti", icon: "🫓" },
-            { id: 162, name: "Roti John Daging", price: 3.50, category: "Roti", icon: "🫓" },
-            { id: 163, name: "Roti John Ayam Cheese", price: 3.50, category: "Roti", icon: "🫓" },
-            { id: 164, name: "Roti John daging cheese", price: 4.00, category: "Roti", icon: "🫓" },
-            { id: 165, name: "Capati", price: 1.00, category: "Roti", icon: "🫓" },
-            { id: 166, name: "Roti Sarang Burung", price: 2.00, category: "Roti", icon: "🫓" },
+            // Roti
+            { id: 1, name: "Roti kosong", price: 0.80, category: "Roti", icon: "🫓" },
+            { id: 2, name: "Roti Kosong Cheese", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 3, name: "Roti Kosong Bawang", price: 1.20, category: "Roti", icon: "🫓" },
+            { id: 4, name: "Roti Telur", price: 1.40, category: "Roti", icon: "🫓" },
+            { id: 5, name: "Roti Telur Bawang", price: 1.70, category: "Roti", icon: "🫓" },
+            { id: 6, name: "Roti Telur Cheese", price: 2.00, category: "Roti", icon: "🫓" },
+            { id: 7, name: "Roti Jantan", price: 2.00, category: "Roti", icon: "🫓" },
+            { id: 8, name: "Roti plastar", price: 1.40, category: "Roti", icon: "🫓" },
+            { id: 9, name: "Roti Bomb", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 10, name: "Roti Tissue", price: 1.70, category: "Roti", icon: "🫓" },
+            { id: 11, name: "Roti Kuning Biasa", price: 1.00, category: "Roti", icon: "🫓" },
+            { id: 12, name: "Roti Kuning Cheese", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 13, name: "Roti Kuning plastar", price: 1.50, category: "Roti", icon: "🫓" },
+            { id: 14, name: "Roti Kahwin", price: 0.70, category: "Roti", icon: "🫓" },
+            { id: 15, name: "Roti Kahwin Cheese", price: 1.20, category: "Roti", icon: "🫓" },
+            { id: 16, name: "Roti John Telur", price: 2.00, category: "Roti", icon: "🫓" },
+            { id: 17, name: "Roti John Ayam", price: 3.00, category: "Roti", icon: "🫓" },
+            { id: 18, name: "Roti John Daging", price: 3.50, category: "Roti", icon: "🫓" },
+            { id: 19, name: "Roti John Ayam Cheese", price: 3.50, category: "Roti", icon: "🫓" },
+            { id: 20, name: "Roti John daging cheese", price: 4.00, category: "Roti", icon: "🫓" },
+            { id: 21, name: "Capati", price: 1.00, category: "Roti", icon: "🫓" },
+            { id: 22, name: "Roti Sarang Burung", price: 2.00, category: "Roti", icon: "🫓" },
 
-            { id: 120, name: "Dosai", price: 1.20, category: "Dosai", icon: "🥞" },
-            { id: 121, name: "Dosai Masala", price: 2.50, category: "Dosai", icon: "🥞" },
-            { id: 122, name: "Ghee Dosai", price: 2.00, category: "Dosai", icon: "🥞" },
-            { id: 123, name: "Dosai Telur", price: 1.70, category: "Dosai", icon: "🥞" },
-            { id: 124, name: "Dosai Bawang", price: 1.70, category: "Dosai", icon: "🥞" },
-            { id: 125, name: "Dosai Telur Bawang", price: 2.30, category: "Dosai", icon: "🥞" },
-            { id: 126, name: "Dosai Ayam", price: 3.50, category: "Dosai", icon: "🥞" },
-            { id: 127, name: "Dosai Cheese", price: 1.70, category: "Dosai", icon: "🥞" },
-            { id: 128, name: "Dosai Daging", price: 3.50, category: "Dosai", icon: "🥞" },
-            { id: 129, name: "Uttapam", price: 1.20, category: "Dosai", icon: "🥞" },
-            { id: 130, name: "Uttapam Bawang", price: 1.70, category: "Dosai", icon: "🥞" },
-            { id: 131, name: "Uttapam Telur", price: 1.70, category: "Dosai", icon: "🥞" },
-            { id: 132, name: "Uttapam Telur Bawang", price: 2.30, category: "Dosai", icon: "🥞" },
+            // Bruger
+            { id: 23, name: "Burger Telur", price: 1.50, category: "Bruger", icon: "🍔" },
+            { id: 24, name: "Burger Ayam", price: 2.50, category: "Bruger", icon: "🍔" },
+            { id: 25, name: "Burger Daging", price: 2.50, category: "Bruger", icon: "🍔" },
+            { id: 26, name: "Burger Telur Cheese", price: 2.00, category: "Bruger", icon: "🍔" },
+            { id: 27, name: "Burger Ayam Cheese", price: 3.00, category: "Bruger", icon: "🍔" },
+            { id: 28, name: "Burger Daging Cheese", price: 3.00, category: "Bruger", icon: "🍔" },
+            { id: 29, name: "Sandwich Telur", price: 1.50, category: "Bruger", icon: "🥪" },
 
-            { id: 47, name: "Mee Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 48, name: "Mee Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 49, name: "Mee Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 50, name: "Mee Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 51, name: "Mee Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 52, name: "Mee Mamak Biasa", price: 3.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 53, name: "Mee Mamak Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 54, name: "Mee Mamak Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 55, name: "Mee Mamak Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 56, name: "Mee Mamak Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 57, name: "Mee Hoon Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 58, name: "Mee Hoon Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 59, name: "Mee Hoon Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 60, name: "Mee Hoon Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 61, name: "Mee Hoon Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 62, name: "Kueh Teow Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 63, name: "Kueh Teow Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 64, name: "Kueh Teow Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 65, name: "Kueh Teow Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
-            { id: 66, name: "Kueh Teow Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
-            { id: 67, name: "Mee Basah Biasa", price: 3.00, category: "Mee Basah", icon: "🍜" },
-            { id: 68, name: "Mee Basah Ayam", price: 4.50, category: "Mee Basah", icon: "🍜" },
-            { id: 69, name: "Mee Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
-            { id: 70, name: "Mee Basah Seafood", price: 5.50, category: "Mee Basah", icon: "🍜" },
-            { id: 71, name: "Mee Basah Special", price: 6.00, category: "Mee Basah", icon: "🍜" },
-            { id: 133, name: "Indomee Goreng Biasa", price: 3.00, category: "Instant Noodles", icon: "🍜" },
-            { id: 134, name: "Indomee Goreng Ayam", price: 4.50, category: "Instant Noodles", icon: "🍜" },
-            { id: 135, name: "Indomee Goreng Daging", price: 5.00, category: "Instant Noodles", icon: "🍜" },
-            { id: 136, name: "Indomee Goreng Seafood", price: 5.50, category: "Instant Noodles", icon: "🍜" },
-            { id: 139, name: "Maggi Goreng Biasa", price: 3.00, category: "Instant Noodles", icon: "🍜" },
-            { id: 140, name: "Maggi Goreng Ayam", price: 4.50, category: "Instant Noodles", icon: "🍜" },
-            { id: 141, name: "Maggi Goreng Daging", price: 5.00, category: "Instant Noodles", icon: "🍜" },
-            { id: 142, name: "Maggi Goreng Seafood", price: 5.50, category: "Instant Noodles", icon: "🍜" },
+            // Nasi Goreng & Nasi
+            { id: 30, name: "Nasi Ayam Penyet", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
+            { id: 31, name: "Nasi Ayam (Goreng)", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
+            { id: 32, name: "Nasi Ayam (Steam)", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
+            { id: 33, name: "Nasi Lemak Biasa", price: 1.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 34, name: "Nasi Lemak Ayam", price: 4.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 35, name: "Nasi Lemak Daging", price: 5.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 36, name: "Nasi Lemak Kambing", price: 6.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 37, name: "Nasi Goreng Biasa", price: 2.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 38, name: "Nasi Goreng Ayam", price: 4.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 39, name: "Nasi Goreng Daging", price: 5.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 40, name: "Nasi Goreng Seafood", price: 5.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 41, name: "Nasi Goreng pattaya Biasa", price: 3.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 42, name: "Nasi Goreng pattaya Ayam", price: 4.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 43, name: "Nasi Goreng pattaya Daging", price: 5.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 44, name: "Nasi Goreng pattaya Kambing", price: 7.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 45, name: "Nasi Goreng Kampong", price: 4.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 46, name: "Nasi Goreng Cornbeef", price: 4.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 47, name: "Nasi Goreng Ikan Masin", price: 3.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 48, name: "Nasi Goreng Belacan", price: 3.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 49, name: "Nasi Goreng Special", price: 6.00, category: "Nasi Goreng", icon: "🍛" },
+            { id: 50, name: "Nasi Goreng pattaya Special", price: 6.50, category: "Nasi Goreng", icon: "🍛" },
+            { id: 51, name: "Nasi Briyani Biasa", price: 3.00, category: "Nasi Goreng", icon: "🥘" },
+            { id: 52, name: "Nasi Briyani Ayam", price: 4.50, category: "Nasi Goreng", icon: "🥘" },
+            { id: 53, name: "Nasi Briyani Daging", price: 5.50, category: "Nasi Goreng", icon: "🥘" },
+            { id: 54, name: "Nasi Briyani Kambing", price: 7.00, category: "Nasi Goreng", icon: "🥘" },
 
-            { id: 1, name: "Udang sambal", price: 6.00, category: "Special", icon: "🦐" },
-            { id: 2, name: "Udang Tomato", price: 6.00, category: "Special", icon: "🦐" },
-            { id: 3, name: "Buttermilk Chicken/Rice", price: 6.00, category: "Special", icon: "🍗" },
-            { id: 6, name: "Butter Chicken", price: 6.00, category: "Special", icon: "🍗" },
-            { id: 8, name: "Fish and Chips", price: 6.00, category: "Special", icon: "🐟" },
-            { id: 11, name: "Soup Sayur", price: 3.00, category: "Soup", icon: "🥣" },
-            { id: 12, name: "Soup Tulang", price: 5.00, category: "Soup", icon: "🥣" },
-            { id: 13, name: "Soup Ayam", price: 3.50, category: "Soup", icon: "🥣" },
-            { id: 14, name: "Soup Daging", price: 5.00, category: "Soup", icon: "🥣" },
-            { id: 17, name: "Tom Yum Biasa", price: 3.00, category: "Tom Yum", icon: "🍲" },
-            { id: 18, name: "Tom Yum Ayam", price: 4.50, category: "Tom Yum", icon: "🍲" },
-            { id: 19, name: "Tom Yum Daging", price: 5.00, category: "Tom Yum", icon: "🍲" },
-            { id: 20, name: "Tom Yum Seafood", price: 5.50, category: "Tom Yum", icon: "🍲" },
-            { id: 22, name: "Mee Soup Biasa", price: 3.50, category: "Mee Soup", icon: "🍜" },
-            { id: 37, name: "Kueh Teow Soup Biasa", price: 3.50, category: "Kueh Teow Soup", icon: "🍜" },
-            { id: 42, name: "Kolo Mee Biasa", price: 3.00, category: "Kolo Mee", icon: "🍝" },
-            { id: 82, name: "Rojak Biasa", price: 3.00, category: "Rojak & Sayur", icon: "🥗" },
-            { id: 83, name: "Rojak Sotong", price: 4.00, category: "Rojak & Sayur", icon: "🦑" },
-            { id: 86, name: "Sayur Campur", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
-            { id: 90, name: "Soto Kuning Biasa", price: 2.50, category: "Soto", icon: "🍲" },
-            { id: 105, name: "Bakso Kuning Biasa", price: 3.00, category: "Bakso", icon: "🧆" },
-            { id: 167, name: "Burger Telur", price: 1.50, category: "Burger", icon: "🍔" },
-            { id: 168, name: "Burger Ayam", price: 2.50, category: "Burger", icon: "🍔" },
-            { id: 174, name: "Nasi Ayam Penyet", price: 4.00, category: "Rice", icon: "🍗" },
-            { id: 177, name: "Nasi Lemak Biasa", price: 1.50, category: "Rice", icon: "🍛" },
-            { id: 181, name: "Nasi Goreng Biasa", price: 2.50, category: "Rice", icon: "🍛" },
-            { id: 195, name: "Nasi Briyani Biasa", price: 3.00, category: "Rice", icon: "🥘" },
-            { id: 199, name: "Murtabak Ayam", price: 4.00, category: "Murtabak", icon: "🫓" },
-            { id: 200, name: "Murtabak Sardine", price: 4.50, category: "Murtabak", icon: "🫓" },
+            // Murtabak
+            { id: 55, name: "Murtabak Ayam", price: 4.00, category: "Murtabak", icon: "🫓" },
+            { id: 56, name: "Murtabak Sardine", price: 4.50, category: "Murtabak", icon: "🫓" },
+            { id: 57, name: "Murtabak Daging", price: 5.00, category: "Murtabak", icon: "🫓" },
+            { id: 58, name: "Murtabak Sayur", price: 3.50, category: "Murtabak", icon: "🫓" },
 
-            { id: 203, name: "Tea", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 204, name: "Tea Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 205, name: "Tea Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
-            { id: 206, name: "Tea Tarik Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
-            { id: 207, name: "Tea Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
-            { id: 208, name: "Tea-C", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 211, name: "Tea-O", price: 1.00, category: "Hot Drinks", icon: "🍵" },
-            { id: 214, name: "Kopi", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 215, name: "Nescafe Tarik", price: 1.20, category: "Hot Drinks", icon: "☕" },
-            { id: 222, name: "Milo panas", price: 1.20, category: "Hot Drinks", icon: "🥛" },
-            { id: 223, name: "Kopi Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
-            { id: 235, name: "Kopi TongkatAli Cni", price: 1.20, category: "Hot Drinks", icon: "☕" },
-            { id: 236, name: "Kopi Susu Kambing", price: 1.20, category: "Hot Drinks", icon: "☕" },
-            { id: 237, name: "Kopi Radix", price: 1.20, category: "Hot Drinks", icon: "☕" },
-            { id: 238, name: "Nescafe", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            // Mee Goreng
+            { id: 59, name: "Mee Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 60, name: "Mee Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 61, name: "Mee Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 62, name: "Mee Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 63, name: "Mee Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 64, name: "Mee Mamak Biasa", price: 3.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 65, name: "Mee Mamak Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 66, name: "Mee Mamak Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 67, name: "Mee Mamak Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 68, name: "Mee Mamak Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 69, name: "Mee Hoon Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 70, name: "Mee Hoon Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 71, name: "Mee Hoon Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 72, name: "Mee Hoon Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 73, name: "Mee Hoon Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 74, name: "Kueh Teow Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 75, name: "Kueh Teow Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 76, name: "Kueh Teow Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
+            { id: 77, name: "Kueh Teow Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
+            { id: 78, name: "Kueh Teow Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
 
-            { id: 254, name: "Tea Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 255, name: "Tea-Tarik Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 257, name: "Tea-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 260, name: "Tea-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 262, name: "Kopi-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 265, name: "Nescafe Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 269, name: "Milo Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 272, name: "Neslo Ping", price: 1.50, category: "Sejuk", icon: "🧊" },
-            { id: 275, name: "Horlicks Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
-            { id: 278, name: "Lemon Tea Ping", price: 1.30, category: "Sejuk", icon: "🍋" },
-            { id: 283, name: "Air Bandung", price: 1.50, category: "Sejuk", icon: "🌹" },
-            { id: 286, name: "Soda Gembira", price: 2.50, category: "Sejuk", icon: "🥤" },
+            // Mee Basah
+            { id: 79, name: "Mee Basah Biasa", price: 3.00, category: "Mee Basah", icon: "🍜" },
+            { id: 80, name: "Mee Basah Ayam", price: 4.50, category: "Mee Basah", icon: "🍜" },
+            { id: 81, name: "Mee Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
+            { id: 82, name: "Mee Basah Seafood", price: 5.50, category: "Mee Basah", icon: "🍜" },
+            { id: 83, name: "Mee Basah Special", price: 6.00, category: "Mee Basah", icon: "🍜" },
+            { id: 84, name: "Mee Hoon Basah Biasa", price: 3.00, category: "Mee Basah", icon: "🍜" },
+            { id: 85, name: "Mee Hoon Basah Ayam", price: 4.50, category: "Mee Basah", icon: "🍜" },
+            { id: 86, name: "Mee Hoon Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
+            { id: 87, name: "Mee Hoon Basah Seafood", price: 5.50, category: "Mee Basah", icon: "🍜" },
+            { id: 88, name: "Mee Hoon Basah Special", price: 6.00, category: "Mee Basah", icon: "🍜" },
+            { id: 89, name: "Kueh Tewo Basah Basah", price: 3.00, category: "Mee Basah", icon: "🍜" },
+            { id: 90, name: "Kueh Tewo Basah Ayam", price: 4.50, category: "Mee Basah", icon: "🍜" },
+            { id: 91, name: "Kueh Tewo Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
+            { id: 92, name: "Kueh Tewo Basah Seafood", price: 5.50, category: "Mee Basah", icon: "🍜" },
+            { id: 93, name: "Kueh Tewo Basah Special", price: 6.00, category: "Mee Basah", icon: "🍜" },
 
-            { id: 287, name: "Fresh Apple Juice", price: 2.50, category: "Fresh Juice", icon: "🧃" },
-            { id: 289, name: "Fresh Orange Juice", price: 2.50, category: "Fresh Juice", icon: "🍊" },
-            { id: 293, name: "Mango Lassi", price: 2.50, category: "Fresh Juice", icon: "🥭" },
-            { id: 297, name: "Vennila Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" },
-            { id: 298, name: "Chocolate Milk Shake", price: 3.50, category: "Milk Shake", icon: "🍫" }
+            // Rojak & Sayur
+            { id: 94, name: "Rojak Biasa", price: 3.00, category: "Rojak & Sayur", icon: "🥗" },
+            { id: 95, name: "Rojak Sotong", price: 4.00, category: "Rojak & Sayur", icon: "🦑" },
+            { id: 96, name: "Rojak Ayam", price: 4.00, category: "Rojak & Sayur", icon: "🍗" },
+            { id: 97, name: "Rojak Daging", price: 4.00, category: "Rojak & Sayur", icon: "🥩" },
+            { id: 98, name: "Sayur Campur", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
+            { id: 99, name: "Sayur Bayam", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
+            { id: 100, name: "Sayur Kacang panjang", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
+            { id: 101, name: "Sayur bendi", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
+
+            // Soto
+            { id: 102, name: "Soto Kuning Biasa", price: 2.50, category: "Soto", icon: "🍲" },
+            { id: 103, name: "Soto Kuning Ayam", price: 4.00, category: "Soto", icon: "🍲" },
+            { id: 104, name: "Soto Kuning Daging", price: 5.00, category: "Soto", icon: "🍲" },
+            { id: 105, name: "Soto Kuning Seafood", price: 5.50, category: "Soto", icon: "🍲" },
+            { id: 106, name: "Soto Kuning Special", price: 6.00, category: "Soto", icon: "🍲" },
+            { id: 107, name: "Soto putih Biasa", price: 2.50, category: "Soto", icon: "🍲" },
+            { id: 108, name: "Soto putih Ayam", price: 4.00, category: "Soto", icon: "🍲" },
+            { id: 109, name: "Soto putih Daging", price: 5.00, category: "Soto", icon: "🍲" },
+            { id: 110, name: "Soto putih Seafood", price: 5.50, category: "Soto", icon: "🍲" },
+            { id: 111, name: "Soto putih Special", price: 6.00, category: "Soto", icon: "🍲" },
+            { id: 112, name: "Soto Kahwin Biasa", price: 2.50, category: "Soto", icon: "🍲" },
+            { id: 113, name: "Soto Kahwin Ayam", price: 4.00, category: "Soto", icon: "🍲" },
+            { id: 114, name: "Soto Kahwin Daging", price: 5.00, category: "Soto", icon: "🍲" },
+            { id: 115, name: "Soto Kahwin Seafood", price: 5.50, category: "Soto", icon: "🍲" },
+            { id: 116, name: "Soto Kahwin Special", price: 6.00, category: "Soto", icon: "🍲" },
+
+            // Special
+            { id: 117, name: "Udang sambal", price: 6.00, category: "Special", icon: "🦐" },
+            { id: 118, name: "Udang Tomato", price: 6.00, category: "Special", icon: "🦐" },
+            { id: 119, name: "Buttermilk Chicken/Rice", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 120, name: "BBQ Sauce Chicken/Rice", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 121, name: "Black pepper Chicken/Rice", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 122, name: "Butter Chicken", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 123, name: "Chicken and Chip", price: 6.00, category: "Special", icon: "🍗" },
+            { id: 124, name: "Fish and Chips", price: 6.00, category: "Special", icon: "🐟" },
+            { id: 125, name: "Butter prawn", price: 7.00, category: "Special", icon: "🦐" },
+            { id: 126, name: "Buttermilk prawn", price: 7.00, category: "Special", icon: "🦐" },
+
+            // Soup
+            { id: 127, name: "Soup Sayur", price: 3.00, category: "Soup", icon: "🥣" },
+            { id: 128, name: "Soup Tulang", price: 5.00, category: "Soup", icon: "🥣" },
+            { id: 129, name: "Soup Ayam", price: 3.50, category: "Soup", icon: "🥣" },
+            { id: 130, name: "Soup Daging", price: 5.00, category: "Soup", icon: "🥣" },
+            { id: 131, name: "Soup Hatibuyah", price: 5.00, category: "Soup", icon: "🥣" },
+            { id: 132, name: "Soup Seafood", price: 5.50, category: "Soup", icon: "🥣" },
+
+            // Tom Yum
+            { id: 133, name: "Tom Yum Biasa", price: 3.00, category: "Tom Yum", icon: "🍲" },
+            { id: 134, name: "Tom Yum Ayam", price: 4.50, category: "Tom Yum", icon: "🍲" },
+            { id: 135, name: "Tom Yum Daging", price: 5.00, category: "Tom Yum", icon: "🍲" },
+            { id: 136, name: "Tom Yum Seafood", price: 5.50, category: "Tom Yum", icon: "🍲" },
+            { id: 137, name: "Tom Yum Special", price: 6.00, category: "Tom Yum", icon: "🍲" },
+
+            // Mee Soup, Mee Hoon Soup, Mee Kawin Soup
+            { id: 138, name: "Mee Soup Biasa", price: 3.50, category: "Mee Soup", icon: "🍜" },
+            { id: 139, name: "Mee Soup Ayam", price: 4.50, category: "Mee Soup", icon: "🍜" },
+            { id: 140, name: "Mee Soup Daging", price: 5.00, category: "Mee Soup", icon: "🍜" },
+            { id: 141, name: "Mee Soup Seafood", price: 5.50, category: "Mee Soup", icon: "🍜" },
+            { id: 142, name: "Mee Soup Special", price: 6.00, category: "Mee Soup", icon: "🍜" },
+            { id: 143, name: "Mee Hoon Soup Biasa", price: 3.50, category: "Mee Soup", icon: "🍜" },
+            { id: 144, name: "Mee Hoon Soup Ayam", price: 4.50, category: "Mee Soup", icon: "🍜" },
+            { id: 145, name: "Mee hoon Soup Daging", price: 5.00, category: "Mee Soup", icon: "🍜" },
+            { id: 146, name: "Mee hoon Soup Seafood", price: 5.50, category: "Mee Soup", icon: "🍜" },
+            { id: 147, name: "Mee hoon Soup Special", price: 6.00, category: "Mee Soup", icon: "🍜" },
+            { id: 148, name: "Mee Kawin Soup Biasa", price: 3.50, category: "Mee Soup", icon: "🍜" },
+            { id: 149, name: "Mee Kawin Soup Ayam", price: 4.50, category: "Mee Soup", icon: "🍜" },
+            { id: 150, name: "Mee Kawin Soup Daging", price: 5.00, category: "Mee Soup", icon: "🍜" },
+            { id: 151, name: "Mee Kawin Soup Seafood", price: 5.50, category: "Mee Soup", icon: "🍜" },
+            { id: 152, name: "Mee Kawin Soup Special", price: 6.00, category: "Mee Soup", icon: "🍜" },
+
+            // Kueh Teow Soup
+            { id: 153, name: "Kueh Teow Soup Biasa", price: 3.50, category: "Kueh Teow Soup", icon: "🍜" },
+            { id: 154, name: "Kueh Teow Soup Ayam", price: 4.50, category: "Kueh Teow Soup", icon: "🍜" },
+            { id: 155, name: "Kueh Teow Soup Daging", price: 5.00, category: "Kueh Teow Soup", icon: "🍜" },
+            { id: 156, name: "Kueh Teow Soup Seafood", price: 5.50, category: "Kueh Teow Soup", icon: "🍜" },
+            { id: 157, name: "Kueh Teow Soup Special", price: 6.00, category: "Kueh Teow Soup", icon: "🍜" },
+
+            // Kolo Mee
+            { id: 158, name: "Kolo Mee Biasa", price: 3.00, category: "Kolo Mee", icon: "🍝" },
+            { id: 159, name: "Kolo Mee Ayam", price: 4.50, category: "Kolo Mee", icon: "🍝" },
+            { id: 160, name: "Kolo Mee Daging", price: 5.00, category: "Kolo Mee", icon: "🍝" },
+            { id: 161, name: "Kolo Mee Seafood", price: 5.50, category: "Kolo Mee", icon: "🍝" },
+            { id: 162, name: "Kolo Mee Special", price: 6.00, category: "Kolo Mee", icon: "🍝" },
+
+            // Hot Drinks
+            { id: 163, name: "Tea", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 164, name: "Tea Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 165, name: "Tea Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 166, name: "Tea Tarik Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 167, name: "Tea Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 168, name: "Tea-C", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 169, name: "Tea-C Tarik Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 170, name: "Tea-C Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 171, name: "Tea-O", price: 1.00, category: "Hot Drinks", icon: "🍵" },
+            { id: 172, name: "Tea-O Halia", price: 1.30, category: "Hot Drinks", icon: "🍵" },
+            { id: 173, name: "Tea-O Madu", price: 1.50, category: "Hot Drinks", icon: "🍵" },
+            { id: 174, name: "Kopi", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 175, name: "Nescafe Tarik", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 176, name: "Nescafe Tarik India", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 177, name: "Nescafe-C", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 178, name: "Nescafe-C Tarik India", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 179, name: "Nescafe-O", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 180, name: "Nescafe-O Halia", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 181, name: "Nescafe-O Madu", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 182, name: "Milo panas", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 183, name: "Kopi Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 184, name: "Kopi Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 185, name: "Kopi Tarik Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 186, name: "Kopi Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 187, name: "Kopi-C", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 188, name: "Kopi-C Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 189, name: "Kopi-C Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 190, name: "Kopi-C Tarik Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 191, name: "Kopi-C Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 192, name: "Kopi-O", price: 1.00, category: "Hot Drinks", icon: "☕" },
+            { id: 193, name: "Kopi-O Halia", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 194, name: "Kopi-O Madu", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 195, name: "Kopi TongkatAli Cni", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 196, name: "Kopi Susu Kambing", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 197, name: "Kopi Radix", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 198, name: "Nescafe", price: 1.20, category: "Hot Drinks", icon: "☕" },
+            { id: 199, name: "Milo Tarik", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 200, name: "Milo - O", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 201, name: "Milo - C", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 202, name: "Neslo panas", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 203, name: "Neslo - C", price: 1.50, category: "Hot Drinks", icon: "☕" },
+            { id: 204, name: "Neslo - O", price: 1.30, category: "Hot Drinks", icon: "☕" },
+            { id: 205, name: "Horlicks panas", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 206, name: "Horlicks Tarik", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 207, name: "Horlicks - C", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 208, name: "Horlicks - O", price: 1.20, category: "Hot Drinks", icon: "🥛" },
+            { id: 209, name: "Lemon Tea panas", price: 1.20, category: "Hot Drinks", icon: "🍋" },
+            { id: 210, name: "Lemon Panas", price: 1.20, category: "Hot Drinks", icon: "🍋" },
+            { id: 211, name: "Lemon Panas Madu", price: 1.50, category: "Hot Drinks", icon: "🍋" },
+            { id: 212, name: "Kasturi Panas", price: 1.20, category: "Hot Drinks", icon: "🍋" },
+            { id: 213, name: "Kasturi Panas Madu", price: 1.50, category: "Hot Drinks", icon: "🍋" },
+
+            // Sejuk (Cold Drinks)
+            { id: 214, name: "Tea Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 215, name: "Tea-Tarik Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 216, name: "Tea-Tarik Ping India", price: 1.40, category: "Sejuk", icon: "🧊" },
+            { id: 217, name: "Tea-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 218, name: "Tea-C Tarik Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 219, name: "Tea-C Tarik India Ping", price: 1.70, category: "Sejuk", icon: "🧊" },
+            { id: 220, name: "Tea-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 221, name: "Tea-O Madu Ping", price: 1.70, category: "Sejuk", icon: "🧊" },
+            { id: 222, name: "Kopi-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 223, name: "Kopi-C Tarik Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 224, name: "Kopi-C Tarik India Ping", price: 1.50, category: "Sejuk", icon: "🧊" },
+            { id: 225, name: "Nescafe Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 226, name: "Nescafe-C Ping", price: 1.70, category: "Sejuk", icon: "🧊" },
+            { id: 227, name: "Nescafe-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 228, name: "Nescafe-O Madu Ping", price: 1.70, category: "Sejuk", icon: "🧊" },
+            { id: 229, name: "Milo Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 230, name: "Milo-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 231, name: "Milo-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 232, name: "Neslo Ping", price: 1.50, category: "Sejuk", icon: "🧊" },
+            { id: 233, name: "Neslo-C Ping", price: 1.50, category: "Sejuk", icon: "🧊" },
+            { id: 234, name: "Neslo-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 235, name: "Horlicks Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 236, name: "Horlicks-C Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 237, name: "Horlicks-O Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
+            { id: 238, name: "Lemon Tea Ping", price: 1.30, category: "Sejuk", icon: "🍋" },
+            { id: 239, name: "Lemon Madu Ping", price: 1.80, category: "Sejuk", icon: "🍋" },
+            { id: 240, name: "Kasturi Ping", price: 1.30, category: "Sejuk", icon: "🍋" },
+            { id: 241, name: "Kasturi Madu Ping", price: 1.80, category: "Sejuk", icon: "🍋" },
+            { id: 242, name: "Tea C Special", price: 2.00, category: "Sejuk", icon: "🧊" },
+            { id: 243, name: "Air Bandung", price: 1.50, category: "Sejuk", icon: "🌹" },
+            { id: 244, name: "Orange Campur", price: 1.50, category: "Sejuk", icon: "🍊" },
+            { id: 245, name: "Air Manisan", price: 1.50, category: "Sejuk", icon: "🥤" },
+            { id: 246, name: "Soda Gembira", price: 2.50, category: "Sejuk", icon: "🥤" },
+
+            // Fresh Juice
+            { id: 247, name: "Fresh Apple Juice", price: 2.50, category: "Fresh Juice", icon: "🧃" },
+            { id: 248, name: "Fresh Lemon Juice", price: 2.50, category: "Fresh Juice", icon: "🍋" },
+            { id: 249, name: "Fresh Orange Juice", price: 2.50, category: "Fresh Juice", icon: "🍊" },
+            { id: 250, name: "Fresh Carrot Juice", price: 2.50, category: "Fresh Juice", icon: "🥕" },
+            { id: 251, name: "Fresh Watermelon Juice", price: 2.50, category: "Fresh Juice", icon: "🍉" },
+            { id: 252, name: "Sweet Lassi", price: 2.50, category: "Fresh Juice", icon: "🥛" },
+            { id: 253, name: "Mango Lassi", price: 2.50, category: "Fresh Juice", icon: "🥭" },
+            { id: 254, name: "Salt Lassi", price: 2.50, category: "Fresh Juice", icon: "🥛" },
+            { id: 255, name: "Orange Lassi", price: 2.50, category: "Fresh Juice", icon: "🍊" },
+            { id: 256, name: "Mixed Fruit Juice", price: 3.00, category: "Fresh Juice", icon: "🧃" },
+
+            // Milk Shake
+            { id: 257, name: "Vennila Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" },
+            { id: 258, name: "Chocolate Milk Shake", price: 3.50, category: "Milk Shake", icon: "🍫" },
+            { id: 259, name: "Strawberry Milk Shake", price: 3.50, category: "Milk Shake", icon: "🍓" },
+            { id: 260, name: "Mango Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥭" },
+            { id: 261, name: "Milo Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥛" },
+            { id: 262, name: "Holicks Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" }
         ];
 
         const defaultRawMaterials = [
@@ -599,18 +822,24 @@
             { id: 5, name: "Wheat Flour (kg)", qty: 40 }
         ];
 
-        let menuData = JSON.parse(localStorage.getItem('alhussain_menu')) || defaultMenuData;
+        let menuData = JSON.parse(localStorage.getItem('alhussain_menu'));
+        if (!menuData || menuData.length < defaultMenuData.length) {
+            menuData = defaultMenuData;
+            localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
+        }
+
         let rawMaterials = JSON.parse(localStorage.getItem('alhussain_materials')) || defaultRawMaterials;
         let cart = [];
         let activeOrders = {}; 
         let completedSales = []; 
         let currentCategory = "All";
         let isPrinting = false;
+        let orderRunningNumber = parseInt(localStorage.getItem('alhussain_order_num')) || 1;
 
-        // --- REAL-TIME CLOUD SYNC LISTENERS ---
         db.ref('activeOrders').on('value', (snapshot) => {
             activeOrders = snapshot.val() || {};
             renderVisualTables();
+            renderVisualTakeaways();
         });
 
         db.ref('sales').on('value', (snapshot) => {
@@ -625,12 +854,14 @@
             
             const adminPanel = document.getElementById('admin-panel');
             const billSummaryContainer = document.getElementById('bill-summary-container');
+            const btnPrintBill = document.getElementById('btn-print-bill-elem');
             const btnPay = document.getElementById('btn-pay-elem');
             const btnDrawer = document.getElementById('btn-drawer-elem');
 
             if (user === "admin" && pass === "admin123") {
                 adminPanel.style.display = "block";
                 billSummaryContainer.style.display = "block";
+                btnPrintBill.style.display = "block";
                 btnPay.style.display = "block";
                 btnDrawer.style.display = "block";
                 grantAccess("Admin Dashboard");
@@ -638,6 +869,7 @@
             else if (user === "user1" && pass === "1234") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "block";
+                btnPrintBill.style.display = "block";
                 btnPay.style.display = "block";
                 btnDrawer.style.display = "block";
                 grantAccess("Staff (User 1)");
@@ -645,6 +877,7 @@
             else if (user === "user2" && pass === "1234") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "none";
+                btnPrintBill.style.display = "none";
                 btnPay.style.display = "none";
                 btnDrawer.style.display = "none";
                 grantAccess("Order Taker (User 2)");
@@ -659,17 +892,51 @@
             document.getElementById('main-app').style.display = "block";
             document.getElementById('display-user').innerText = role;
             renderCategories();
-            populateCategoryDropdowns();
+            populateCategoryDropdown();
             renderMenu();
             updateCart();
             renderVisualTables();
+            renderVisualTakeaways();
             updateStats();
+            toggleOrderTypeFields();
         }
 
         function logout() { location.reload(); }
 
+        function toggleOrderTypeFields() {
+            const orderType = document.getElementById('order-type').value;
+            const tableSelect = document.getElementById('table-no');
+            
+            tableSelect.innerHTML = '';
+            if (orderType === "Takeaway") {
+                tableSelect.innerHTML = `<option value="Order ${orderRunningNumber}">Order ${orderRunningNumber}</option>`;
+            } else {
+                for (let i = 1; i <= 13; i++) {
+                    tableSelect.innerHTML += `<option value="Table ${i}">Table ${i}</option>`;
+                }
+            }
+        }
+
+        function onOrderTypeChange() {
+            toggleOrderTypeFields();
+            cart = [];
+            document.getElementById('discount-input').value = "0.00";
+            updateCart();
+        }
+
+        function onTableChange() {
+            const selectedKey = document.getElementById('table-no').value;
+            if (activeOrders[selectedKey]) {
+                cart = JSON.parse(JSON.stringify(activeOrders[selectedKey].items));
+            } else {
+                cart = [];
+            }
+            document.getElementById('discount-input').value = "0.00";
+            updateCart();
+        }
+
         function getAllCategories() {
-            let preferredOrder = ["Roti", "Dosai", "Mee Goreng", "Mee Basah", "Instant Noodles", "Hot Drinks", "Sejuk", "Fresh Juice", "Milk Shake"];
+            let preferredOrder = ["Roti", "Bruger", "Nasi Goreng", "Murtabak", "Mee Goreng", "Mee Basah", "Rojak & Sayur", "Soto", "Special", "Soup", "Tom Yum", "Mee Soup", "Kueh Teow Soup", "Kolo Mee", "Hot Drinks", "Sejuk", "Fresh Juice", "Milk Shake"];
             let existingCats = [...new Set(menuData.map(i => i.category))];
             
             existingCats.sort((a, b) => {
@@ -683,14 +950,37 @@
             return existingCats;
         }
 
-        function populateCategoryDropdowns() {
-            const selectEl = document.getElementById('add-m-cat');
-            if(!selectEl) return;
-            const categories = getAllCategories();
-            selectEl.innerHTML = '';
-            categories.forEach(cat => {
-                selectEl.innerHTML += `<option value="${cat}">${cat}</option>`;
+        function populateCategoryDropdown() {
+            const select = document.getElementById('add-m-cat');
+            if(!select) return;
+            const cats = getAllCategories();
+            select.innerHTML = '';
+            cats.forEach(c => {
+                select.innerHTML += `<option value="${c}">${c}</option>`;
             });
+        }
+
+        function addNewCategoryPrompt() {
+            let newCat = prompt("Enter New Category Name:");
+            if (newCat && newCat.trim() !== "") {
+                let formattedCat = newCat.trim();
+                let cats = getAllCategories();
+                if (!cats.includes(formattedCat)) {
+                    const select = document.getElementById('add-m-cat');
+                    let exists = false;
+                    for (let opt of select.options) {
+                        if (opt.value.toLowerCase() === formattedCat.toLowerCase()) { exists = true; break; }
+                    }
+                    if (!exists) {
+                        select.innerHTML += `<option value="${formattedCat}" selected>${formattedCat}</option>`;
+                        select.value = formattedCat;
+                        alert("✅ New Category added to dropdown! Now add an item under this category.");
+                    }
+                } else {
+                    alert("Category already exists!");
+                    document.getElementById('add-m-cat').value = formattedCat;
+                }
+            }
         }
 
         function renderCategories() {
@@ -743,7 +1033,7 @@
             document.getElementById('add-m-name').value = '';
             document.getElementById('add-m-price').value = '';
             renderCategories();
-            populateCategoryDropdowns();
+            populateCategoryDropdown();
             renderMenu();
             alert("✅ New Menu Item Added Successfully!");
         }
@@ -751,9 +1041,27 @@
         function addToCart(id) {
             const item = menuData.find(m => m.id === id);
             const cartItem = cart.find(c => c.id === id);
-            if (cartItem) cartItem.qty += 1;
-            else cart.push({ ...item, qty: 1, customPrice: item.price, comment: "" });
+            if (cartItem) {
+                cartItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1, customPrice: item.price, selectedNotes: [], customComment: "" });
+            }
             updateCart();
+        }
+
+        function toggleItemNoteCheckbox(id, noteName, checkboxElem) {
+            const cartItem = cart.find(c => c.id === id);
+            if (cartItem) {
+                if (!cartItem.selectedNotes) cartItem.selectedNotes = [];
+                if (checkboxElem.checked) {
+                    if (!cartItem.selectedNotes.includes(noteName)) {
+                        cartItem.selectedNotes.push(noteName);
+                    }
+                } else {
+                    cartItem.selectedNotes = cartItem.selectedNotes.filter(n => n !== noteName);
+                }
+                updateCart();
+            }
         }
 
         function updateCart() {
@@ -762,11 +1070,37 @@
             let subtotal = 0;
             cart.forEach(item => {
                 subtotal += item.customPrice * item.qty;
+                
+                let catLower = (item.category || "").toLowerCase();
+                let nameLower = (item.name || "").toLowerCase();
+                let isRotiOrMurtabak = (catLower.includes('roti') || catLower.includes('murtabak') || nameLower.includes('roti') || nameLower.includes('murtabak') || nameLower.includes('dosai') || nameLower.includes('tosai') || nameLower.includes('capati'));
+
+                let noteHtml = '';
+                if (isRotiOrMurtabak) {
+                    if (!item.selectedNotes) item.selectedNotes = [];
+                    let isAyamChecked = item.selectedNotes.includes('Curry Ayam') ? 'checked' : '';
+                    let isDhalChecked = item.selectedNotes.includes('Dhal') ? 'checked' : '';
+                    let isIkanChecked = item.selectedNotes.includes('Curry Ikan') ? 'checked' : '';
+
+                    noteHtml = `
+                        <div class="note-checkboxes">
+                            <label class="note-label"><input type="checkbox" ${isAyamChecked} onchange="toggleItemNoteCheckbox(${item.id}, 'Curry Ayam', this)"> Curry Ayam</label>
+                            <label class="note-label"><input type="checkbox" ${isDhalChecked} onchange="toggleItemNoteCheckbox(${item.id}, 'Dhal', this)"> Dhal</label>
+                            <label class="note-label"><input type="checkbox" ${isIkanChecked} onchange="toggleItemNoteCheckbox(${item.id}, 'Curry Ikan', this)"> Curry Ikan</label>
+                        </div>
+                        <input type="text" class="comment-input" placeholder="Type custom note..." value="${item.customComment || ''}" oninput="item.customComment=this.value">
+                    `;
+                } else {
+                    noteHtml = `
+                        <input type="text" class="comment-input" placeholder="Type custom note..." value="${item.customComment || ''}" oninput="item.customComment=this.value">
+                    `;
+                }
+
                 tbody.innerHTML += `
                     <tr>
                         <td>
                             <div class="cart-item-name">${item.name}</div>
-                            <input type="text" class="comment-input" placeholder="Add note..." value="${item.comment || ''}" oninput="item.comment=this.value">
+                            ${noteHtml}
                         </td>
                         <td>
                             <div class="qty-controls">
@@ -821,18 +1155,31 @@
             }
         }
 
+        function getFormattedItemNotes(item) {
+            let parts = [];
+            if (item.selectedNotes && item.selectedNotes.length > 0) {
+                parts.push(item.selectedNotes.join(', '));
+            }
+            if (item.customComment && item.customComment.trim() !== '') {
+                parts.push(item.customComment.trim());
+            }
+            return parts.join(' | ');
+        }
+
         function saveOrderToTable() {
             if (cart.length === 0) return alert("Cart is empty!");
             const orderType = document.getElementById('order-type').value;
-            let targetKey = orderType === "Takeaway" ? `Takeaway ${Object.keys(activeOrders).length + 1}` : document.getElementById('table-no').value;
+            let targetKey = document.getElementById('table-no').value;
 
             activeOrders[targetKey] = { time: Date.now(), type: orderType, items: JSON.parse(JSON.stringify(cart)) };
             db.ref('activeOrders').set(activeOrders);
-            
+
             cart = [];
+            document.getElementById('discount-input').value = "0.00";
             updateCart();
             renderVisualTables();
-            alert("✅ Order held & synced to cloud successfully!");
+            renderVisualTakeaways();
+            toggleOrderTypeFields();
         }
 
         function renderVisualTables() {
@@ -853,19 +1200,63 @@
             }
         }
 
-        function loadTable(key) {
-            if (activeOrders[key]) {
-                cart = JSON.parse(JSON.stringify(activeOrders[key].items));
-                document.getElementById('table-no').value = key;
-                document.getElementById('order-type').value = activeOrders[key].type || "Dine-In";
-                updateCart();
-                alert(`Loaded order for ${key}`);
-            } else {
-                alert(`${key} is Free (Available).`);
+        function renderVisualTakeaways() {
+            const container = document.getElementById('visual-takeaway-grid');
+            const countBadge = document.getElementById('takeaway-count');
+            if(!container) return;
+            
+            container.innerHTML = '';
+            let takeawayKeys = Object.keys(activeOrders).filter(k => k.startsWith('Order '));
+            
+            if(countBadge) countBadge.innerText = takeawayKeys.length;
+
+            if (takeawayKeys.length === 0) {
+                container.innerHTML = `<div style="grid-column: span 3; text-align: center; color: #94a3b8; font-size: 12px; padding: 6px;">No Active Takeaways</div>`;
+                return;
             }
+
+            takeawayKeys.forEach((key) => {
+                let order = activeOrders[key];
+                let itemCount = order.items ? order.items.reduce((sum, i) => sum + i.qty, 0) : 0;
+                
+                container.innerHTML += `
+                    <button class="v-takeaway-card" onclick="loadTakeawayOrder('${key}')">
+                        <b>${key}</b><br>
+                        <small style="font-size:10px;">Items: ${itemCount} 📦</small>
+                    </button>
+                `;
+            });
         }
 
-        // ஃபாஸ்ட் மற்றும் பாதுகாப்பான சிங்கிள் பிரிண்ட் பங்க்ஷன்
+        function loadTable(key) {
+            document.getElementById('order-type').value = "Dine-In";
+            toggleOrderTypeFields();
+            document.getElementById('table-no').value = key;
+            
+            if (activeOrders[key]) {
+                cart = JSON.parse(JSON.stringify(activeOrders[key].items));
+            } else {
+                cart = [];
+            }
+            document.getElementById('discount-input').value = "0.00";
+            updateCart();
+        }
+
+        function loadTakeawayOrder(key) {
+            document.getElementById('order-type').value = "Takeaway";
+            const tableSelect = document.getElementById('table-no');
+            tableSelect.innerHTML = `<option value="${key}">${key}</option>`;
+            tableSelect.value = key;
+
+            if (activeOrders[key]) {
+                cart = JSON.parse(JSON.stringify(activeOrders[key].items));
+            } else {
+                cart = [];
+            }
+            document.getElementById('discount-input').value = "0.00";
+            updateCart();
+        }
+
         function safePrint(modeClass) {
             if (isPrinting) return; 
             isPrinting = true;
@@ -877,14 +1268,14 @@
                 setTimeout(() => {
                     document.body.className = "";
                     isPrinting = false;
-                }, 600);
+                }, 500);
             }, 100);
         }
 
         function printKitchenKOT() {
             if (cart.length === 0) return alert("Cart is empty!");
             const orderType = document.getElementById('order-type').value;
-            const refName = orderType === "Takeaway" ? "Takeaway" : document.getElementById('table-no').value;
+            const refName = document.getElementById('table-no').value;
 
             document.getElementById('k-order-type').innerText = orderType;
             document.getElementById('k-table').innerText = refName;
@@ -892,7 +1283,9 @@
             const kItems = document.getElementById('k-items');
             kItems.innerHTML = '';
             cart.forEach(i => {
-                kItems.innerHTML += `<tr><td><b>${i.name} ${i.comment ? '('+i.comment+')' : ''}</b></td><td style="text-align:center;"><b>${i.qty}</b></td></tr>`;
+                let noteStr = getFormattedItemNotes(i);
+                let noteHtml = noteStr ? `<br><span style="font-size:16px; font-weight:900; color:#000;">Note: ${noteStr}</span>` : '';
+                kItems.innerHTML += `<tr><td style="padding: 8px 0; border-bottom: 1px dashed #000;"><b>${i.name}</b>${noteHtml}</td><td style="text-align:center; vertical-align:top; font-size:22px; border-bottom: 1px dashed #000;"><b>${i.qty}</b></td></tr>`;
             });
 
             safePrint("print-kitchen-mode");
@@ -902,33 +1295,77 @@
             safePrint("print-drawer-mode");
         }
 
-        function processBill() {
+        function printCustomerBillOnly() {
             if (cart.length === 0) return alert("Cart is empty!");
             let subtotal = cart.reduce((sum, item) => sum + (item.customPrice * item.qty), 0);
             let discountAmount = parseFloat(document.getElementById('discount-input').value) || 0;
             let grandTotal = subtotal - discountAmount;
             if (grandTotal < 0) grandTotal = 0;
 
-            let paidAmount = prompt("Grand Total: $" + grandTotal.toFixed(2) + "\nEnter Paid Amount:", grandTotal.toFixed(2));
-            if (paidAmount === null) return; 
-            let paid = parseFloat(paidAmount);
-            if (isNaN(paid) || paid < grandTotal) return alert("⚠️ Insufficient amount!");
-
-            let change = paid - grandTotal;
-            alert("💰 Change: $" + change.toFixed(2));
-
             const orderType = document.getElementById('order-type').value;
-            const refName = orderType === "Takeaway" ? "Takeaway" : document.getElementById('table-no').value;
+            const refName = document.getElementById('table-no').value;
             const payMethod = document.getElementById('payment-method').value;
             const timeStr = new Date().toLocaleString();
 
-            fillReceiptDetails(orderType, refName, payMethod, timeStr, subtotal, discountAmount, grandTotal, paid, change, cart);
+            fillReceiptDetails(orderType, refName, payMethod, timeStr, subtotal, discountAmount, grandTotal, 0, 0, cart);
+            safePrint("print-customer");
+        }
+
+        let currentGrandTotalForPay = 0;
+
+        function openPaymentModal() {
+            if (cart.length === 0) return alert("Cart is empty!");
+            let subtotal = cart.reduce((sum, item) => sum + (item.customPrice * item.qty), 0);
+            let discountAmount = parseFloat(document.getElementById('discount-input').value) || 0;
+            currentGrandTotalForPay = subtotal - discountAmount;
+            if (currentGrandTotalForPay < 0) currentGrandTotalForPay = 0;
+
+            document.getElementById('modal-grand-total').innerText = currentGrandTotalForPay.toFixed(2);
+            document.getElementById('modal-paid-input').value = currentGrandTotalForPay.toFixed(2);
+            document.getElementById('modal-change-amount').innerText = "0.00";
+
+            document.getElementById('payment-modal').style.display = 'flex';
+            setTimeout(() => {
+                const paidInput = document.getElementById('modal-paid-input');
+                paidInput.focus();
+                paidInput.select();
+            }, 100);
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        function calculateChangePreview() {
+            let paid = parseFloat(document.getElementById('modal-paid-input').value) || 0;
+            let change = paid - currentGrandTotalForPay;
+            document.getElementById('modal-change-amount').innerText = (change >= 0 ? change : 0).toFixed(2);
+        }
+
+        function confirmPaymentProcess() {
+            let paid = parseFloat(document.getElementById('modal-paid-input').value) || 0;
+            if (isNaN(paid) || paid < currentGrandTotalForPay) {
+                return alert("⚠️ Insufficient paid amount!");
+            }
+
+            let change = paid - currentGrandTotalForPay;
+            closePaymentModal();
+
+            const orderType = document.getElementById('order-type').value;
+            const refName = document.getElementById('table-no').value;
+            const payMethod = document.getElementById('payment-method').value;
+            const timeStr = new Date().toLocaleString();
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.customPrice * item.qty), 0);
+            let discountAmount = parseFloat(document.getElementById('discount-input').value) || 0;
+
+            fillReceiptDetails(orderType, refName, payMethod, timeStr, subtotal, discountAmount, currentGrandTotalForPay, paid, change, cart);
 
             completedSales.push({ 
                 time: timeStr, 
                 ref: `${orderType} (${refName})`, 
                 method: payMethod, 
-                amount: grandTotal,
+                amount: currentGrandTotalForPay,
                 orderType: orderType,
                 refName: refName,
                 subtotal: subtotal,
@@ -940,16 +1377,23 @@
             
             db.ref('sales').set(completedSales);
 
+            if (orderType === "Takeaway") {
+                orderRunningNumber++;
+                localStorage.setItem('alhussain_order_num', orderRunningNumber);
+            }
+
             delete activeOrders[refName];
             db.ref('activeOrders').set(activeOrders);
 
-            // இது பிரிண்ட் செய்யும்போது கேஷ் டூயரையும் சேர்த்துத் திறக்கும்
-            safePrint("print-customer");
-
             cart = []; 
+            document.getElementById('discount-input').value = "0.00";
             updateCart(); 
             renderVisualTables();
+            renderVisualTakeaways();
+            toggleOrderTypeFields();
             updateStats();
+
+            alert("✅ Payment Successful! Change: $" + change.toFixed(2));
         }
 
         function fillReceiptDetails(orderType, ref, method, time, subtotal, discount, total, paid, change, items) {
@@ -965,7 +1409,9 @@
             const pItems = document.getElementById('p-items');
             pItems.innerHTML = '';
             items.forEach(item => {
-                pItems.innerHTML += `<tr><td><b>${item.name}</b></td><td style="text-align:center;"><b>${item.qty}</b></td><td style="text-align:right;"><b>$${(item.customPrice * item.qty).toFixed(2)}</b></td></tr>`;
+                let noteStr = getFormattedItemNotes(item);
+                let noteHtml = noteStr ? `<br><span style="font-size:13px; font-weight:900;">Note: ${noteStr}</span>` : '';
+                pItems.innerHTML += `<tr><td style="padding: 6px 0;"><b>${item.name}</b>${noteHtml}</td><td style="text-align:center; vertical-align:top;"><b>${item.qty}</b></td><td style="text-align:right; vertical-align:top;"><b>$${(item.customPrice * item.qty).toFixed(2)}</b></td></tr>`;
             });
         }
 
@@ -976,13 +1422,11 @@
             safePrint("print-customer");
         }
 
-        // --- MANAGE MENU & CATEGORY MODAL FUNCTIONS (FAST & LAZY-FREE) ---
         function openMenuManagerModal() {
             const tbody = document.getElementById('menu-manager-tbody');
             tbody.innerHTML = '';
             const allCategories = getAllCategories();
 
-            // லேக் இல்லாமல் இருக்க ஒரே முறையில் அனைத்து ரோக்களையும் ஏற்றுதல்
             let rowsHtml = '';
             menuData.forEach((item) => {
                 let optionsHtml = '';
@@ -1017,7 +1461,7 @@
         function closeMenuManagerModal() { 
             document.getElementById('menu-manager-modal').style.display = 'none'; 
             renderCategories();
-            populateCategoryDropdowns();
+            populateCategoryDropdown();
             renderMenu();
         }
 
@@ -1040,7 +1484,7 @@
             localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             renderMenu();
             renderCategories();
-            populateCategoryDropdowns();
+            populateCategoryDropdown();
             openMenuManagerModal();
         }
 
@@ -1163,11 +1607,14 @@
         }
 
         function closeDay() {
-            if(confirm("Close day and reset all sales?")) {
+            if(confirm("Close day and reset all sales and order numbers?")) {
                 completedSales = [];
                 db.ref('sales').set(completedSales);
+                orderRunningNumber = 1;
+                localStorage.setItem('alhussain_order_num', orderRunningNumber);
                 updateStats();
-                alert("🔒 Day closed successfully! Sales are cleared for today.");
+                toggleOrderTypeFields();
+                alert("🔒 Day closed successfully! Sales cleared and Order Numbers reset to 1.");
             }
         }
 
@@ -1175,6 +1622,15 @@
             let totalSales = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
             if(document.getElementById('stat-sales')) document.getElementById('stat-sales').innerText = totalSales.toFixed(2);
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tableParam = urlParams.get('table');
+            if (tableParam) {
+                const tableSelect = document.getElementById('table-no');
+                if (tableSelect) tableSelect.value = tableParam;
+            }
+        });
     </script>
 </body>
 </html>

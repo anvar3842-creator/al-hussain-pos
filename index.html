@@ -203,7 +203,7 @@
                 <div class="controls-bar">
                     <div class="search-container">
                         <input type="text" id="search-input" class="search-box" placeholder="Search menu..." onkeyup="renderMenu()" onclick="this.value=''; renderMenu();">
-                        <button class="btn-menu-refresh" onclick="refreshMenuData()" title="Refresh Menu">🔄 Refresh</button>
+                        <button class="btn-menu-refresh" onclick="refreshMenuData()" title="Refresh Page">🔄 Refresh</button>
                     </div>
                     <div class="category-filters" id="category-filters"></div>
                 </div>
@@ -841,8 +841,23 @@
             { id: 262, name: "Holicks Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" }
         ];
 
-        let menuData = defaultMenuData;
-        localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
+        // Menu data structure (will be synced with Firebase)
+        let menuData = JSON.parse(localStorage.getItem('alhussain_menu')) || defaultMenuData;
+
+        // Automatically sync menu data from Firebase cloud in real-time for both admin and customers
+        db.ref('menuData').on('value', (snapshot) => {
+            const cloudMenu = snapshot.val();
+            if (cloudMenu && Array.isArray(cloudMenu) && cloudMenu.length > 0) {
+                menuData = cloudMenu;
+                localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
+            } else {
+                // If cloud is empty, push default/local menu to cloud
+                db.ref('menuData').set(menuData);
+            }
+            renderCategories();
+            populateCategoryDropdown();
+            renderMenu();
+        });
 
         let rawMaterials = JSON.parse(localStorage.getItem('alhussain_materials')) || [];
         
@@ -896,8 +911,13 @@
                 renderMenu();
                 updateCart();
             } else {
-                document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('main-app').style.display = 'none';
+                const savedRole = sessionStorage.getItem('alhussain_logged_role');
+                if (savedRole) {
+                    applyRoleUIAccess(savedRole);
+                } else {
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('main-app').style.display = 'none';
+                }
             }
         });
 
@@ -905,7 +925,27 @@
             event.preventDefault();
             const user = document.getElementById('login-user').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value.trim();
-            
+
+            if (user === "admin" && pass === "admin123") {
+                sessionStorage.setItem('alhussain_logged_role', 'Admin Dashboard');
+                applyRoleUIAccess('Admin Dashboard');
+            } 
+            else if (user === "user1" && pass === "1234") {
+                sessionStorage.setItem('alhussain_logged_role', 'Staff (User 1)');
+                applyRoleUIAccess('Staff (User 1)');
+            }
+            else if (user === "user2" && pass === "1234") {
+                sessionStorage.setItem('alhussain_logged_role', 'Order Taker (User 2)');
+                applyRoleUIAccess('Order Taker (User 2)');
+            } 
+            else {
+                const errElem = document.getElementById('login-error');
+                errElem.style.display = "block";
+                errElem.innerText = "Invalid Username or Password!";
+            }
+        }
+
+        function applyRoleUIAccess(role) {
             const adminPanel = document.getElementById('admin-panel');
             const billSummaryContainer = document.getElementById('bill-summary-container');
             const btnPrintBill = document.getElementById('btn-print-bill-elem');
@@ -914,7 +954,7 @@
             const btnHold = document.getElementById('btn-hold-elem');
             const btnKitchen = document.getElementById('btn-kitchen-elem');
 
-            if (user === "admin" && pass === "admin123") {
+            if (role === "Admin Dashboard") {
                 adminPanel.style.display = "block";
                 billSummaryContainer.style.display = "block";
                 btnPrintBill.style.display = "block";
@@ -922,9 +962,8 @@
                 btnDrawer.style.display = "block";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
-                grantAccess("Admin Dashboard");
             } 
-            else if (user === "user1" && pass === "1234") {
+            else if (role === "Staff (User 1)") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "block";
                 btnPrintBill.style.display = "block";
@@ -932,9 +971,8 @@
                 btnDrawer.style.display = "block";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
-                grantAccess("Staff (User 1)");
             }
-            else if (user === "user2" && pass === "1234") {
+            else if (role === "Order Taker (User 2)") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "none";
                 btnPrintBill.style.display = "none";
@@ -942,13 +980,9 @@
                 btnDrawer.style.display = "none";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
-                grantAccess("Order Taker (User 2)");
-            } 
-            else {
-                const errElem = document.getElementById('login-error');
-                errElem.style.display = "block";
-                errElem.innerText = "Invalid Username or Password!";
             }
+
+            grantAccess(role);
         }
 
         function grantAccess(role) {
@@ -965,15 +999,13 @@
             toggleOrderTypeFields();
         }
 
-        function logout() { location.href = liveBaseUrl; }
+        function logout() { 
+            sessionStorage.removeItem('alhussain_logged_role');
+            location.href = liveBaseUrl; 
+        }
 
         function refreshMenuData() {
-            menuData = defaultMenuData;
-            localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
-            renderCategories();
-            populateCategoryDropdown();
-            renderMenu();
-            alert("🔄 Menu items refreshed successfully!");
+            location.reload();
         }
 
         function toggleOrderTypeFields() {
@@ -1126,6 +1158,9 @@
 
             const newId = menuData.length > 0 ? Math.max(...menuData.map(m => m.id)) + 1 : 1;
             menuData.push({ id: newId, name: name, category: category, price: price, icon: "🍲" });
+            
+            // Save to Firebase Cloud so customer QR pages update instantly
+            db.ref('menuData').set(menuData);
             localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
 
             document.getElementById('add-m-name').value = '';
@@ -1133,7 +1168,7 @@
             renderCategories();
             populateCategoryDropdown();
             renderMenu();
-            alert("✅ New Menu Item Added Successfully!");
+            alert("✅ New Menu Item Added Successfully & Synced to Cloud!");
         }
 
         function addToCart(id) {
@@ -1540,12 +1575,15 @@
                 if (field === 'price') item.price = parseFloat(value) || 0;
                 else if (field === 'category') item.category = value;
                 else if (field === 'name') item.name = value.trim();
+                
+                db.ref('menuData').set(menuData);
                 localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             }
         }
 
         function deleteMenuItem(id) {
             menuData = menuData.filter(m => m.id !== id);
+            db.ref('menuData').set(menuData);
             localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             renderMenu();
             renderCategories();

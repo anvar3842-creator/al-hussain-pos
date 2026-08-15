@@ -203,7 +203,7 @@
                 <div class="controls-bar">
                     <div class="search-container">
                         <input type="text" id="search-input" class="search-box" placeholder="Search menu..." onkeyup="renderMenu()" onclick="this.value=''; renderMenu();">
-                        <button class="btn-menu-refresh" onclick="refreshMenuData()" title="Refresh Page">🔄 Refresh</button>
+                        <button class="btn-menu-refresh" onclick="refreshMenuData()" title="Refresh Menu">🔄 Refresh</button>
                     </div>
                     <div class="category-filters" id="category-filters"></div>
                 </div>
@@ -552,6 +552,7 @@
         const liveBaseUrl = "https://anvar3842-creator.github.io/al-hussain-menu/";
 
         const defaultMenuData = [
+            // --- 1. ROTI ---
             { id: 1, name: "Roti kosong", price: 0.80, category: "Roti", icon: "🫓" },
             { id: 2, name: "Roti Kosong Cheese", price: 1.50, category: "Roti", icon: "🫓" },
             { id: 3, name: "Roti Kosong Bawang", price: 1.20, category: "Roti", icon: "🫓" },
@@ -574,6 +575,8 @@
             { id: 20, name: "Roti John daging cheese", price: 4.00, category: "Roti", icon: "🫓" },
             { id: 21, name: "Capati", price: 1.00, category: "Roti", icon: "🫓" },
             { id: 22, name: "Roti Sarang Burung", price: 2.00, category: "Roti", icon: "🫓" },
+
+            // --- 2. DOSAI ---
             { id: 263, name: "Plain Dosai", price: 1.20, category: "Dosai", icon: "🥞" },
             { id: 264, name: "Masala Dosai", price: 2.50, category: "Dosai", icon: "🥞" },
             { id: 265, name: "Egg Dosai", price: 2.00, category: "Dosai", icon: "🥞" },
@@ -582,6 +585,8 @@
             { id: 268, name: "Paper Dosai", price: 2.00, category: "Dosai", icon: "🥞" },
             { id: 269, name: "Rava Dosai", price: 2.50, category: "Dosai", icon: "🥞" },
             { id: 270, name: "Tosai Bawang", price: 1.80, category: "Dosai", icon: "🥞" },
+
+            // --- 3. NASI CAMPUR ---
             { id: 300, name: "Ayam Kurma", price: 2.00, category: "Nasi Campur", icon: "🍛" },
             { id: 301, name: "Ayam Kari", price: 2.00, category: "Nasi Campur", icon: "🍛" },
             { id: 302, name: "Ayam Merah", price: 2.00, category: "Nasi Campur", icon: "🍛" },
@@ -599,6 +604,8 @@
             { id: 314, name: "Telur Rebus", price: 0.50, category: "Nasi Campur", icon: "🥚" },
             { id: 315, name: "Telur Dadar", price: 0.80, category: "Nasi Campur", icon: "🍳" },
             { id: 316, name: "Telur Mata", price: 0.50, category: "Nasi Campur", icon: "🍳" },
+
+            // --- 4. BRUGER ---
             { id: 23, name: "Burger Telur", price: 1.50, category: "Bruger", icon: "🍔" },
             { id: 24, name: "Burger Ayam", price: 2.50, category: "Bruger", icon: "🍔" },
             { id: 25, name: "Burger Daging", price: 2.50, category: "Bruger", icon: "🍔" },
@@ -606,6 +613,8 @@
             { id: 27, name: "Burger Ayam Cheese", price: 3.00, category: "Bruger", icon: "🍔" },
             { id: 28, name: "Burger Daging Cheese", price: 3.00, category: "Bruger", icon: "🍔" },
             { id: 29, name: "Sandwich Telur", price: 1.50, category: "Bruger", icon: "🥪" },
+
+            // --- 5. NASI GORENG & BRIYANI ---
             { id: 30, name: "Nasi Ayam Penyet", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
             { id: 31, name: "Nasi Ayam (Goreng)", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
             { id: 32, name: "Nasi Ayam (Steam)", price: 4.00, category: "Nasi Goreng", icon: "🍗" },
@@ -631,10 +640,14 @@
             { id: 52, name: "Nasi Briyani Ayam", price: 4.50, category: "Nasi Goreng", icon: "🥘" },
             { id: 53, name: "Nasi Briyani Daging", price: 5.50, category: "Nasi Goreng", icon: "🥘" },
             { id: 54, name: "Nasi Briyani Kambing", price: 7.00, category: "Nasi Goreng", icon: "🥘" },
+
+            // --- 6. MURTABAK ---
             { id: 55, name: "Murtabak Ayam", price: 4.00, category: "Murtabak", icon: "🫓" },
             { id: 56, name: "Murtabak Sardine", price: 4.50, category: "Murtabak", icon: "🫓" },
             { id: 57, name: "Murtabak Daging", price: 5.00, category: "Murtabak", icon: "🫓" },
             { id: 58, name: "Murtabak Sayur", price: 3.50, category: "Murtabak", icon: "🫓" },
+
+            // --- 7. MEE GORENG ---
             { id: 59, name: "Mee Goreng Biasa", price: 2.50, category: "Mee Goreng", icon: "🍝" },
             { id: 60, name: "Mee Goreng Ayam", price: 4.00, category: "Mee Goreng", icon: "🍝" },
             { id: 61, name: "Mee Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
@@ -655,6 +668,8 @@
             { id: 76, name: "Kueh Teow Goreng Daging", price: 5.00, category: "Mee Goreng", icon: "🍝" },
             { id: 77, name: "Kueh Teow Goreng Seafood", price: 5.50, category: "Mee Goreng", icon: "🍝" },
             { id: 78, name: "Kueh Teow Goreng Special", price: 6.00, category: "Mee Goreng", icon: "🍝" },
+
+            // --- 8. MEE BASAH ---
             { id: 79, name: "Mee Basah Biasa", price: 3.00, category: "Mee Basah", icon: "🍜" },
             { id: 80, name: "Mee Basah Ayam", price: 4.50, category: "Mee Basah", icon: "🍜" },
             { id: 81, name: "Mee Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
@@ -670,6 +685,8 @@
             { id: 91, name: "Kueh Tewo Basah Daging", price: 5.00, category: "Mee Basah", icon: "🍜" },
             { id: 92, name: "Kueh Tewo Basah Seafood", price: 5.50, category: "Mee Basah", icon: "🍜" },
             { id: 93, name: "Kueh Tewo Basah Special", price: 6.00, category: "Mee Basah", icon: "🍜" },
+
+            // --- 9. ROJAK & SAYUR ---
             { id: 94, name: "Rojak Biasa", price: 3.00, category: "Rojak & Sayur", icon: "🥗" },
             { id: 95, name: "Rojak Sotong", price: 4.00, category: "Rojak & Sayur", icon: "🦑" },
             { id: 96, name: "Rojak Ayam", price: 4.00, category: "Rojak & Sayur", icon: "🍗" },
@@ -678,6 +695,8 @@
             { id: 99, name: "Sayur Bayam", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
             { id: 100, name: "Sayur Kacang panjang", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
             { id: 101, name: "Sayur bendi", price: 3.00, category: "Rojak & Sayur", icon: "🥬" },
+
+            // --- 10. SOTO ---
             { id: 102, name: "Soto Kuning Biasa", price: 2.50, category: "Soto", icon: "🍲" },
             { id: 103, name: "Soto Kuning Ayam", price: 4.00, category: "Soto", icon: "🍲" },
             { id: 104, name: "Soto Kuning Daging", price: 5.00, category: "Soto", icon: "🍲" },
@@ -693,6 +712,8 @@
             { id: 114, name: "Soto Kahwin Daging", price: 5.00, category: "Soto", icon: "🍲" },
             { id: 115, name: "Soto Kahwin Seafood", price: 5.50, category: "Soto", icon: "🍲" },
             { id: 116, name: "Soto Kahwin Special", price: 6.00, category: "Soto", icon: "🍲" },
+
+            // --- 11. SPECIAL ---
             { id: 117, name: "Udang sambal", price: 6.00, category: "Special", icon: "🦐" },
             { id: 118, name: "Udang Tomato", price: 6.00, category: "Special", icon: "🦐" },
             { id: 119, name: "Buttermilk Chicken/Rice", price: 6.00, category: "Special", icon: "🍗" },
@@ -703,17 +724,23 @@
             { id: 124, name: "Fish and Chips", price: 6.00, category: "Special", icon: "🐟" },
             { id: 125, name: "Butter prawn", price: 7.00, category: "Special", icon: "🦐" },
             { id: 126, name: "Buttermilk prawn", price: 7.00, category: "Special", icon: "🦐" },
+
+            // --- 12. SOUP ---
             { id: 127, name: "Soup Sayur", price: 3.00, category: "Soup", icon: "🥣" },
             { id: 128, name: "Soup Tulang", price: 5.00, category: "Soup", icon: "🥣" },
             { id: 129, name: "Soup Ayam", price: 3.50, category: "Soup", icon: "🥣" },
             { id: 130, name: "Soup Daging", price: 5.00, category: "Soup", icon: "🥣" },
             { id: 131, name: "Soup Hatibuyah", price: 5.00, category: "Soup", icon: "🥣" },
             { id: 132, name: "Soup Seafood", price: 5.50, category: "Soup", icon: "🥣" },
+
+            // --- 13. TOM YUM ---
             { id: 133, name: "Tom Yum Biasa", price: 3.00, category: "Tom Yum", icon: "🍲" },
             { id: 134, name: "Tom Yum Ayam", price: 4.50, category: "Tom Yum", icon: "🍲" },
             { id: 135, name: "Tom Yum Daging", price: 5.00, category: "Tom Yum", icon: "🍲" },
             { id: 136, name: "Tom Yum Seafood", price: 5.50, category: "Tom Yum", icon: "🍲" },
             { id: 137, name: "Tom Yum Special", price: 6.00, category: "Tom Yum", icon: "🍲" },
+
+            // --- 14. MEE SOUP ---
             { id: 138, name: "Mee Soup Biasa", price: 3.50, category: "Mee Soup", icon: "🍜" },
             { id: 139, name: "Mee Soup Ayam", price: 4.50, category: "Mee Soup", icon: "🍜" },
             { id: 140, name: "Mee Soup Daging", price: 5.00, category: "Mee Soup", icon: "🍜" },
@@ -729,16 +756,22 @@
             { id: 150, name: "Mee Kawin Soup Daging", price: 5.00, category: "Mee Soup", icon: "🍜" },
             { id: 151, name: "Mee Kawin Soup Seafood", price: 5.50, category: "Mee Soup", icon: "🍜" },
             { id: 152, name: "Mee Kawin Soup Special", price: 6.00, category: "Mee Soup", icon: "🍜" },
+
+            // --- 15. KUEH TEOW SOUP ---
             { id: 153, name: "Kueh Teow Soup Biasa", price: 3.50, category: "Kueh Teow Soup", icon: "🍜" },
             { id: 154, name: "Kueh Teow Soup Ayam", price: 4.50, category: "Kueh Teow Soup", icon: "🍜" },
             { id: 155, name: "Kueh Teow Soup Daging", price: 5.00, category: "Kueh Teow Soup", icon: "🍜" },
             { id: 156, name: "Kueh Teow Soup Seafood", price: 5.50, category: "Kueh Teow Soup", icon: "🍜" },
             { id: 157, name: "Kueh Teow Soup Special", price: 6.00, category: "Kueh Teow Soup", icon: "🍜" },
+
+            // --- 16. KOLO MEE ---
             { id: 158, name: "Kolo Mee Biasa", price: 3.00, category: "Kolo Mee", icon: "🍝" },
             { id: 159, name: "Kolo Mee Ayam", price: 4.50, category: "Kolo Mee", icon: "🍝" },
             { id: 160, name: "Kolo Mee Daging", price: 5.00, category: "Kolo Mee", icon: "🍝" },
             { id: 161, name: "Kolo Mee Seafood", price: 5.50, category: "Kolo Mee", icon: "🍝" },
             { id: 162, name: "Kolo Mee Special", price: 6.00, category: "Kolo Mee", icon: "🍝" },
+
+            // --- 17. HOT DRINKS ---
             { id: 163, name: "Tea", price: 1.00, category: "Hot Drinks", icon: "☕" },
             { id: 164, name: "Tea Tarik", price: 1.00, category: "Hot Drinks", icon: "☕" },
             { id: 165, name: "Tea Tarik India", price: 1.20, category: "Hot Drinks", icon: "☕" },
@@ -790,6 +823,8 @@
             { id: 211, name: "Lemon Panas Madu", price: 1.50, category: "Hot Drinks", icon: "🍋" },
             { id: 212, name: "Kasturi Panas", price: 1.20, category: "Hot Drinks", icon: "🍋" },
             { id: 213, name: "Kasturi Panas Madu", price: 1.50, category: "Hot Drinks", icon: "🍋" },
+
+            // --- 18. SEJUK ---
             { id: 214, name: "Tea Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
             { id: 215, name: "Tea-Tarik Ping", price: 1.30, category: "Sejuk", icon: "🧊" },
             { id: 216, name: "Tea-Tarik Ping India", price: 1.40, category: "Sejuk", icon: "🧊" },
@@ -823,6 +858,8 @@
             { id: 244, name: "Orange Campur", price: 1.50, category: "Sejuk", icon: "🍊" },
             { id: 245, name: "Air Manisan", price: 1.50, category: "Sejuk", icon: "🥤" },
             { id: 246, name: "Soda Gembira", price: 2.50, category: "Sejuk", icon: "🥤" },
+
+            // --- 19. FRESH JUICE ---
             { id: 247, name: "Fresh Apple Juice", price: 2.50, category: "Fresh Juice", icon: "🧃" },
             { id: 248, name: "Fresh Lemon Juice", price: 2.50, category: "Fresh Juice", icon: "🍋" },
             { id: 249, name: "Fresh Orange Juice", price: 2.50, category: "Fresh Juice", icon: "🍊" },
@@ -833,38 +870,46 @@
             { id: 254, name: "Salt Lassi", price: 2.50, category: "Fresh Juice", icon: "🥛" },
             { id: 255, name: "Orange Lassi", price: 2.50, category: "Fresh Juice", icon: "🍊" },
             { id: 256, name: "Mixed Fruit Juice", price: 3.00, category: "Fresh Juice", icon: "🧃" },
+
+            // --- 20. MILK SHAKE ---
             { id: 257, name: "Vennila Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" },
             { id: 258, name: "Chocolate Milk Shake", price: 3.50, category: "Milk Shake", icon: "🍫" },
             { id: 259, name: "Strawberry Milk Shake", price: 3.50, category: "Milk Shake", icon: "🍓" },
             { id: 260, name: "Mango Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥭" },
             { id: 261, name: "Milo Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥛" },
-            { id: 262, name: "Holicks Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" }
+            { id: 262, name: "Holicks Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" },
+
+            // --- 21. MINIMUM TIN ---
+            { id: 271, name: "Coke", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 272, name: "Coke Zero", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 273, name: "100 Plus", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 274, name: "Sprite", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 275, name: "EAS Coconut Juice", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 276, name: "Pepsi", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 277, name: "Florida", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 278, name: "Red Bull Silver", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 279, name: "Krating Daeng", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 280, name: "Red Bull", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 281, name: "Mr. Brown", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 282, name: "7 Up", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 283, name: "Soybean", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 284, name: "Air Teppu", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 285, name: "Grass Jelly", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 286, name: "Fuji Tea Jasmine", price: 1.20, category: "Minimum Tin", icon: "🥤" },
+            { id: 287, name: "Air Botol Kecil", price: 0.60, category: "Minimum Tin", icon: "🥤" },
+            { id: 288, name: "Air Botol Besar", price: 1.00, category: "Minimum Tin", icon: "🥤" }
         ];
 
-        // Menu data structure (will be synced with Firebase)
-        let menuData = JSON.parse(localStorage.getItem('alhussain_menu')) || defaultMenuData;
-
-        // Automatically sync menu data from Firebase cloud in real-time for both admin and customers
-        db.ref('menuData').on('value', (snapshot) => {
-            const cloudMenu = snapshot.val();
-            if (cloudMenu && Array.isArray(cloudMenu) && cloudMenu.length > 0) {
-                menuData = cloudMenu;
-                localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
-            } else {
-                // If cloud is empty, push default/local menu to cloud
-                db.ref('menuData').set(menuData);
-            }
-            renderCategories();
-            populateCategoryDropdown();
-            renderMenu();
-        });
+        // Ensure customer phones always load the latest complete menu
+        let menuData = defaultMenuData;
+        localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
 
         let rawMaterials = JSON.parse(localStorage.getItem('alhussain_materials')) || [];
         
         let categoryOrder = JSON.parse(localStorage.getItem('alhussain_cat_order')) || [
             "Roti", "Dosai", "Nasi Campur", "Bruger", "Nasi Goreng", "Murtabak", "Mee Goreng", "Mee Basah", 
             "Rojak & Sayur", "Soto", "Special", "Soup", "Tom Yum", "Mee Soup", 
-            "Kueh Teow Soup", "Kolo Mee", "Hot Drinks", "Sejuk", "Fresh Juice", "Milk Shake"
+            "Kueh Teow Soup", "Kolo Mee", "Hot Drinks", "Sejuk", "Fresh Juice", "Milk Shake", "Minimum Tin"
         ];
 
         let cart = [];
@@ -911,13 +956,8 @@
                 renderMenu();
                 updateCart();
             } else {
-                const savedRole = sessionStorage.getItem('alhussain_logged_role');
-                if (savedRole) {
-                    applyRoleUIAccess(savedRole);
-                } else {
-                    document.getElementById('login-screen').style.display = 'flex';
-                    document.getElementById('main-app').style.display = 'none';
-                }
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('main-app').style.display = 'none';
             }
         });
 
@@ -925,27 +965,7 @@
             event.preventDefault();
             const user = document.getElementById('login-user').value.trim().toLowerCase();
             const pass = document.getElementById('login-pass').value.trim();
-
-            if (user === "admin" && pass === "admin123") {
-                sessionStorage.setItem('alhussain_logged_role', 'Admin Dashboard');
-                applyRoleUIAccess('Admin Dashboard');
-            } 
-            else if (user === "user1" && pass === "1234") {
-                sessionStorage.setItem('alhussain_logged_role', 'Staff (User 1)');
-                applyRoleUIAccess('Staff (User 1)');
-            }
-            else if (user === "user2" && pass === "1234") {
-                sessionStorage.setItem('alhussain_logged_role', 'Order Taker (User 2)');
-                applyRoleUIAccess('Order Taker (User 2)');
-            } 
-            else {
-                const errElem = document.getElementById('login-error');
-                errElem.style.display = "block";
-                errElem.innerText = "Invalid Username or Password!";
-            }
-        }
-
-        function applyRoleUIAccess(role) {
+            
             const adminPanel = document.getElementById('admin-panel');
             const billSummaryContainer = document.getElementById('bill-summary-container');
             const btnPrintBill = document.getElementById('btn-print-bill-elem');
@@ -954,7 +974,7 @@
             const btnHold = document.getElementById('btn-hold-elem');
             const btnKitchen = document.getElementById('btn-kitchen-elem');
 
-            if (role === "Admin Dashboard") {
+            if (user === "admin" && pass === "admin123") {
                 adminPanel.style.display = "block";
                 billSummaryContainer.style.display = "block";
                 btnPrintBill.style.display = "block";
@@ -962,8 +982,9 @@
                 btnDrawer.style.display = "block";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
+                grantAccess("Admin Dashboard");
             } 
-            else if (role === "Staff (User 1)") {
+            else if (user === "user1" && pass === "1234") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "block";
                 btnPrintBill.style.display = "block";
@@ -971,8 +992,9 @@
                 btnDrawer.style.display = "block";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
+                grantAccess("Staff (User 1)");
             }
-            else if (role === "Order Taker (User 2)") {
+            else if (user === "user2" && pass === "1234") {
                 adminPanel.style.display = "none";
                 billSummaryContainer.style.display = "none";
                 btnPrintBill.style.display = "none";
@@ -980,9 +1002,13 @@
                 btnDrawer.style.display = "none";
                 btnHold.style.display = "block";
                 btnKitchen.style.display = "block";
+                grantAccess("Order Taker (User 2)");
+            } 
+            else {
+                const errElem = document.getElementById('login-error');
+                errElem.style.display = "block";
+                errElem.innerText = "Invalid Username or Password!";
             }
-
-            grantAccess(role);
         }
 
         function grantAccess(role) {
@@ -999,13 +1025,15 @@
             toggleOrderTypeFields();
         }
 
-        function logout() { 
-            sessionStorage.removeItem('alhussain_logged_role');
-            location.href = liveBaseUrl; 
-        }
+        function logout() { location.href = liveBaseUrl; }
 
         function refreshMenuData() {
-            location.reload();
+            menuData = defaultMenuData;
+            localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
+            renderCategories();
+            populateCategoryDropdown();
+            renderMenu();
+            alert("🔄 Menu items refreshed successfully!");
         }
 
         function toggleOrderTypeFields() {
@@ -1158,9 +1186,6 @@
 
             const newId = menuData.length > 0 ? Math.max(...menuData.map(m => m.id)) + 1 : 1;
             menuData.push({ id: newId, name: name, category: category, price: price, icon: "🍲" });
-            
-            // Save to Firebase Cloud so customer QR pages update instantly
-            db.ref('menuData').set(menuData);
             localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
 
             document.getElementById('add-m-name').value = '';
@@ -1168,7 +1193,7 @@
             renderCategories();
             populateCategoryDropdown();
             renderMenu();
-            alert("✅ New Menu Item Added Successfully & Synced to Cloud!");
+            alert("✅ New Menu Item Added Successfully!");
         }
 
         function addToCart(id) {
@@ -1575,15 +1600,12 @@
                 if (field === 'price') item.price = parseFloat(value) || 0;
                 else if (field === 'category') item.category = value;
                 else if (field === 'name') item.name = value.trim();
-                
-                db.ref('menuData').set(menuData);
                 localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             }
         }
 
         function deleteMenuItem(id) {
             menuData = menuData.filter(m => m.id !== id);
-            db.ref('menuData').set(menuData);
             localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             renderMenu();
             renderCategories();

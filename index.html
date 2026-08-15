@@ -841,21 +841,7 @@
             { id: 262, name: "Holicks Milk Shake", price: 3.50, category: "Milk Shake", icon: "🥤" }
         ];
 
-        let existingMenu = JSON.parse(localStorage.getItem('alhussain_menu'));
-        let menuData = [];
-        
-        if (!existingMenu || existingMenu.length === 0) {
-            menuData = defaultMenuData;
-        } else {
-            let existingMap = new Map(existingMenu.map(item => [item.name.toLowerCase().trim(), item]));
-            defaultMenuData.forEach(defItem => {
-                let key = defItem.name.toLowerCase().trim();
-                if (!existingMap.has(key)) {
-                    existingMenu.push(defItem);
-                }
-            });
-            menuData = existingMenu;
-        }
+        let menuData = defaultMenuData;
         localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
 
         let rawMaterials = JSON.parse(localStorage.getItem('alhussain_materials')) || [];
@@ -982,8 +968,8 @@
         function logout() { location.href = liveBaseUrl; }
 
         function refreshMenuData() {
-            let freshMenu = JSON.parse(localStorage.getItem('alhussain_menu'));
-            if (freshMenu) { menuData = freshMenu; }
+            menuData = defaultMenuData;
+            localStorage.setItem('alhussain_menu', JSON.stringify(menuData));
             renderCategories();
             populateCategoryDropdown();
             renderMenu();

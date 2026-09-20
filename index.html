@@ -189,11 +189,168 @@
         .btn-clear { background: #fef2f2; color: var(--danger); }
         .btn-clear:hover { background: var(--danger); color: white; }
 
-        .category-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; width: 100%; scroll-behavior: smooth; }
-        .category-filters::-webkit-scrollbar { height: 4px; }
-        .cat-btn { background: var(--bg-color); border: 2px solid transparent; padding: 9px 16px; border-radius: 12px; color: var(--text-muted); font-weight: 800; cursor: pointer; white-space: nowrap; font-size: 14px; font-family: inherit; transition: all 0.3s ease; }
-        .cat-btn.active { background: linear-gradient(135deg, #7c3aed, #06b6d4); color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
-        .cat-btn:hover:not(.active) { background: #e2e8f0; color: var(--text-main); transform: translateY(-1px); }
+        /* Category Bar & Navigation */
+        .category-bar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 6px;
+            position: relative;
+        }
+
+        .cat-nav-btn {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            color: #1e293b;
+            width: 44px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            user-select: none;
+            font-family: inherit;
+        }
+        .cat-nav-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            color: #2563eb;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.15);
+        }
+        .cat-nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 2px 10px 2px;
+            width: 100%;
+            scroll-behavior: smooth;
+            cursor: grab;
+            user-select: none;
+            align-items: center;
+        }
+        .category-filters.is-dragging {
+            cursor: grabbing;
+            scroll-behavior: auto;
+        }
+        /* Thick, comfortable, easily clickable and visible scrollbar */
+        .category-filters::-webkit-scrollbar {
+            height: 9px;
+        }
+        .category-filters::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 6px;
+        }
+        .category-filters::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+        .category-filters::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Wrap view mode: shows all categories cleanly without horizontal scrolling */
+        .category-filters.wrap-mode {
+            flex-wrap: wrap;
+            overflow-x: visible;
+            overflow-y: auto;
+            max-height: 200px;
+            padding-bottom: 8px;
+        }
+
+        /* Larger, clearer Category buttons */
+        .cat-btn {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            padding: 11px 20px;
+            border-radius: 14px;
+            color: #334155;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-shrink: 0;
+            min-height: 48px;
+            box-sizing: border-box;
+        }
+        .cat-btn:hover:not(.active) {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            color: #0f172a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .cat-btn.active {
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 16px rgba(79, 70, 229, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .cat-wrap-toggle-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            color: #334155;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            font-family: inherit;
+            height: 48px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            user-select: none;
+        }
+        .cat-wrap-toggle-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+        .cat-wrap-toggle-btn.active {
+            background: #ede9fe;
+            color: #6d28d9;
+            border-color: #a78bfa;
+            box-shadow: 0 3px 10px rgba(109,40,217,0.18);
+        }
+
+        @media (max-width: 768px) {
+            .cat-nav-btn { width: 38px; height: 42px; font-size: 14px; border-radius: 10px; }
+            .cat-btn { padding: 9px 14px; font-size: 13.5px; min-height: 42px; border-radius: 11px; }
+            .cat-wrap-toggle-btn { height: 42px; padding: 8px 10px; font-size: 12px; border-radius: 10px; }
+        }
+        @media (max-width: 520px) {
+            #cat-wrap-label { display: none; }
+            .cat-wrap-toggle-btn { padding: 8px 12px; }
+        }
         
         .category-section-header { grid-column: 1 / -1; font-size: 18px; font-weight: 900; color: var(--text-main); padding: 20px 0 10px 0; border-bottom: 2px dashed var(--border-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
         .category-section-header:first-child { padding-top: 0; }
@@ -556,7 +713,14 @@
                             <button class="btn-menu-refresh btn-clear" onclick="clearSearch()" title="Clear Search">Clear</button>
                             <button class="btn-menu-refresh" onclick="refreshMenuData()" title="Refresh Menu">Refresh</button>
                         </div>
-                        <div class="category-filters" id="category-filters"></div>
+                        <div class="category-bar-wrapper">
+                            <button type="button" class="cat-nav-btn" id="cat-nav-left" onclick="scrollCategoryBar(-260)" title="Scroll Left (இடது)">◀</button>
+                            <div class="category-filters" id="category-filters"></div>
+                            <button type="button" class="cat-nav-btn" id="cat-nav-right" onclick="scrollCategoryBar(260)" title="Scroll Right (வலது)">▶</button>
+                            <button type="button" class="cat-wrap-toggle-btn" id="cat-wrap-toggle" onclick="toggleCategoryViewMode()" title="Toggle View: Wrap All vs Scroll">
+                                <span id="cat-wrap-icon">⊞</span> <span id="cat-wrap-label">All Categories</span>
+                            </button>
+                        </div>
                     </div>
                     <div id="menu-grid" class="menu-grid"></div>
                 </div>
@@ -840,8 +1004,15 @@
                                     <label class="perm-check-item">
                                         <input type="checkbox" id="perm-take_orders" checked>
                                         <div>
-                                            <span class="perm-title">Take Orders & Billing</span>
-                                            <span class="perm-desc">ஆர்டர் எடுத்தல் & பில் தயாரித்தல்</span>
+                                            <span class="perm-title">Take Orders (ஆர்டர் எடுத்தல்)</span>
+                                            <span class="perm-desc">டேபிள் ஆர்டர் எடுத்தல் & கிச்சன் KOT</span>
+                                        </div>
+                                    </label>
+                                    <label class="perm-check-item" style="background:#f0fdf4; border-color:#bbf7d0;">
+                                        <input type="checkbox" id="perm-billing">
+                                        <div>
+                                            <span class="perm-title" style="color:#15803d;">Billing & Payment (பில்லிங்)</span>
+                                            <span class="perm-desc">பில் போடுதல் & கட்டணம் வசூலித்தல் (Pay/Bill)</span>
                                         </div>
                                     </label>
                                     <label class="perm-check-item">
@@ -1104,6 +1275,7 @@
         const DEFAULT_PERMISSIONS = {
             admin: {
                 take_orders: true,
+                billing: true,
                 manage_menu: true,
                 daily_expense: true,
                 sales_history: true,
@@ -1117,6 +1289,7 @@
             },
             supplier: {
                 take_orders: true,
+                billing: false,
                 manage_menu: false,
                 daily_expense: false,
                 sales_history: false,
@@ -1144,6 +1317,10 @@
             let permissions = data.permissions;
             if (!permissions || typeof permissions !== 'object') {
                 permissions = isAdmin ? { ...DEFAULT_PERMISSIONS.admin } : { ...DEFAULT_PERMISSIONS.supplier };
+            } else {
+                if (permissions.billing === undefined) {
+                    permissions.billing = isAdmin ? true : false;
+                }
             }
             return {
                 name: data.name || (key === 'admin' ? 'Admin' : key),
@@ -1163,9 +1340,12 @@
             if (!cred) return false;
             if (cred.roleType === 'admin') return true;
             if (cred.permissions && typeof cred.permissions === 'object') {
-                return cred.permissions[permKey] === true;
+                if (cred.permissions[permKey] !== undefined) {
+                    return cred.permissions[permKey] === true;
+                }
             }
             if (permKey === 'take_orders') return true;
+            if (permKey === 'billing') return false;
             return false;
         }
 
@@ -1821,6 +2001,12 @@
                     discInput.disabled = false;
                     discInput.title = "Enter discount ($)";
                 }
+                const btnPay = document.getElementById('btn-pay-elem');
+                if (btnPay) btnPay.style.display = '';
+                const btnPrintBill = document.getElementById('btn-print-bill-elem');
+                if (btnPrintBill) btnPrintBill.style.display = '';
+                const btnDrawer = document.getElementById('btn-drawer-elem');
+                if (btnDrawer) btnDrawer.style.display = '';
                 return;
             }
 
@@ -1906,6 +2092,15 @@
                 discInput.disabled = !canDisc;
                 discInput.title = canDisc ? "Enter discount ($)" : "Discount permission not enabled for this account";
             }
+
+            // In Cart: Billing action buttons control (Pay, Print Bill, Open Drawer)
+            const canBill = hasPermission('billing');
+            const btnPay = document.getElementById('btn-pay-elem');
+            if (btnPay) btnPay.style.display = canBill ? '' : 'none';
+            const btnPrintBill = document.getElementById('btn-print-bill-elem');
+            if (btnPrintBill) btnPrintBill.style.display = canBill ? '' : 'none';
+            const btnDrawer = document.getElementById('btn-drawer-elem');
+            if (btnDrawer) btnDrawer.style.display = canBill ? '' : 'none';
         }
 
         function logout() {
@@ -2043,6 +2238,7 @@
             switchMobileTab('menu');
             renderCart();
             renderMenuGrid();
+            applyRolePermissionsUI();
         }
 
         // Seated duration calculation and timing helpers
@@ -2445,24 +2641,122 @@
             return Math.max(0, sub - disc);
         }
 
+        let isCategoryWrapMode = false;
+
+        function scrollCategoryBar(amount) {
+            const container = document.getElementById('category-filters');
+            if (!container) return;
+            container.scrollBy({ left: amount, behavior: 'smooth' });
+        }
+
+        function toggleCategoryViewMode() {
+            isCategoryWrapMode = !isCategoryWrapMode;
+            const container = document.getElementById('category-filters');
+            const toggleBtn = document.getElementById('cat-wrap-toggle');
+            const icon = document.getElementById('cat-wrap-icon');
+            const label = document.getElementById('cat-wrap-label');
+            const navLeft = document.getElementById('cat-nav-left');
+            const navRight = document.getElementById('cat-nav-right');
+
+            if (isCategoryWrapMode) {
+                if (container) container.classList.add('wrap-mode');
+                if (toggleBtn) toggleBtn.classList.add('active');
+                if (icon) icon.innerText = "⇄";
+                if (label) label.innerText = "Scroll Bar";
+                if (navLeft) navLeft.style.display = 'none';
+                if (navRight) navRight.style.display = 'none';
+            } else {
+                if (container) container.classList.remove('wrap-mode');
+                if (toggleBtn) toggleBtn.classList.remove('active');
+                if (icon) icon.innerText = "⊞";
+                if (label) label.innerText = "All Categories";
+                if (navLeft) navLeft.style.display = 'flex';
+                if (navRight) navRight.style.display = 'flex';
+            }
+        }
+
+        function initCategoryMouseScroll() {
+            const container = document.getElementById('category-filters');
+            if (!container || container.dataset.mouseScrollBound) return;
+            container.dataset.mouseScrollBound = "true";
+
+            // Mouse wheel horizontal scroll
+            container.addEventListener('wheel', (e) => {
+                if (container.classList.contains('wrap-mode')) return;
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    container.scrollLeft += (e.deltaY * 1.5);
+                }
+            }, { passive: false });
+
+            // Drag-to-scroll with mouse/touch
+            let isDown = false;
+            let startX = 0;
+            let scrollLeft = 0;
+
+            container.addEventListener('mousedown', (e) => {
+                if (container.classList.contains('wrap-mode')) return;
+                isDown = true;
+                container.classList.add('is-dragging');
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isDown) {
+                    isDown = false;
+                    if (container) container.classList.remove('is-dragging');
+                }
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown || container.classList.contains('wrap-mode')) return;
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 1.4;
+                container.scrollLeft = scrollLeft - walk;
+            });
+        }
+
         function renderCategories() {
             const container = document.getElementById('category-filters');
             if (!container) return;
             container.innerHTML = "";
 
             const allBtn = document.createElement('button');
+            allBtn.type = "button";
             allBtn.className = `cat-btn ${selectedCategory === "All" ? 'active' : ''}`;
-            allBtn.innerText = "All";
-            allBtn.onclick = () => { selectedCategory = "All"; renderCategories(); renderMenuGrid(); };
+            allBtn.innerHTML = `<span>🍽️</span> <span>All</span>`;
+            allBtn.onclick = () => { 
+                selectedCategory = "All"; 
+                renderCategories(); 
+                renderMenuGrid(); 
+            };
             container.appendChild(allBtn);
 
             categories.forEach(cat => {
                 const btn = document.createElement('button');
+                btn.type = "button";
                 btn.className = `cat-btn ${selectedCategory === cat ? 'active' : ''}`;
                 btn.innerText = cat;
-                btn.onclick = () => { selectedCategory = cat; renderCategories(); renderMenuGrid(); };
+                btn.onclick = () => { 
+                    selectedCategory = cat; 
+                    renderCategories(); 
+                    renderMenuGrid(); 
+                };
                 container.appendChild(btn);
             });
+
+            initCategoryMouseScroll();
+
+            // Auto-scroll active category button into view when in scroll mode
+            if (!isCategoryWrapMode) {
+                const activeBtn = container.querySelector('.cat-btn.active');
+                if (activeBtn) {
+                    setTimeout(() => {
+                        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }, 50);
+                }
+            }
         }
 
         function populateCategoryDropdowns() {
@@ -2948,6 +3242,10 @@
         }
 
         function printCustomerBillOnly() {
+            if (!hasPermission('billing')) {
+                alert("Permission denied: You do not have permission to print customer bills. (பில் போட அனுமதி இல்லை)");
+                return;
+            }
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
@@ -3020,12 +3318,20 @@
         }
 
         function openCashDrawerOnly() {
+            if (!hasPermission('billing')) {
+                alert("Permission denied: You do not have permission to open the cash drawer.");
+                return;
+            }
             document.body.className = "print-drawer-mode";
             window.print();
             setTimeout(() => { document.body.className = ""; }, 1000);
         }
 
         function openPaymentModal() {
+            if (!hasPermission('billing')) {
+                alert("Permission denied: You do not have permission for billing and payment. (பில்லிங் செய்ய அனுமதி இல்லை)");
+                return;
+            }
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
@@ -4074,7 +4380,7 @@
 
         // Dynamic Supplier, Staff & Login Credentials Management with Permissions
         const ALL_PERMISSION_KEYS = [
-            'take_orders', 'manage_menu', 'daily_expense', 'sales_history',
+            'take_orders', 'billing', 'manage_menu', 'daily_expense', 'sales_history',
             'payment_summary', 'monthly_reports', 'day_close', 'qr_codes',
             'apply_discounts', 'cancel_orders', 'manage_suppliers'
         ];
@@ -4180,9 +4486,9 @@
                 } else if (preset === 'supplier') {
                     cb.checked = (pk === 'take_orders');
                 } else if (preset === 'cashier') {
-                    cb.checked = ['take_orders', 'payment_summary', 'daily_expense', 'apply_discounts'].includes(pk);
+                    cb.checked = ['take_orders', 'billing', 'payment_summary', 'daily_expense', 'apply_discounts'].includes(pk);
                 } else if (preset === 'manager') {
-                    cb.checked = ['take_orders', 'manage_menu', 'daily_expense', 'sales_history', 'payment_summary', 'monthly_reports', 'day_close', 'qr_codes', 'apply_discounts', 'cancel_orders', 'manage_suppliers'].includes(pk);
+                    cb.checked = ['take_orders', 'billing', 'manage_menu', 'daily_expense', 'sales_history', 'payment_summary', 'monthly_reports', 'day_close', 'qr_codes', 'apply_discounts', 'cancel_orders', 'manage_suppliers'].includes(pk);
                 }
             });
         }
@@ -4229,6 +4535,7 @@
                     tagsHtml = '<span class="cred-perm-tag">No Permissions</span>';
                 } else {
                     if (perms.take_orders) tagsHtml += '<span class="cred-perm-tag highlight">Orders</span>';
+                    if (perms.billing) tagsHtml += '<span class="cred-perm-tag highlight" style="background:#ecfdf5;color:#047857;border-color:#a7f3d0;">Billing</span>';
                     if (perms.manage_menu) tagsHtml += '<span class="cred-perm-tag">Menu/Stock</span>';
                     if (perms.daily_expense) tagsHtml += '<span class="cred-perm-tag">Expenses</span>';
                     if (perms.sales_history) tagsHtml += '<span class="cred-perm-tag">Sales Reports</span>';

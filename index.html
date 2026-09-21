@@ -486,6 +486,9 @@
         .pay-method-tab-btn { padding: 11px 8px; border: 2px solid #e2e8f0; border-radius: 12px; background: #f8fafc; color: #475569; font-weight: 800; font-size: 13.5px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
         .pay-method-tab-btn:hover { border-color: #cbd5e1; background: #f1f5f9; }
         .pay-method-tab-btn.active { border-color: var(--primary); background: #ede9fe; color: #6d28d9; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15); }
+        #pay-method-btn-cash.active { border-color: #10b981; background: #ecfdf5; color: #047857; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25); }
+        #pay-method-btn-card.active { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25); }
+        #pay-method-btn-qr.active { border-color: #8b5cf6; background: #f5f3ff; color: #6d28d9; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.25); }
 
         .staff-alert-banner { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; border-radius: 14px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15); margin-bottom: 8px; gap: 10px; }
         .staff-alert-banner.waiter-type { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fcd34d; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); }
@@ -612,11 +615,18 @@
         <div class="login-box">
             <h2>Al Hussain Restaurant</h2>
             <form onsubmit="handleLogin(event)">
-                <input type="text" id="login-user" placeholder="Username (admin/user1/user2)" required autocomplete="username">
+                <input type="text" id="login-user" placeholder="Username / Name (e.g. admin, user1, சரிஷ்மா)" required autocomplete="username">
                 <input type="password" id="login-pass" placeholder="Password" required autocomplete="current-password">
                 <button type="submit" class="btn-login">Login Securely</button>
             </form>
             <p id="login-error" class="error-msg">Invalid Credentials!</p>
+            <div id="login-accounts-preview" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 11.5px; text-align: left;">
+                <div style="font-weight: 800; color: #475569; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>👥 Active Staff / Suppliers:</span>
+                    <span style="font-size: 10px; color: #64748b; font-weight: normal;">Click to select ID</span>
+                </div>
+                <div id="login-accounts-chips" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+            </div>
         </div>
     </div>
 
@@ -863,13 +873,13 @@
 
             <div style="text-align: left; font-size: 13px; font-weight: 800; color: #64748b; margin-bottom: 6px;">Payment Method:</div>
             <div class="pay-method-selector-grid">
-                <button type="button" id="pay-method-btn-cash" class="pay-method-tab-btn active" onclick="selectModalPaymentMethod('Cash')">
+                <button type="button" id="pay-method-btn-cash" data-method="Cash" class="pay-method-tab-btn active" onclick="selectModalPaymentMethod('Cash')">
                     💵 Cash
                 </button>
-                <button type="button" id="pay-method-btn-card" class="pay-method-tab-btn" onclick="selectModalPaymentMethod('Card')">
+                <button type="button" id="pay-method-btn-card" data-method="Card" class="pay-method-tab-btn" onclick="selectModalPaymentMethod('Card')">
                     💳 Card
                 </button>
-                <button type="button" id="pay-method-btn-qr" class="pay-method-tab-btn" onclick="selectModalPaymentMethod('QR Pay')">
+                <button type="button" id="pay-method-btn-qr" data-method="QR Pay" class="pay-method-tab-btn" onclick="selectModalPaymentMethod('QR Pay')">
                     📱 QR Pay
                 </button>
             </div>
@@ -946,7 +956,7 @@
                         <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 14px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 8px;">
                                 <h4 id="cred-form-title" style="margin: 0; font-size: 15px; font-weight: 900; color: #1e293b;">
-                                    ✏️ Edit Supplier Credentials
+                                    ✏️ Edit Staff / Supplier Credentials
                                 </h4>
                                 <span id="cred-editing-badge" class="badge" style="background: #e0e7ff; color: #4338ca; font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 800;">user1</span>
                             </div>
@@ -956,7 +966,7 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Display Name (பெயர்):</label>
-                                    <input type="text" id="cred-name" placeholder="e.g. Supplier D / Kannan" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
+                                    <input type="text" id="cred-name" placeholder="e.g. user1 / சரிஷ்மா" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
                                 </div>
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Role Type (பங்கு):</label>
@@ -973,7 +983,7 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Login ID / Username:</label>
-                                    <input type="text" id="cred-username" placeholder="e.g. supplier_d" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
+                                    <input type="text" id="cred-username" placeholder="e.g. user1" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
                                 </div>
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Password / PIN:</label>
@@ -1299,9 +1309,9 @@
 
         const DEFAULT_CREDENTIALS = {
             admin: { user: "admin", pass: "al@123", name: "Admin", roleType: "admin", permissions: { ...DEFAULT_PERMISSIONS.admin } },
-            user1: { user: "supplier_a", pass: "1234", name: "Supplier A", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } },
-            user2: { user: "supplier_b", pass: "1234", name: "Supplier B", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } },
-            user3: { user: "supplier_c", pass: "1234", name: "Supplier C", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } }
+            user1: { user: "user1", pass: "1234", name: "user1", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } },
+            user2: { user: "user2", pass: "1234", name: "user2", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } },
+            user3: { user: "user3", pass: "1234", name: "user3", roleType: "supplier", permissions: { ...DEFAULT_PERMISSIONS.supplier } }
         };
 
         function normalizeCredentialEntry(key, data) {
@@ -1316,10 +1326,28 @@
                     permissions.billing = isAdmin ? true : false;
                 }
             }
+
+            let rawUser = (data.user !== undefined && data.user !== null) ? String(data.user).trim() : '';
+            if (!rawUser) rawUser = key;
+
+            let rawName = (data.name !== undefined && data.name !== null) ? String(data.name).trim() : '';
+
+            // Clean up old generic placeholder names (Supplier A, Supplier 1, Supplier, Staff 1, etc.)
+            const isGenericName = !rawName || 
+                /^supplier[\s_-]*[a-c0-9]*$/i.test(rawName) || 
+                /^staff[\s_-]*[a-c0-9]*$/i.test(rawName) ||
+                rawName.toLowerCase() === 'supplier';
+
+            let displayName = rawName;
+            if (isGenericName) {
+                // If it's a generic placeholder, use the username (e.g. user1) or key
+                displayName = rawUser || (key === 'admin' ? 'Admin' : key);
+            }
+
             return {
-                name: data.name || (key === 'admin' ? 'Admin' : key),
-                user: data.user || '',
-                pass: data.pass || '',
+                name: displayName,
+                user: rawUser,
+                pass: (data.pass !== undefined && data.pass !== null) ? String(data.pass).trim() : '',
                 roleType: roleType,
                 permissions: permissions,
                 updatedAt: data.updatedAt || Date.now()
@@ -1343,20 +1371,85 @@
             return false;
         }
 
+        function renderLoginAccountsPreview() {
+            const chipsContainer = document.getElementById('login-accounts-chips');
+            if (!chipsContainer) return;
+            chipsContainer.innerHTML = '';
+            
+            const entries = Object.entries(credentials || {});
+            if (entries.length === 0) {
+                chipsContainer.innerHTML = '<span style="color:#94a3b8; font-style:italic;">No active accounts</span>';
+                return;
+            }
+
+            entries.forEach(([key, cred]) => {
+                if (!cred) return;
+                const name = cred.name || key;
+                const username = cred.user || key;
+                const isAdmin = cred.roleType === 'admin' || key === 'admin';
+                
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.style.cssText = `
+                    display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px;
+                    border-radius: 999px; font-size: 11.5px; font-weight: 700;
+                    cursor: pointer; border: 1px solid ${isAdmin ? '#fde68a' : '#cbd5e1'};
+                    background: ${isAdmin ? '#fffbeb' : '#f8fafc'};
+                    color: ${isAdmin ? '#92400e' : '#334155'};
+                    transition: all 0.15s;
+                `;
+                chip.innerHTML = `<span>${isAdmin ? '👑' : '👤'}</span> <b>${escapeHtml(name)}</b> <span style="opacity: 0.7; font-size: 10.5px;">(${escapeHtml(username)})</span>`;
+                chip.onmouseover = () => { chip.style.borderColor = '#3b82f6'; chip.style.background = '#eff6ff'; };
+                chip.onmouseout = () => { chip.style.borderColor = isAdmin ? '#fde68a' : '#cbd5e1'; chip.style.background = isAdmin ? '#fffbeb' : '#f8fafc'; };
+                chip.onclick = () => {
+                    const userEl = document.getElementById('login-user');
+                    const passEl = document.getElementById('login-pass');
+                    if (userEl) {
+                        userEl.value = username;
+                    }
+                    if (passEl) {
+                        passEl.focus();
+                    }
+                };
+                chipsContainer.appendChild(chip);
+            });
+        }
+
         // Do NOT expose credentials to customers scanning QR code!
         if (!isCustomerVisitor) {
             function syncCredentialsFromSnapshot(val) {
                 if (!val || typeof val !== 'object') return;
-                const merged = Object.assign({}, DEFAULT_CREDENTIALS, val);
-                Object.keys(merged).forEach(k => {
-                    credentials[k] = normalizeCredentialEntry(k, merged[k]);
+                // Merge Firebase items directly into credentials to keep user-saved names intact
+                Object.keys(val).forEach(k => {
+                    if (val[k]) {
+                        const item = normalizeCredentialEntry(k, val[k]);
+                        // If Firebase stored an old generic placeholder (e.g. "Supplier A", "Supplier 1", "Staff 1"), sync the clean name back to Firebase
+                        if (val[k].name && (/^supplier[\s_-]*[a-c0-9]*$/i.test(val[k].name) || /^staff[\s_-]*[a-c0-9]*$/i.test(val[k].name) || val[k].name.toLowerCase() === 'supplier')) {
+                            db.ref('credentials/' + k + '/name').set(item.name);
+                            db.ref('userCredentials/' + k + '/name').set(item.name);
+                        }
+                        if (val[k].user && (val[k].user === 'supplier_a' || val[k].user === 'supplier_b' || val[k].user === 'supplier_c')) {
+                            db.ref('credentials/' + k + '/user').set(item.user);
+                            db.ref('userCredentials/' + k + '/user').set(item.user);
+                        }
+                        credentials[k] = item;
+                    }
                 });
+
+                // Update active user display name if changed in database
+                if (loggedInRole && credentials[loggedInRole] && credentials[loggedInRole].name) {
+                    loggedInDisplayName = credentials[loggedInRole].name;
+                    const dispEl = document.getElementById('display-user');
+                    if (dispEl) dispEl.innerText = loggedInDisplayName;
+                }
+
                 if (document.getElementById('credentials-modal') && document.getElementById('credentials-modal').style.display === 'flex') {
                     if (typeof renderCredentialOverview === 'function') renderCredentialOverview();
                 }
                 if (typeof applyRolePermissionsUI === 'function') {
                     applyRolePermissionsUI();
                 }
+                renderLoginAccountsPreview();
             }
 
             db.ref('credentials').on('value', (snapshot) => {
@@ -1438,7 +1531,7 @@
         // Firebase listeners
         db.ref('tableLinks').on('value', (snap) => {
             tableLinks = snap.val() || {};
-            renderBigTablesGrid();
+            requestRenderBigTablesGrid();
         });
 
         db.ref('categories').on('value', (snapshot) => {
@@ -1577,7 +1670,7 @@
                     document.getElementById('customer-ready-screen').style.display = 'flex';
                 }
             }
-            renderBigTablesGrid();
+            requestRenderBigTablesGrid();
             if (currentTableKey) renderCart();
         });
 
@@ -1659,7 +1752,7 @@
                 playPosChime('order');
                 showToast("🔔 New Customer Table Order received!");
             }
-            renderBigTablesGrid();
+            requestRenderBigTablesGrid();
             renderLiveStaffAlerts();
         });
 
@@ -1671,7 +1764,7 @@
                 playPosChime('waiter');
                 showToast("🙋 A customer requested waiter / service!");
             }
-            renderBigTablesGrid();
+            requestRenderBigTablesGrid();
             renderLiveStaffAlerts();
         });
 
@@ -1852,6 +1945,7 @@
                 // Staff or admin: show login screen
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'none';
+                renderLoginAccountsPreview();
             }
         });
 
@@ -1939,36 +2033,90 @@
             const userInput = (userEl ? userEl.value : "").trim().toLowerCase();
             const passInput = (passEl ? passEl.value : "").trim();
 
+            if (!userInput || !passInput) {
+                if (errEl) {
+                    errEl.innerText = "Please enter both Username and Password!";
+                    errEl.style.display = "block";
+                }
+                return;
+            }
+
+            // Sync latest credentials from Firebase in case updated recently
+            try {
+                const snap = await db.ref('credentials').once('value');
+                const val = snap.val();
+                if (val && typeof val === 'object') {
+                    Object.keys(val).forEach(k => {
+                        if (val[k]) credentials[k] = normalizeCredentialEntry(k, val[k]);
+                    });
+                }
+            } catch (e) {
+                console.warn("Could not query Firebase credentials before login:", e);
+            }
+
             let roleKey = "";
             let displayName = "";
             let matched = false;
 
-            
-            // Check all credentials dynamically
+            // STAGE 1: Exact match on configured username (cred.user), display name (cred.name), or account key
             for (const [key, cred] of Object.entries(credentials)) {
                 if (!cred) continue;
                 const cUser = (cred.user || "").trim().toLowerCase();
                 const cName = (cred.name || "").trim().toLowerCase();
-                const defaultAliases = {
-                    admin: ["admin"],
-                    user1: ["user1", "supplier_a", "suppliera", "supplier a", "a", "staff1", "supplier 1", "supplier1"],
-                    user2: ["user2", "supplier_b", "supplierb", "supplier b", "b", "staff2", "supplier 2", "supplier2"],
-                    user3: ["user3", "supplier_c", "supplierc", "supplier c", "c", "staff3", "supplier 3", "supplier3"]
-                }[key] || [];
+                const keyLower = key.toLowerCase();
 
-                if (userInput === cUser || (cName && userInput === cName) || defaultAliases.includes(userInput)) {
-                    const fallbackPasses = key === "admin" ? ["al@123", "admin123", "1234"] : ["1234", "1111", "2222", "3333"];
+                // Match exact configured user, or exact display name, or exact internal key
+                if (userInput === cUser || (cName && userInput === cName) || userInput === keyLower) {
+                    const fallbackPasses = (key === "admin" || cred.roleType === "admin") ? ["al@123", "admin123", "1234"] : ["1234", "1111", "2222", "3333"];
                     if (await verifyPassword(passInput, cred.pass, fallbackPasses)) {
                         roleKey = key;
-                        displayName = cred.name || (key === "admin" ? "Admin" : (key === "user1" ? "Supplier 1" : key === "user2" ? "Supplier 2" : "Supplier 3"));
+                        let foundName = cred.name;
+                        if (key === 'user1' || cUser === 'user1' || userInput.replace(/[\s_-]/g, '') === 'user1') {
+                            if (!foundName || /^supplier[\s_-]*[a-c0-9]*$/i.test(foundName) || /^staff[\s_-]*[a-c0-9]*$/i.test(foundName) || foundName.toLowerCase() === 'supplier') {
+                                foundName = 'user1';
+                            }
+                        }
+                        displayName = foundName || (key === "admin" ? "Admin" : (cred.user || key));
                         matched = true;
                         break;
                     }
                 }
             }
+
+            // STAGE 2: If no direct match on real account, check legacy default aliases
+            if (!matched) {
+                for (const [key, cred] of Object.entries(credentials)) {
+                    if (!cred) continue;
+                    const defaultAliases = {
+                        admin: ["admin"],
+                        user1: ["user1", "user 1", "user_1", "supplier_a", "suppliera", "supplier a", "staff1", "supplier 1", "supplier1", "யூசர் 1", "யூசர்1", "யூசர் ஒன்னு"],
+                        user2: ["user2", "user 2", "user_2", "supplier_b", "supplierb", "supplier b", "staff2", "supplier 2", "supplier2", "யூசர் 2", "யூசர்2"],
+                        user3: ["user3", "user 3", "user_3", "supplier_c", "supplierc", "supplier c", "staff3", "supplier 3", "supplier3", "யூசர் 3", "யூசர்3"]
+                    }[key] || [];
+
+                    if (defaultAliases.includes(userInput)) {
+                        const fallbackPasses = (key === "admin" || cred.roleType === "admin") ? ["al@123", "admin123", "1234"] : ["1234", "1111", "2222", "3333"];
+                        if (await verifyPassword(passInput, cred.pass, fallbackPasses)) {
+                            roleKey = key;
+                            let foundName = cred.name;
+                            if (key === 'user1' || userInput.includes('user1') || userInput.includes('user 1') || userInput.includes('யூசர்')) {
+                                if (!foundName || /^supplier[\s_-]*[a-c0-9]*$/i.test(foundName) || /^staff[\s_-]*[a-c0-9]*$/i.test(foundName) || foundName.toLowerCase() === 'supplier') {
+                                    foundName = 'user1';
+                                }
+                            }
+                            displayName = foundName || (key === "admin" ? "Admin" : (cred.user || key));
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+            }
             
             if (!matched) {
-                if (errEl) errEl.style.display = "block";
+                if (errEl) {
+                    errEl.innerText = "Invalid Username or Password! Please check your credentials.";
+                    errEl.style.display = "block";
+                }
                 return;
             }
 
@@ -1977,7 +2125,13 @@
 
         function grantAccess(roleKey, roleName) {
             loggedInRole = roleKey;
-            loggedInDisplayName = roleName || roleKey;
+            // Never show generic Supplier/Staff placeholder if account is user1
+            if (roleKey === 'user1' || (credentials[roleKey] && credentials[roleKey].user === 'user1')) {
+                if (!roleName || /^supplier[\s_-]*[a-c0-9]*$/i.test(roleName) || /^staff[\s_-]*[a-c0-9]*$/i.test(roleName) || roleName.toLowerCase() === 'supplier') {
+                    roleName = 'user1';
+                }
+            }
+            loggedInDisplayName = roleName || (credentials[roleKey] ? credentials[roleKey].name : roleKey);
             db.ref('isShopOnline').set(true);
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
@@ -1988,7 +2142,7 @@
 
             if (loggedInRole !== "admin") {
                 activeShift = {
-                    role: roleName,
+                    role: loggedInDisplayName,
                     loginTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     billsCount: 0,
                     totalCollected: 0
@@ -2128,6 +2282,7 @@
             document.getElementById('login-pass').value = "";
             document.getElementById('login-error').style.display = "none";
             isCustomerMode = false;
+            renderLoginAccountsPreview();
         }
 
         function switchMobileTab(tab) {
@@ -2414,13 +2569,31 @@
             openTable(newOrderKey);
         }
 
+        let renderBigTablesGridScheduled = false;
+        function requestRenderBigTablesGrid() {
+            if (renderBigTablesGridScheduled) return;
+            renderBigTablesGridScheduled = true;
+            requestAnimationFrame(() => {
+                renderBigTablesGridScheduled = false;
+                renderBigTablesGrid();
+            });
+        }
+
         function renderBigTablesGrid() {
             const grid = document.getElementById('big-tables-grid');
             if (!grid) return;
-            grid.innerHTML = "";
+
+            const fragment = document.createDocumentFragment();
+            const renderedTableKeys = new Set();
 
             for (let i = 1; i <= 13; i++) {
                 let tableKey = `Table ${i}`;
+                renderedTableKeys.add(tableKey.toLowerCase());
+                renderedTableKeys.add(`table${i}`.toLowerCase());
+                renderedTableKeys.add(`${i}`);
+                renderedTableKeys.add(`order-table ${i}`.toLowerCase());
+                renderedTableKeys.add(`order-table${i}`.toLowerCase());
+
                 let isLinked = isLinkedSlaveTable(tableKey);
                 let effectiveKey = getMasterTableKey(tableKey);
                 let orderData = activeOrders[effectiveKey];
@@ -2431,24 +2604,14 @@
                 if (currentTableFilter === 'occupied' && !isOccupied) continue;
                 if (currentTableFilter === 'available' && isOccupied) continue;
 
-                // Auto-set seatedAt if order exists with items but seatedAt was not recorded yet
+                // Auto-set seatedAt in memory if missing (does not trigger Firebase loop during render)
                 if (isOccupied && orderData && !orderData.seatedAt) {
                     orderData.seatedAt = Date.now();
                     orderData.seatedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    db.ref('activeOrders/' + effectiveKey + '/seatedAt').set(orderData.seatedAt);
-                    db.ref('activeOrders/' + effectiveKey + '/seatedTime').set(orderData.seatedTime);
                 }
 
                 let itemCount = hasItems ? orderData.items.reduce((s, x) => s + x.qty, 0) : 0;
                 let orderTotal = hasItems ? getOrderGrandTotal(orderData) : 0;
-
-                let itemsPreview = "";
-                if (hasItems && orderData.items) {
-                    itemsPreview = orderData.items.slice(0, 3).map(x => `${x.qty}x ${x.name}`).join(", ");
-                    if (orderData.items.length > 3) {
-                        itemsPreview += ` +${orderData.items.length - 3} more`;
-                    }
-                }
 
                 // Seated duration indicator banner
                 let seatedBannerHtml = "";
@@ -2509,7 +2672,7 @@
                 let statusSubtitle = 'Ready for guests';
                 if (isOccupied) {
                     if (hasItems) {
-                        statusSubtitle = `${itemCount} Items • $${orderTotal.toFixed(2)}`;
+                        statusSubtitle = `$${orderTotal.toFixed(2)} (${itemCount} Items)`;
                     } else {
                         statusSubtitle = '👥 Seated • Waiting to order';
                     }
@@ -2526,13 +2689,9 @@
                     </div>
                     ${alertBadgeHtml}
                     ${seatedBannerHtml}
-                    <p style="font-weight: 900; font-size: 13.5px; color: ${isOccupied ? (hasItems ? '#b91c1c' : '#d97706') : '#475569'}; margin-bottom: 2px;">
+                    <p style="font-weight: 900; font-size: 14px; color: ${isOccupied ? (hasItems ? '#b91c1c' : '#d97706') : '#475569'}; margin: 4px 0;">
                         ${statusSubtitle}
                     </p>
-                    ${hasItems && itemsPreview ? `
-                    <div class="table-items-summary" title="${itemsPreview}">
-                        📝 ${itemsPreview}
-                    </div>` : ''}
                     ${isOccupied ? `
                     <div style="margin-top: 6px; display:flex; justify-content:center;">
                         <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? 'background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd;' : 'background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff;'}">
@@ -2540,21 +2699,29 @@
                         </span>
                     </div>` : ''}
                 `;
-                grid.appendChild(card);
+                fragment.appendChild(card);
             }
 
             Object.keys(activeOrders).forEach(key => {
+                const norm = key.trim().toLowerCase();
+                // Strictly skip any table 1 to 13 key so it NEVER duplicates
+                if (renderedTableKeys.has(norm)) return;
+                const match = norm.match(/^(?:table|order-table)?\s*(\d+)$/i);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num >= 1 && num <= 13) return;
+                }
+
                 if (key.startsWith("Order-")) {
                     let orderData = activeOrders[key];
                     let isOccupied = orderData && orderData.items && orderData.items.length > 0;
                     if (isOccupied) {
                         if (currentTableFilter === 'available') return;
+                        renderedTableKeys.add(norm);
 
                         if (!orderData.seatedAt) {
                             orderData.seatedAt = Date.now();
                             orderData.seatedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                            db.ref('activeOrders/' + key + '/seatedAt').set(orderData.seatedAt);
-                            db.ref('activeOrders/' + key + '/seatedTime').set(orderData.seatedTime);
                         }
 
                         let itemCount = orderData.items.reduce((s, x) => s + x.qty, 0);
@@ -2572,14 +2739,6 @@
                             </div>
                             <span class="seated-since-hint">since ${startStr}</span>
                         </div>`;
-
-                        let itemsPreview = "";
-                        if (orderData.items) {
-                            itemsPreview = orderData.items.slice(0, 3).map(x => `${x.qty}x ${x.name}`).join(", ");
-                            if (orderData.items.length > 3) {
-                                itemsPreview += ` +${orderData.items.length - 3} more`;
-                            }
-                        }
 
                         const card = document.createElement('div');
                         card.className = `big-table-card occupied`;
@@ -2602,28 +2761,27 @@
                             </div>
                             ${custInfoHtml}
                             ${waitBannerHtml}
-                            <p style="font-weight: 900; font-size: 14px; color: #b45309; margin-bottom: 2px;">${itemCount} Items • $${orderTotal.toFixed(2)}</p>
-                            ${itemsPreview ? `
-                            <div class="table-items-summary" title="${itemsPreview}">
-                                📝 ${itemsPreview}
-                            </div>` : ''}
+                            <p style="font-weight: 900; font-size: 14px; color: #b45309; margin: 4px 0;">$${orderTotal.toFixed(2)} (${itemCount} Items)</p>
                             <div style="margin-top: 6px; display:flex; justify-content:center;">
                                 <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? 'background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd;' : 'background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff;'}">
                                     ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
                                 </span>
                             </div>
                         `;
-                        grid.appendChild(card);
+                        fragment.appendChild(card);
                     }
                 }
             });
+
+            // Atomic replacement: zero flash, zero blink, zero duplicate elements
+            grid.replaceChildren(fragment);
         }
 
         // Auto refresh seated duration timer every 30 seconds
         setInterval(() => {
             const tblView = document.getElementById('table-selection-view');
             if (tblView && tblView.style.display !== 'none') {
-                renderBigTablesGrid();
+                requestRenderBigTablesGrid();
             }
             const posView = document.getElementById('pos-main-view');
             if (posView && posView.style.display !== 'none' && currentTableKey) {
@@ -3157,11 +3315,6 @@
                     <td>
                         <div class="cart-item-name">${item.name}</div>
                         ${optionsHtml}
-                        <div class="note-checkboxes">
-                            <label class="note-label"><input type="checkbox" ${item.notes && item.notes.spicy ? 'checked' : ''} onchange="toggleItemNote('${item.id}', 'spicy', this.checked)"> Spicy</label>
-                            <label class="note-label"><input type="checkbox" ${item.notes && item.notes.noVeg ? 'checked' : ''} onchange="toggleItemNote('${item.id}', 'noVeg', this.checked)"> No Veg</label>
-                            <label class="note-label"><input type="checkbox" ${item.notes && item.notes.takeaway ? 'checked' : ''} onchange="toggleItemNote('${item.id}', 'takeaway', this.checked)"> Takeaway</label>
-                        </div>
                         <input type="text" class="comment-input" placeholder="Notes..." value="${item.comment || ''}" onchange="updateItemComment('${item.id}', this.value)">
                     </td>
                     <td>
@@ -3435,7 +3588,9 @@
             document.getElementById('modal-grand-total').innerText = grand.toFixed(2);
             document.getElementById('modal-paid-input').value = grand.toFixed(2);
             document.getElementById('modal-change-amount').innerText = "0.00";
-            document.getElementById('modal-print-checkbox').checked = true;
+            
+            const printCheck = document.getElementById('modal-print-checkbox');
+            if (printCheck) printCheck.checked = false;
 
             selectModalPaymentMethod('Cash');
             document.getElementById('payment-modal').style.display = 'flex';
@@ -3446,39 +3601,43 @@
             const hiddenSelect = document.getElementById('payment-method');
             if (hiddenSelect) hiddenSelect.value = method;
 
-            const buttons = document.querySelectorAll('.pay-method-btn');
+            const buttons = document.querySelectorAll('.pay-method-tab-btn, .pay-method-btn');
             buttons.forEach(btn => {
-                if (btn.getAttribute('data-method') === method) {
+                const m = btn.getAttribute('data-method') || 
+                          (btn.id === 'pay-method-btn-cash' ? 'Cash' : 
+                           btn.id === 'pay-method-btn-card' ? 'Card' : 
+                           btn.id === 'pay-method-btn-qr' ? 'QR Pay' : '');
+                if (m === method) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
                 }
             });
 
-            const hintCard = document.getElementById('pay-hint-card');
-            const hintQr = document.getElementById('pay-hint-qr');
-            const quickCashSection = document.getElementById('quick-cash-buttons-row');
+            const digitalHint = document.getElementById('modal-digital-pay-hint');
+            const quickCashSection = document.getElementById('modal-quick-cash-section');
+            let order = currentTableKey ? activeOrders[currentTableKey] : null;
+            let grand = order ? getOrderGrandTotal(order) : 0;
 
             if (method === 'Card') {
-                if (hintCard) hintCard.style.display = 'block';
-                if (hintQr) hintQr.style.display = 'none';
+                if (digitalHint) {
+                    digitalHint.innerHTML = "💳 <strong>Card Payment:</strong> Tap or insert customer card on NETS/Credit Card terminal.";
+                    digitalHint.style.display = 'block';
+                }
                 if (quickCashSection) quickCashSection.style.display = 'none';
-                let order = activeOrders[currentTableKey];
-                let grand = getOrderGrandTotal(order);
                 document.getElementById('modal-paid-input').value = grand.toFixed(2);
                 calculateChangePreview();
             } else if (method === 'QR Pay') {
-                if (hintCard) hintCard.style.display = 'none';
-                if (hintQr) hintQr.style.display = 'block';
+                if (digitalHint) {
+                    digitalHint.innerHTML = "📱 <strong>QR Pay:</strong> Customer scans and pays via PayNow / NETS QR.";
+                    digitalHint.style.display = 'block';
+                }
                 if (quickCashSection) quickCashSection.style.display = 'none';
-                let order = activeOrders[currentTableKey];
-                let grand = getOrderGrandTotal(order);
                 document.getElementById('modal-paid-input').value = grand.toFixed(2);
                 calculateChangePreview();
             } else {
-                if (hintCard) hintCard.style.display = 'none';
-                if (hintQr) hintQr.style.display = 'none';
-                if (quickCashSection) quickCashSection.style.display = 'grid';
+                if (digitalHint) digitalHint.style.display = 'none';
+                if (quickCashSection) quickCashSection.style.display = 'block';
                 calculateChangePreview();
             }
         }
@@ -4524,8 +4683,14 @@
             const cred = credentials[userKey];
             if (!cred) return;
 
+            // If cred.name is generic placeholder, use cred.user or userKey (user1)
+            let editName = cred.name || "";
+            if (!editName || /^supplier[\s_-]*[a-c0-9]*$/i.test(editName) || /^staff[\s_-]*[a-c0-9]*$/i.test(editName) || editName.toLowerCase() === 'supplier') {
+                editName = cred.user || userKey;
+            }
+
             document.getElementById('cred-target-key').value = userKey;
-            document.getElementById('cred-form-title').innerText = `✏️ Edit: ${cred.name || userKey}`;
+            document.getElementById('cred-form-title').innerText = `✏️ Edit: ${editName}`;
 
             const badge = document.getElementById('cred-editing-badge');
             if (badge) {
@@ -4534,9 +4699,9 @@
                 badge.style.color = userKey === 'admin' ? '#b45309' : '#4338ca';
             }
 
-            document.getElementById('cred-name').value = cred.name || "";
+            document.getElementById('cred-name').value = editName;
             document.getElementById('cred-role-type').value = cred.roleType || (userKey === 'admin' ? 'admin' : 'supplier');
-            document.getElementById('cred-username').value = cred.user || "";
+            document.getElementById('cred-username').value = cred.user || userKey;
             document.getElementById('cred-password').value = cred.pass || "";
 
             // Populate checkboxes
@@ -4689,6 +4854,7 @@
                 db.ref('userCredentials/' + userKey).remove()
             ]).then(() => {
                 renderCredentialOverview();
+                renderLoginAccountsPreview();
                 startAddNewUser();
                 if (typeof applyRolePermissionsUI === 'function') applyRolePermissionsUI();
             }).catch(err => {
@@ -4698,21 +4864,23 @@
 
         function saveCredentials() {
             let targetKey = document.getElementById('cred-target-key').value.trim();
-            const name = document.getElementById('cred-name').value.trim();
+            let name = document.getElementById('cred-name').value.trim();
             const roleType = document.getElementById('cred-role-type').value;
             const username = document.getElementById('cred-username').value.trim();
             const password = document.getElementById('cred-password').value.trim();
 
-            if (!name) {
-                alert("Please enter a Display Name for the staff/supplier!");
-                document.getElementById('cred-name').focus();
-                return;
-            }
             if (!username) {
-                alert("Please enter a Login ID / Username!");
+                alert("Please enter a Login ID / Username (e.g. user1)!");
                 document.getElementById('cred-username').focus();
                 return;
             }
+
+            // If name is empty, or has generic supplier/staff default, default it to username or user1
+            if (!name || /^supplier[\s_-]*[a-c0-9]*$/i.test(name) || /^staff[\s_-]*[a-c0-9]*$/i.test(name) || name.toLowerCase() === 'supplier') {
+                name = username || (targetKey || 'user1');
+                document.getElementById('cred-name').value = name;
+            }
+
             if (!password) {
                 alert("Please enter a Password / PIN!");
                 document.getElementById('cred-password').focus();
@@ -4720,17 +4888,40 @@
             }
 
             // Check if username is already taken by another account
-            const duplicateKey = Object.keys(credentials).find(k => k !== targetKey && credentials[k] && credentials[k].user && credentials[k].user.toLowerCase() === username.toLowerCase());
+            const duplicateKey = Object.keys(credentials).find(k => 
+                k !== targetKey && 
+                credentials[k] && 
+                credentials[k].user && 
+                credentials[k].user.trim().toLowerCase() === username.toLowerCase()
+            );
+
             if (duplicateKey) {
-                alert(`The username "${username}" is already assigned to "${credentials[duplicateKey].name || duplicateKey}". Please pick a unique username/ID.`);
-                document.getElementById('cred-username').focus();
-                return;
+                // If targetKey is empty or duplicateKey matches standard slots, adapt that slot smoothly
+                if (!targetKey || duplicateKey === targetKey) {
+                    targetKey = duplicateKey;
+                } else if (duplicateKey === 'user1' || duplicateKey === 'user2' || duplicateKey === 'user3') {
+                    targetKey = duplicateKey;
+                } else {
+                    const dupName = credentials[duplicateKey].name || duplicateKey;
+                    alert(`The username "${username}" is already assigned to "${dupName}". Please pick a unique username/ID.`);
+                    document.getElementById('cred-username').focus();
+                    return;
+                }
             }
 
-            // If new user, create a persistent key
+            // If targetKey is empty, check if username matches user1, user2, user3
             if (!targetKey) {
-                const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 12);
-                targetKey = 'user_' + slug + '_' + Date.now().toString().slice(-4);
+                const uLower = username.toLowerCase().replace(/[\s_-]/g, '');
+                if (uLower === 'user1') {
+                    targetKey = 'user1';
+                } else if (uLower === 'user2') {
+                    targetKey = 'user2';
+                } else if (uLower === 'user3') {
+                    targetKey = 'user3';
+                } else {
+                    const cleanSlug = (username || name || 'user').toLowerCase().replace(/[^a-z0-9]/gi, '') || 'staff';
+                    targetKey = 'user_' + cleanSlug.slice(0, 15) + '_' + Date.now().toString().slice(-6);
+                }
             }
 
             // Collect granted permissions
@@ -4756,11 +4947,19 @@
 
             credentials[targetKey] = roleObj;
 
+            // Update live display if current logged-in user edited themselves
+            if (loggedInRole === targetKey) {
+                loggedInDisplayName = name;
+                const dispEl = document.getElementById('display-user');
+                if (dispEl) dispEl.innerText = loggedInDisplayName;
+            }
+
             Promise.all([
                 db.ref('credentials/' + targetKey).set(roleObj),
                 db.ref('userCredentials/' + targetKey).set(roleObj)
             ]).then(() => {
                 renderCredentialOverview();
+                renderLoginAccountsPreview();
                 loadUserForEditing(targetKey);
                 if (typeof applyRolePermissionsUI === 'function') applyRolePermissionsUI();
                 alert(`✅ Success: Account "${name}" saved!\nLogin ID: ${username}\nPassword: ${password}`);

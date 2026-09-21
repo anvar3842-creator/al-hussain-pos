@@ -778,7 +778,7 @@
                     </div>
 
                     <div class="action-buttons" id="staff-action-buttons">
-                        <button class="btn-hold" id="btn-hold-elem" onclick="saveOrderToTableAndPrintKOT(false)" style="background:linear-gradient(135deg, #4f46e5, #4338ca); font-weight:900;">📥 Send to Kitchen & Hold</button>
+                        <button type="button" class="btn-send-kitchen-direct" id="btn-send-kitchen-direct" onclick="staffSendOrderToKitchen(false)" style="background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:900; font-size:14px; padding:12px 14px; border-radius:10px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(16, 185, 129, 0.35);">🚀 Send Order to Kitchen</button>
                         <button class="btn-kitchen" id="btn-kitchen-elem" onclick="printKitchenKOT()">🖨️ Kitchen KOT</button>
                         <button class="btn-ready-order" id="btn-ready-order-elem" onclick="toggleOrderReadyStatus()">Mark Order Ready</button>
                         <button class="btn-move-table" id="btn-move-table-elem" onclick="openMoveTableModal()">🔄 Move Table</button>
@@ -1669,6 +1669,48 @@
             }
         });
 
+        let previousActiveOrdersMap = null;
+        let initialActiveOrdersLoaded = false;
+
+        function checkActiveOrdersForExternalChanges(incomingOrders) {
+            if (!initialActiveOrdersLoaded) {
+                initialActiveOrdersLoaded = true;
+                previousActiveOrdersMap = JSON.parse(JSON.stringify(incomingOrders || {}));
+                return;
+            }
+            if (isCustomerMode || !previousActiveOrdersMap) {
+                previousActiveOrdersMap = JSON.parse(JSON.stringify(incomingOrders || {}));
+                return;
+            }
+
+            const prev = previousActiveOrdersMap;
+            const curr = incomingOrders || {};
+
+            Object.keys(curr).forEach(tKey => {
+                const curOrd = curr[tKey];
+                if (!curOrd || !curOrd.items || curOrd.items.length === 0) return;
+
+                // Skip if this device authored the last edit
+                if (curOrd.lastDeviceId && curOrd.lastDeviceId === posDeviceId) return;
+
+                const prevOrd = prev[tKey];
+                const curCount = curOrd.items.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+                const prevCount = prevOrd && prevOrd.items ? prevOrd.items.reduce((s, it) => s + (Number(it.qty) || 1), 0) : 0;
+                const who = curOrd.takenBy || curOrd.lastUpdatedBy || '';
+                const total = getOrderGrandTotal(curOrd);
+
+                if (!prevOrd) {
+                    // New order on table
+                    handleIncomingOrderAlert('order', tKey, who, curCount, total);
+                } else if (curCount > prevCount || (curOrd.lastUpdatedAt && curOrd.lastUpdatedAt > (prevOrd.lastUpdatedAt || 0))) {
+                    // Items added or order updated
+                    handleIncomingOrderAlert('update', tKey, who, curCount, total);
+                }
+            });
+
+            previousActiveOrdersMap = JSON.parse(JSON.stringify(curr));
+        }
+
         db.ref('activeOrders').on('value', (snapshot) => {
             activeOrders = snapshot.val() || {};
             if (isCustomerMode && isTakeawayCustomer && activeOrders[currentTableKey]) {
@@ -1676,6 +1718,7 @@
                     document.getElementById('customer-ready-screen').style.display = 'flex';
                 }
             }
+            checkActiveOrdersForExternalChanges(activeOrders);
             requestRenderBigTablesGrid();
             if (currentTableKey) renderCart();
         });
@@ -1721,6 +1764,8 @@
 
         let posAudioContext = null;
         let audioUnlocked = false;
+        let activeSpeechUtterance = null; // Prevent Chromium garbage-collection freeze
+        let lastAnnouncedTableActionTimes = {}; // Debounce tracker: tableKey -> timestamp
 
         function getPosAudioContext() {
             try {
@@ -1729,7 +1774,7 @@
                     if (AudioCtx) posAudioContext = new AudioCtx();
                 }
                 if (posAudioContext && posAudioContext.state === 'suspended') {
-                    posAudioContext.resume();
+                    posAudioContext.resume().catch(() => {});
                 }
                 return posAudioContext;
             } catch (e) {
@@ -1738,11 +1783,36 @@
             }
         }
 
+        function updateSoundButtonUI() {
+            const btn = document.getElementById('btn-sound-test');
+            if (!btn) return;
+            if (audioUnlocked) {
+                btn.innerHTML = '🔊 Sound: Active';
+                btn.style.background = '#dcfce7';
+                btn.style.color = '#15803d';
+                btn.style.borderColor = '#86efac';
+                btn.title = "Audio alerts active - click to test voice announcement";
+            } else {
+                btn.innerHTML = '🔈 Sound: Tap to Enable';
+                btn.style.background = '#fef3c7';
+                btn.style.color = '#b45309';
+                btn.style.borderColor = '#fcd34d';
+                btn.title = "Browser audio waiting for touch/click - tap to enable sound alerts";
+            }
+        }
+
         function unlockAudio() {
-            if (audioUnlocked) return;
+            if (audioUnlocked) {
+                const ctx = getPosAudioContext();
+                if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+                return;
+            }
             try {
                 const ctx = getPosAudioContext();
                 if (ctx) {
+                    if (ctx.state === 'suspended') {
+                        ctx.resume().catch(() => {});
+                    }
                     const buf = ctx.createBuffer(1, 1, 22050);
                     const src = ctx.createBufferSource();
                     src.buffer = buf;
@@ -1753,15 +1823,23 @@
                     window.speechSynthesis.resume();
                 }
                 audioUnlocked = true;
+                updateSoundButtonUI();
             } catch (e) {
                 console.warn("Audio unlock warning:", e);
             }
         }
 
-        // Global listeners to unlock browser audio automatically on first touch or click
-        ['click', 'touchstart', 'pointerdown', 'keydown'].forEach(evt => {
+        // Global listeners to unlock browser audio automatically on any touch, pointer, or key
+        ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
             window.addEventListener(evt, () => unlockAudio(), { passive: true });
         });
+
+        // Periodic keep-alive for AudioContext to prevent idle background sleep
+        setInterval(() => {
+            if (audioUnlocked && posAudioContext && posAudioContext.state === 'suspended') {
+                posAudioContext.resume().catch(() => {});
+            }
+        }, 15000);
 
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => {
@@ -1769,20 +1847,43 @@
             };
         }
 
+        function playFallbackBeep(type = 'order') {
+            try {
+                // Standalone base64 encoded audio beep as backup when AudioContext is constrained
+                const snd = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbqWE1KDCX1+fTagwIL5jP4dBmCQMglcvf13AGAB+Tv9vXcAQAHpK619VwBAAdkbfV1nAEABmPtNPWcAMAGIuxz9VuBwAZibLM13AJABaGrczYcgoAE4Koy9h0DAAQf6LK13UNAA93m8nWdw8=");
+                snd.volume = 0.95;
+                snd.play().catch(() => {});
+            } catch (e) {}
+        }
+
         function playChimeTone(type = 'order') {
+            unlockAudio();
             try {
                 const ctx = getPosAudioContext();
-                if (!ctx) return;
+                if (!ctx) {
+                    playFallbackBeep(type);
+                    return;
+                }
+                if (ctx.state === 'suspended') {
+                    ctx.resume().catch(() => {});
+                }
                 const now = ctx.currentTime;
 
                 let f1 = 523.25; // C5
                 let f2 = 783.99; // G5
+                let gainVal1 = 0.38;
+                let gainVal2 = 0.42;
+
                 if (type === 'waiter') {
                     f1 = 659.25; // E5
                     f2 = 880.00; // A5
+                    gainVal1 = 0.45;
+                    gainVal2 = 0.50;
                 } else if (type === 'update') {
                     f1 = 587.33; // D5
                     f2 = 987.77; // B5
+                    gainVal1 = 0.40;
+                    gainVal2 = 0.46;
                 }
 
                 // Tone 1: gentle sine chime
@@ -1790,26 +1891,27 @@
                 const gain1 = ctx.createGain();
                 osc1.type = 'sine';
                 osc1.frequency.setValueAtTime(f1, now);
-                gain1.gain.setValueAtTime(0.32, now);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+                gain1.gain.setValueAtTime(gainVal1, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
                 osc1.connect(gain1);
                 gain1.connect(ctx.destination);
                 osc1.start(now);
-                osc1.stop(now + 0.32);
+                osc1.stop(now + 0.35);
 
                 // Tone 2: melodic harmonic chime
                 const osc2 = ctx.createOscillator();
                 const gain2 = ctx.createGain();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(f2, now + 0.15);
-                gain2.gain.setValueAtTime(0.34, now + 0.15);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+                osc2.frequency.setValueAtTime(f2, now + 0.16);
+                gain2.gain.setValueAtTime(gainVal2, now + 0.16);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.70);
                 osc2.connect(gain2);
                 gain2.connect(ctx.destination);
-                osc2.start(now + 0.15);
-                osc2.stop(now + 0.65);
+                osc2.start(now + 0.16);
+                osc2.stop(now + 0.70);
             } catch (e) {
-                console.log("Audio chime error:", e);
+                console.warn("Audio chime error:", e);
+                playFallbackBeep(type);
             }
         }
 
@@ -1836,30 +1938,50 @@
         function speakAnnouncement(text) {
             try {
                 if (!('speechSynthesis' in window)) return;
+                
+                // Unstick Chromium synthesis engine if paused
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
                 window.speechSynthesis.cancel();
 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.92;
-                utterance.pitch = 1.05;
-                utterance.volume = 1.0;
-                utterance.lang = 'en-US';
+                setTimeout(() => {
+                    try {
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        activeSpeechUtterance = utterance; // Prevent garbage collection mid-speech
+                        utterance.rate = 0.92;
+                        utterance.pitch = 1.05;
+                        utterance.volume = 1.0;
+                        utterance.lang = 'en-US';
 
-                const voices = window.speechSynthesis.getVoices();
-                if (voices && voices.length > 0) {
-                    const bestVoice = voices.find(v => 
-                        v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel') || v.name.includes('Zira'))
-                    ) || voices.find(v => v.lang.startsWith('en'));
-                    if (bestVoice) utterance.voice = bestVoice;
-                }
+                        const voices = window.speechSynthesis.getVoices();
+                        if (voices && voices.length > 0) {
+                            const bestVoice = voices.find(v => 
+                                v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel') || v.name.includes('Zira'))
+                            ) || voices.find(v => v.lang.startsWith('en'));
+                            if (bestVoice) utterance.voice = bestVoice;
+                        }
 
-                window.speechSynthesis.resume();
-                window.speechSynthesis.speak(utterance);
+                        utterance.onend = () => {
+                            activeSpeechUtterance = null;
+                        };
+                        utterance.onerror = (e) => {
+                            console.warn("Speech error:", e);
+                            activeSpeechUtterance = null;
+                        };
+
+                        window.speechSynthesis.resume();
+                        window.speechSynthesis.speak(utterance);
+                    } catch (inner) {
+                        console.warn("Utterance speak error:", inner);
+                    }
+                }, 50);
             } catch (e) {
                 console.warn("Speech synthesis error:", e);
             }
         }
 
-        function playChimeAndVoice(type, tableKey) {
+        function playChimeAndVoice(type, tableKey, byUser = '') {
             if (isCustomerMode) return; // Do not voice announce on customer phone
             unlockAudio();
             playChimeTone(type);
@@ -1882,14 +2004,87 @@
 
         function testPosSound() {
             unlockAudio();
+            updateSoundButtonUI();
             playChimeAndVoice('order', 'Table 1');
-            showToast("🔊 Testing Voice: 'New Order, Table 1'");
+            showToast("🔊 Testing Audio: 'New Order, Table 1'");
+        }
+
+        function handleIncomingOrderAlert(type, tableKey, byUser, itemsCount, total) {
+            if (isCustomerMode) return;
+            const now = Date.now();
+            const debKey = type + '_' + tableKey;
+            if (lastAnnouncedTableActionTimes[debKey] && (now - lastAnnouncedTableActionTimes[debKey] < 3500)) {
+                return; // Debounced
+            }
+            lastAnnouncedTableActionTimes[debKey] = now;
+
+            playChimeAndVoice(type, tableKey, byUser);
+
+            const who = byUser ? ` from ${byUser}` : '';
+            const tName = formatTableNameForVoice(tableKey);
+            if (type === 'update') {
+                showToast(`📝 Order Updated: ${tName}${who}`);
+            } else {
+                showToast(`🔔 New Order: ${tName}${who}`);
+            }
+
+            renderLiveStaffAlerts();
+            requestRenderBigTablesGrid();
+        }
+
+        function broadcastLiveOrderEvent(tableKey, actionType, order) {
+            const itemCount = order && order.items ? order.items.reduce((sum, it) => sum + (Number(it.qty) || 1), 0) : 1;
+            const totalDue = order ? getOrderGrandTotal(order) : 0;
+            const alertData = {
+                eventId: Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                table: tableKey,
+                action: actionType, // 'order' or 'update'
+                isUpdate: actionType === 'update',
+                itemsCount: itemCount,
+                total: totalDue,
+                by: loggedInDisplayName || (isCustomerMode ? "Customer QR" : "Staff"),
+                source: isCustomerMode ? "Customer QR" : (loggedInDisplayName || "Staff"),
+                timestamp: Date.now(),
+                timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                originDeviceId: posDeviceId
+            };
+
+            // 1. Direct realtime broadcast event node
+            db.ref('liveOrderNotification').set(alertData);
+
+            // 2. Persistent table-keyed alert banner node
+            db.ref('newCustomerOrderAlerts/' + tableKey).set(alertData);
         }
 
         let lastNotifiedOrderAlerts = {};
         let lastNotifiedStaffAlerts = {};
         let initialOrderAlertsLoaded = false;
         let initialStaffAlertsLoaded = false;
+        let initialLiveNotificationLoaded = false;
+        let lastLiveNotificationTimestamp = 0;
+
+        // Dedicated live order event broadcast listener
+        db.ref('liveOrderNotification').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data || !data.timestamp) return;
+
+            if (!initialLiveNotificationLoaded) {
+                initialLiveNotificationLoaded = true;
+                lastLiveNotificationTimestamp = data.timestamp;
+                return;
+            }
+
+            if (data.timestamp <= lastLiveNotificationTimestamp) return;
+            lastLiveNotificationTimestamp = data.timestamp;
+
+            // Do not announce if current device was the one that placed the order
+            if (data.originDeviceId === posDeviceId) return;
+
+            if (!isCustomerMode) {
+                const actType = data.isUpdate || data.action === 'update' ? 'update' : 'order';
+                handleIncomingOrderAlert(actType, data.table, data.by, data.itemsCount, data.total);
+            }
+        });
 
         db.ref('newCustomerOrderAlerts').on('value', (snapshot) => {
             const data = snapshot.val() || {};
@@ -1913,13 +2108,8 @@
                     if (ts > prevTs) {
                         lastNotifiedOrderAlerts[tKey] = ts;
                         if (item.originDeviceId !== posDeviceId) {
-                            if (item.isUpdate) {
-                                playChimeAndVoice('update', item.table || tKey);
-                                showToast(`📝 Order Updated: ${item.table || tKey}`);
-                            } else {
-                                playChimeAndVoice('order', item.table || tKey);
-                                showToast(`🔔 New Order: ${item.table || tKey}`);
-                            }
+                            const actType = item.isUpdate ? 'update' : 'order';
+                            handleIncomingOrderAlert(actType, item.table || tKey, item.by, item.itemsCount, item.total);
                         }
                     }
                 });
@@ -2002,6 +2192,7 @@
             orderKeys.forEach(tKey => {
                 const al = newCustomerOrderAlerts[tKey];
                 const isUp = !!al.isUpdate;
+                const sourceLabel = al.by ? al.by : (al.source || 'Customer');
                 const banner = document.createElement('div');
                 banner.className = 'staff-alert-banner' + (isUp ? ' update-type' : '');
                 banner.innerHTML = `
@@ -2009,7 +2200,7 @@
                         <span style="font-size:22px;">${isUp ? '📝' : '🔔'}</span>
                         <div>
                             <div style="font-weight:900; color:${isUp ? '#9a3412' : '#1e3a8a'}; font-size:14px;">
-                                <strong>${tKey}</strong>: ${isUp ? 'Order Updated by Customer!' : 'New Customer Order Received!'}
+                                <strong>${tKey}</strong>: ${isUp ? 'Order Updated (' + sourceLabel + ')' : 'New Order (' + sourceLabel + ')'}
                             </div>
                             <div style="font-size:12px; color:${isUp ? '#c2410c' : '#3b82f6'}; font-weight:700;">
                                 ${al.itemsCount || 1} items • $${Number(al.total || 0).toFixed(2)} • at ${al.timeStr || 'just now'}
@@ -2017,7 +2208,7 @@
                         </div>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <button class="staff-alert-btn-view" style="${isUp ? 'background:#ea580c;' : ''}" onclick="staffOpenAlertTable('${tKey}')">View / Print KOT</button>
+                        <button class="staff-alert-btn-view" style="${isUp ? 'background:#ea580c;' : ''}" onclick="staffOpenAlertTable('${tKey}')">View / Attend</button>
                         <button class="staff-alert-btn-dismiss" onclick="dismissCustomerOrderAlert('${tKey}')">Dismiss</button>
                     </div>
                 `;
@@ -2318,6 +2509,7 @@
         }
 
         function grantAccess(roleKey, roleName) {
+            isCustomerMode = false;
             loggedInRole = roleKey;
             // Never show generic Supplier/Staff placeholder if account is user1
             if (roleKey === 'user1' || (credentials[roleKey] && credentials[roleKey].user === 'user1')) {
@@ -2332,6 +2524,8 @@
             document.getElementById('display-user').innerText = loggedInDisplayName;
             const sndBtn = document.getElementById('btn-sound-test');
             if (sndBtn) sndBtn.style.display = 'inline-flex';
+            unlockAudio();
+            updateSoundButtonUI();
 
             resetPrivateStatsVisibility();
             applyRolePermissionsUI();
@@ -2555,6 +2749,17 @@
         }
 
         function backToTableSelection() {
+            if (currentTableKey && activeOrders[currentTableKey]) {
+                const ord = activeOrders[currentTableKey];
+                if (ord && ord.items && ord.items.length > 0 && ord.lastDeviceId === posDeviceId) {
+                    if (!ord.sentToKitchen) {
+                        ord.sentToKitchen = true;
+                        ord.lastUpdatedAt = Date.now();
+                        db.ref('activeOrders/' + currentTableKey).set(ord);
+                        broadcastLiveOrderEvent(currentTableKey, 'order', ord);
+                    }
+                }
+            }
             showTableSelection();
         }
 
@@ -2568,16 +2773,6 @@
             }
             document.getElementById('table-selection-view').style.display = 'none';
             document.getElementById('pos-main-view').style.display = 'flex';
-            
-            // Clear any active alerts for this table once opened by staff
-            if (!isCustomerMode) {
-                if (newCustomerOrderAlerts && newCustomerOrderAlerts[currentTableKey]) {
-                    db.ref('newCustomerOrderAlerts/' + currentTableKey).remove();
-                }
-                if (staffAlerts && staffAlerts[currentTableKey]) {
-                    db.ref('staffAlerts/' + currentTableKey).remove();
-                }
-            }
 
             const headHomeBtn = document.getElementById('header-home-btn');
             if (headHomeBtn && !isCustomerMode) headHomeBtn.style.display = 'inline-flex';
@@ -3320,6 +3515,10 @@
             }
 
             let order = activeOrders[currentTableKey];
+            order.lastDeviceId = posDeviceId;
+            order.lastUpdatedAt = Date.now();
+            order.lastUpdatedBy = isCustomerMode ? "Customer QR" : (loggedInDisplayName || "Staff");
+
             let existing = order.items.find(x => String(x.id) === String(item.id));
 
             if (existing) {
@@ -3359,6 +3558,10 @@
                 }
             }
 
+            order.lastDeviceId = posDeviceId;
+            order.lastUpdatedAt = Date.now();
+            order.lastUpdatedBy = isCustomerMode ? "Customer QR" : (loggedInDisplayName || "Staff");
+
             item.qty += delta;
             if (item.qty <= 0) {
                 order.items = order.items.filter(x => String(x.id) !== String(itemId));
@@ -3380,6 +3583,9 @@
             if (isCustomerMode) return;
             let order = activeOrders[currentTableKey];
             if (!order || !order.items) return;
+            order.lastDeviceId = posDeviceId;
+            order.lastUpdatedAt = Date.now();
+            order.lastUpdatedBy = loggedInDisplayName || "Staff";
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
                 item.customPrice = Math.max(0, Number(newPrice) || 0);
@@ -3554,6 +3760,20 @@
                         sendBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
                     }
                 }
+            } else {
+                const staffSendBtn = document.getElementById('btn-send-kitchen-direct');
+                if (staffSendBtn) {
+                    const isSent = order && (order.sentToKitchen || order.customerSent);
+                    if (isSent) {
+                        staffSendBtn.innerHTML = "🔄 Send Update to Kitchen";
+                        staffSendBtn.style.background = "linear-gradient(135deg, #0284c7, #0369a1)";
+                        staffSendBtn.style.boxShadow = "0 3px 10px rgba(2, 132, 199, 0.35)";
+                    } else {
+                        staffSendBtn.innerHTML = "🚀 Send Order to Kitchen";
+                        staffSendBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+                        staffSendBtn.style.boxShadow = "0 3px 10px rgba(16, 185, 129, 0.35)";
+                    }
+                }
             }
         }
 
@@ -3568,24 +3788,17 @@
             order.customerSentAt = Date.now();
             order.customerSentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             order.takenBy = "Customer QR";
+            order.lastDeviceId = posDeviceId;
+            order.lastUpdatedAt = Date.now();
+            order.lastUpdatedBy = "Customer QR";
+
             if (!order.seatedAt) {
                 order.seatedAt = Date.now();
                 order.seatedTime = order.customerSentTime;
             }
 
-            const itemCount = order.items.reduce((sum, it) => sum + it.qty, 0);
-            const totalDue = getOrderGrandTotal(order);
-
             db.ref('activeOrders/' + currentTableKey).set(order).then(() => {
-                // Post realtime alert to staff with update flag
-                db.ref('newCustomerOrderAlerts/' + currentTableKey).set({
-                    table: currentTableKey,
-                    itemsCount: itemCount,
-                    total: totalDue,
-                    timestamp: Date.now(),
-                    timeStr: order.customerSentTime,
-                    isUpdate: isUpdate
-                });
+                broadcastLiveOrderEvent(currentTableKey, isUpdate ? 'update' : 'order', order);
 
                 const modalTitle = document.querySelector('#customer-success-screen h2');
                 const modalDesc = document.querySelector('#customer-success-screen p');
@@ -3643,37 +3856,36 @@
             });
         }
 
-        function saveOrderToTableAndPrintKOT(skipPrint = false) {
+        function staffSendOrderToKitchen(printKOT = false) {
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) {
-                return alert("No items in cart to save!");
+                return alert("No items in cart to send! Please add items first.");
             }
             const isUpdate = !!(order.sentToKitchen || order.customerSent);
             order.sentToKitchen = true;
+            order.sentToKitchenAt = Date.now();
+            order.lastUpdatedAt = Date.now();
+            order.lastDeviceId = posDeviceId;
+            order.lastUpdatedBy = loggedInDisplayName || "Staff";
             if (!order.takenBy) {
-                order.takenBy = isCustomerMode ? "Customer" : loggedInDisplayName;
+                order.takenBy = loggedInDisplayName || "Staff";
             }
-            const itemCount = order.items.reduce((sum, it) => sum + it.qty, 0);
-            const totalDue = getOrderGrandTotal(order);
 
             db.ref('activeOrders/' + currentTableKey).set(order).then(() => {
-                db.ref('newCustomerOrderAlerts/' + currentTableKey).set({
-                    table: currentTableKey,
-                    itemsCount: itemCount,
-                    total: totalDue,
-                    timestamp: Date.now(),
-                    timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    isUpdate: isUpdate,
-                    originDeviceId: posDeviceId
-                });
+                broadcastLiveOrderEvent(currentTableKey, isUpdate ? 'update' : 'order', order);
+                showToast(isUpdate ? `✓ ${currentTableKey} update sent to Kitchen & Counter!` : `✓ ${currentTableKey} order sent to Kitchen & Counter!`);
 
-                if (!skipPrint) {
+                if (printKOT) {
                     printKitchenKOT();
                 }
                 backToTableSelection();
             }).catch(err => {
                 alert("Error sending order to kitchen: " + err.message);
             });
+        }
+
+        function saveOrderToTableAndPrintKOT(skipPrint = false) {
+            staffSendOrderToKitchen(!skipPrint);
         }
 
         function printKitchenKOT() {

@@ -580,6 +580,47 @@
         .perm-desc { font-size: 9.5px; color: #64748b; font-weight: 700; display: block; margin-top: 2px; }
         .btn-perm-preset { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 800; color: #334155; cursor: pointer; transition: 0.15s; font-family: inherit; }
         .btn-perm-preset:hover { background: #f1f5f9; border-color: #94a3b8; color: #0f172a; }
+
+        .card-pop-tag {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            z-index: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            pointer-events: none;
+        }
+        .item-rep-filter-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1.5px solid #cbd5e1;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .item-rep-filter-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .item-rep-filter-btn.active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+            box-shadow: 0 2px 6px rgba(79,70,229,0.25);
+        }
     </style>
 <script src="/_aistudio-iframe.js?v=2c34bde1"></script></head>
 <body>
@@ -1190,18 +1231,89 @@
     <div id="monthly-report-modal" class="modal-overlay"><div class="modal-content" style="max-width: 650px;"><div class="modal-header"><h3 style="margin:0; font-size:18px;">Daily & Monthly History</h3><button class="close-modal" onclick="closeMonthlyReportModal()">X</button></div><div class="modal-body"><div id="monthly-report-container"></div></div></div></div>
     
     <div id="item-report-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-content" style="max-width: 820px; width: 95%;">
             <div class="modal-header">
-                <h3 style="margin:0; font-size:18px;">Daily Item Sold Report</h3>
                 <div>
-                    <input type="date" id="item-report-date-filter" onchange="renderItemReportTable()" style="padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: bold; font-family: inherit; margin-right: 8px;">
-                    <button class="btn-small" onclick="printItemReport()">Print</button>
-                    <button class="close-modal" onclick="closeItemReportModal()" style="margin-left: 5px;">X</button>
+                    <h3 style="margin:0; font-size:19px; display:flex; align-items:center; gap:8px;">
+                        <span>📊</span> Daily Item Sales Report
+                    </h3>
+                    <p style="margin:3px 0 0; font-size:12px; color:#64748b; font-weight:700;">
+                        விற்பனை செய்யப்பட்ட பொருட்களின் துல்லியமான கணக்கு (Accurate Quantity & Sales Value)
+                    </p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn-small" onclick="printItemReport()" style="background:#0284c7; display:flex; align-items:center; gap:5px; padding:8px 14px; font-size:13px;">
+                        <span>🖨️</span> Print Report
+                    </button>
+                    <button class="close-modal" onclick="closeItemReportModal()">X</button>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding:15px 5px 5px 5px;">
+                <!-- Filter bar -->
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px 14px; margin-bottom:14px;">
+                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                        <span style="font-size:12px; font-weight:900; color:#475569; margin-right:4px;">Shift / Scope:</span>
+                        <button type="button" class="item-rep-filter-btn active" data-scope="session" onclick="setItemReportScope('session')">⚡ Active Session (இன்றைய ஷிப்ட்)</button>
+                        <button type="button" class="item-rep-filter-btn" data-scope="date" onclick="setItemReportScope('date')">📅 Specific Date (தேதி)</button>
+                        <button type="button" class="item-rep-filter-btn" data-scope="all" onclick="setItemReportScope('all')">📜 All Records (முழுதும்)</button>
+                    </div>
+                    <div id="item-report-date-wrapper" style="display:none; align-items:center; gap:6px;">
+                        <label for="item-report-date-filter" style="font-size:12px; font-weight:800; color:#475569;">Date:</label>
+                        <input type="date" id="item-report-date-filter" onchange="renderItemReportTable()" style="padding:6px 10px; border-radius:8px; border:1.5px solid #cbd5e1; font-weight:800; font-family:inherit; outline:none; font-size:13px;">
+                    </div>
+                </div>
+
+                <!-- Secondary Filters: Category & Search -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:14px;">
+                    <div>
+                        <label for="item-report-cat-filter" style="display:block; font-size:11.5px; font-weight:800; color:#64748b; margin-bottom:4px;">Filter by Category (வகை):</label>
+                        <select id="item-report-cat-filter" onchange="renderItemReportTable()" style="width:100%; padding:9px 12px; border-radius:10px; border:1.5px solid #cbd5e1; font-weight:800; font-size:13px; font-family:inherit; background:white; outline:none;">
+                            <option value="All">All Categories (அனைத்து வகைகள்)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="item-report-search" style="display:block; font-size:11.5px; font-weight:800; color:#64748b; margin-bottom:4px;">Search Food Item (உணவு தேடல்):</label>
+                        <input type="text" id="item-report-search" placeholder="Type item name (e.g. Roti, Mee)..." oninput="renderItemReportTable()" style="width:100%; padding:9px 12px; border-radius:10px; border:1.5px solid #cbd5e1; font-weight:700; font-size:13px; font-family:inherit; background:white; outline:none; box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- Summary statistics cards -->
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:15px;">
+                    <div style="background:#ecfdf5; border:1.5px solid #a7f3d0; border-radius:12px; padding:10px 14px; text-align:center;">
+                        <span style="display:block; font-size:11px; font-weight:800; color:#065f46;">TOTAL QUANTITY SOLD</span>
+                        <strong style="font-size:22px; color:#047857;" id="item-rep-total-qty">0</strong>
+                        <span style="font-size:12px; font-weight:700; color:#059669;"> pcs</span>
+                    </div>
+                    <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:12px; padding:10px 14px; text-align:center;">
+                        <span style="display:block; font-size:11px; font-weight:800; color:#1e40af;">TOTAL SALES VALUE</span>
+                        <strong style="font-size:22px; color:#1d4ed8;">$<span id="item-rep-total-amt">0.00</span></strong>
+                    </div>
+                    <div style="background:#f5f3ff; border:1.5px solid #ddd6fe; border-radius:12px; padding:10px 14px; text-align:center;">
+                        <span style="display:block; font-size:11px; font-weight:800; color:#5b21b6;">UNIQUE ITEMS</span>
+                        <strong style="font-size:22px; color:#6d28d9;" id="item-rep-item-count">0</strong>
+                        <span style="font-size:12px; font-weight:700; color:#7c3aed;"> types</span>
+                    </div>
+                </div>
+
+                <!-- Table -->
                 <table class="admin-table">
-                    <thead><tr><th>Item Name</th><th style="text-align:right;">Qty Sold</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th style="width:40px; text-align:center;">#</th>
+                            <th onclick="sortItemReport('name')" style="cursor:pointer; user-select:none;" title="Click to sort by Name">
+                                Item Name & Category ↕
+                            </th>
+                            <th onclick="sortItemReport('price')" style="text-align:right; cursor:pointer; user-select:none; width:90px;" title="Click to sort by Unit Price">
+                                Unit Price ↕
+                            </th>
+                            <th onclick="sortItemReport('qty')" style="text-align:right; cursor:pointer; user-select:none; width:110px;" title="Click to sort by Quantity Sold">
+                                Qty Sold (அளவு) ↕
+                            </th>
+                            <th onclick="sortItemReport('amount')" style="text-align:right; cursor:pointer; user-select:none; width:110px;" title="Click to sort by Total Amount">
+                                Total Sales ($) ↕
+                            </th>
+                        </tr>
+                    </thead>
                     <tbody id="item-report-tbody"></tbody>
                 </table>
             </div>
@@ -1215,14 +1327,108 @@
 
     <div id="payment-summary-modal" class="modal-overlay"><div class="modal-content" style="max-width:620px;"><div class="modal-header"><h3 style="margin:0;font-size:18px;">Daily Payment Summary</h3><button class="close-modal" onclick="closePaymentSummaryModal()">X</button></div><div class="modal-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;"><div class="stat-box">Cash: $<span id="pay-summary-cash">0.00</span></div><div class="stat-box">Card: $<span id="pay-summary-card">0.00</span></div><div class="stat-box">QR Pay: $<span id="pay-summary-qr">0.00</span></div><div class="stat-box">Total: $<span id="pay-summary-total">0.00</span></div></div></div></div></div>
 
+    <div id="day-close-modal" class="modal-overlay">
+      <div class="modal-content" style="max-width:640px;">
+        <div class="modal-header">
+          <h3 style="margin:0; font-size:18px;">🌙 Day Close & Settlement (கணக்கு முடித்தல்)</h3>
+          <button class="close-modal" onclick="closeDayCloseModal()">X</button>
+        </div>
+        <div class="modal-body">
+          <div id="dc-alert-tables-warning" style="display:none; background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; padding:10px 14px; border-radius:8px; margin-bottom:12px; font-weight:700; font-size:13px;"></div>
+
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:800; font-size:14px; color:#1e293b;">Active Session Summary</span>
+              <span id="dc-modal-date-badge" style="font-size:12px; font-weight:800; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:6px;">Today</span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px;">
+              <div class="stat-box" style="border-left:4px solid #10b981;">
+                <span style="font-size:11px; color:#64748b; font-weight:700;">Active Sales</span>
+                <span style="font-size:18px; font-weight:900; color:#0f766e;">$<span id="dc-modal-sales">0.00</span></span>
+                <span style="font-size:11px; color:#64748b;"><span id="dc-modal-bills">0</span> bills</span>
+              </div>
+              <div class="stat-box" style="border-left:4px solid #ef4444;">
+                <span style="font-size:11px; color:#64748b; font-weight:700;">Active Expenses</span>
+                <span style="font-size:18px; font-weight:900; color:#b91c1c;">$<span id="dc-modal-expenses">0.00</span></span>
+                <span style="font-size:11px; color:#64748b;"><span id="dc-modal-exp-count">0</span> items</span>
+              </div>
+              <div class="stat-box" style="border-left:4px solid #3b82f6;">
+                <span style="font-size:11px; color:#64748b; font-weight:700;">Net Settlement</span>
+                <span style="font-size:18px; font-weight:900; color:#1d4ed8;">$<span id="dc-modal-net">0.00</span></span>
+                <span style="font-size:11px; color:#64748b;">(Sales - Expenses)</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px dashed #cbd5e1; font-size:13px; font-weight:700; color:#475569;">
+              <span>Cash: $<strong id="dc-modal-cash">0.00</strong></span>
+              <span>Card: $<strong id="dc-modal-card">0.00</strong></span>
+              <span>QR Pay: $<strong id="dc-modal-qr">0.00</strong></span>
+            </div>
+          </div>
+
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; color:#92400e; font-weight:600;">
+            ℹ️ <b>Note:</b> Performing Day Close will archive today's transactions and <b>reset all active Sales & Expense counters back to $0.00</b> so the next shift/day starts fresh.
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" class="btn-primary" onclick="confirmExecuteDayClose(true)" style="background:linear-gradient(135deg, #059669, #047857); padding:12px; font-size:15px; font-weight:900; border-radius:8px; border:0; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              🖨️ Print Report & Close Day (Reset to $0.00)
+            </button>
+            <div style="display:flex; gap:10px;">
+              <button type="button" onclick="confirmExecuteDayClose(false)" style="flex:1; background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; padding:10px; font-size:13px; font-weight:800; border-radius:8px; cursor:pointer;">
+                ⚡ Reset Counters to $0.00 (No Print)
+              </button>
+              <button type="button" onclick="toggleDayCloseHistoryView()" style="flex:1; background:#f8fafc; color:#475569; border:1px solid #cbd5e1; padding:10px; font-size:13px; font-weight:800; border-radius:8px; cursor:pointer;">
+                📜 Past Close Records
+              </button>
+            </div>
+          </div>
+
+          <div id="dc-history-container" style="display:none; margin-top:16px; border-top:1px solid #e2e8f0; padding-top:12px;">
+            <h4 style="margin:0 0 8px; font-size:14px; font-weight:800; color:#334155;">Previous Day Close History</h4>
+            <div id="dc-history-list" style="max-height:220px; overflow-y:auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="print-receipt"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 22px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2><p style="margin: 2px 0; font-size: 16px; font-weight: 900;">Nagara Brunei Darussalam.</p><p style="margin: 2px 0; font-size: 13px; font-weight: 900;">Company Acc: Al Hussain Enterprise</p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;"><div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="p-taken-by" class="print-ref-strong"></span></div><div id="p-cust-info" style="display:none; margin-top:2px;"><b>Customer:</b> <span id="p-cust-name-val"></span><br><b>Phone:</b> <span id="p-cust-phone-val"></span></div><div><b>Pay:</b> <span id="p-method"></span> | <b>Time:</b> <span id="p-time"></span></div><div id="p-seated-info" style="display:none; font-size:14px; margin-top:2px;"><b>Seated:</b> <span id="p-seated-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 17px; font-weight: 900; margin-bottom: 6px;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Qty</th><th style="text-align: right; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Price</th></tr></thead><tbody id="p-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="font-size: 17px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>$<span id="p-subtotal">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 900; margin-top: 4px;"><span>TOTAL:</span><span>$<span id="p-total">0.00</span></span></div><div style="font-size: 17px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;"><div style="display: flex; justify-content: space-between;"><span>Paid:</span><span>$<span id="p-paid">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 19px;"><span>Change:</span><span>$<span id="p-change">0.00</span></span></div></div><div style="text-align: center; margin-top: 8px; font-size: 17px; font-weight: 900;"><p>Thank you! Please come again.</p></div><div style="display:none;"> p  ú</div></div>
     
     <div id="print-kitchen"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 24px; font-weight: 900;">*** KITCHEN ORDER ***</h2><hr style="border-top: 4px solid black; margin: 4px 0;"></div><div style="font-size: 18px; font-weight: 900; margin-bottom: 8px;"><div><b>Type:</b> <span id="k-order-type"></span> | <b>No:</b> <span id="k-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="k-taken-by" class="print-ref-strong"></span></div><div id="k-cust-info" style="display:none; margin-top:2px;"><b>Customer Name:</b> <span id="k-cust-name-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 20px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 20px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; font-size: 20px; font-weight: 900; color: #000;">Qty</th></tr></thead><tbody id="k-items"></tbody></table></div>
     
     <div id="print-drawer"><div style="text-align: center; font-size: 16px; font-weight: 900;"><p>*** OPEN CASH DRAWER ***</p></div><div style="display:none;"> p  ú</div></div>
     <div id="print-sales-history"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>SALES HISTORY REPORT</b></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead><tbody id="print-history-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;"><span>TOTAL:</span><span>$<span id="print-history-grand-total">0.00</span></span></div></div>
-    <div id="print-day-close"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>DAY CLOSE REPORT</b></p><p id="dc-date" style="margin:2px 0; font-size:13px;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 15px; font-weight: 900; margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Sales:</span><span>$<span id="dc-sales">0.00</span></span></div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Expenses:</span><span>$<span id="dc-expenses">0.00</span></span></div><hr style="border-top: 2px dashed black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 18px;"><span>Net Balance:</span><span>$<span id="dc-net">0.00</span></span></div></div><div><p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>EXPENSES:</b></p><table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900; margin-top: 4px;"><tbody id="dc-expenses-list"></tbody></table></div></div>
-    <div id="print-item-report"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>DAILY ITEM SOLD REPORT</b></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><tbody id="print-item-report-items"></tbody></table></div>
+    <div id="print-day-close"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>DAY CLOSE REPORT</b></p><p id="dc-date" style="margin:2px 0; font-size:13px;"></p><p id="dc-closed-by" style="margin:2px 0; font-size:13px; font-weight:bold;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 15px; font-weight: 900; margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Sales:</span><span>$<span id="dc-sales">0.00</span></span></div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Expenses:</span><span>$<span id="dc-expenses">0.00</span></span></div><hr style="border-top: 2px dashed black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 18px;"><span>Net Balance:</span><span>$<span id="dc-net">0.00</span></span></div><div style="margin-top: 6px; font-size: 13px; border-top: 1px dotted black; padding-top: 4px;"><div style="display:flex; justify-content:space-between;"><span>Cash Sales:</span><span>$<span id="dc-cash">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Card Sales:</span><span>$<span id="dc-card">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>QR Pay Sales:</span><span>$<span id="dc-qr">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Total Bills Count:</span><span id="dc-bills-count">0</span></div></div></div><div><p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>EXPENSES:</b></p><table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900; margin-top: 4px;"><tbody id="dc-expenses-list"></tbody></table></div></div>
+    <div id="print-item-report">
+        <div style="text-align: center; margin-bottom: 6px;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2>
+            <p style="margin: 2px 0; font-size: 14px; font-weight: 900;">DAILY ITEM SOLD REPORT</p>
+            <p id="print-item-report-scope" style="margin: 2px 0; font-size: 13px; font-weight: bold;"></p>
+            <hr style="border-top: 3px solid black; margin: 4px 0;">
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900; margin-bottom: 6px;">
+            <thead>
+                <tr style="border-bottom: 2px solid black;">
+                    <th style="text-align: left; padding: 4px 0; color: #000;">Item Name</th>
+                    <th style="text-align: center; padding: 4px 0; color: #000;">Qty</th>
+                    <th style="text-align: right; padding: 4px 0; color: #000;">Total</th>
+                </tr>
+            </thead>
+            <tbody id="print-item-report-items"></tbody>
+        </table>
+        <hr style="border-top: 3px solid black; margin: 4px 0;">
+        <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 900; margin-bottom: 3px;">
+            <span>TOTAL ITEMS SOLD:</span>
+            <span id="print-item-report-total-qty">0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;">
+            <span>TOTAL REVENUE:</span>
+            <span>$<span id="print-item-report-total-amt">0.00</span></span>
+        </div>
+        <div style="text-align: center; margin-top: 8px; font-size: 11px; font-weight: 700;">
+            <p style="margin: 0;">Printed on: <span id="print-item-report-time"></span></p>
+        </div>
+    </div>
     <div id="print-qr-batch"><div style="text-align: center; margin-bottom: 20px;"><h2>AL HUSSAIN RESTAURANT - QR CODES</h2></div><div id="print-qr-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
 
     <div id="table-link-modal">
@@ -1473,6 +1679,8 @@
         let rawMaterials = [];
         let expenses = [];
         let salesHistory = [];
+        let lastDayClose = null;
+        let dayCloseHistory = {};
         let currentTableKey = "Table 1";
         let activeOrders = {};
         let orderItemComments = {};
@@ -1629,6 +1837,9 @@
                 populateCategoryDropdowns();
                 renderCategoryManagerTable();
                 renderCheckboxManagerCategorySelect();
+                if (typeof populateItemReportCategoryFilter === 'function') {
+                    populateItemReportCategoryFilter();
+                }
             }
         });
 
@@ -1746,6 +1957,26 @@
             renderMonthlyReport();
             renderStaffPerformance();
             renderViewExpensesModal();
+            renderMenuGrid();
+            if (document.getElementById('item-report-modal') && document.getElementById('item-report-modal').style.display === 'flex') {
+                renderItemReportTable();
+            }
+        });
+
+        db.ref('lastDayClose').on('value', (snapshot) => {
+            lastDayClose = snapshot.val() || null;
+            calculateTotalSales();
+            calculateTotalExpenses();
+            if (document.getElementById('day-close-modal') && document.getElementById('day-close-modal').style.display === 'flex') {
+                renderDayCloseModalData();
+            }
+        });
+
+        db.ref('dayCloseHistory').on('value', (snapshot) => {
+            dayCloseHistory = snapshot.val() || {};
+            if (document.getElementById('dc-history-container') && document.getElementById('dc-history-container').style.display !== 'none') {
+                renderDayCloseHistoryList();
+            }
         });
 
         db.ref('takeawaySequenceCounter').on('value', (snapshot) => {
@@ -3342,6 +3573,34 @@
             }
         }
 
+        function getItemSalesCountMap() {
+            const counts = {};
+            const sales = Object.values(salesHistory || {});
+            sales.forEach(sale => {
+                if (!sale || !sale.items) return;
+                const items = Array.isArray(sale.items) ? sale.items : Object.values(sale.items);
+                items.forEach(it => {
+                    if (!it) return;
+                    const qty = Number(it.qty) || 1;
+                    if (it.id) {
+                        counts[String(it.id)] = (counts[String(it.id)] || 0) + qty;
+                    }
+                    if (it.name) {
+                        const nameKey = String(it.name).trim().toLowerCase();
+                        counts[nameKey] = (counts[nameKey] || 0) + qty;
+                    }
+                });
+            });
+            return counts;
+        }
+
+        function getItemPopularityScore(item, countMap) {
+            if (!item) return 0;
+            const byId = item.id ? (countMap[String(item.id)] || 0) : 0;
+            const byName = item.name ? (countMap[String(item.name).trim().toLowerCase()] || 0) : 0;
+            return Math.max(byId, byName);
+        }
+
         function renderMenuGrid() {
             const grid = document.getElementById('menu-grid');
             if (!grid) return;
@@ -3353,11 +3612,22 @@
             const isAll = !selectedCategory || selectedCategory === "All";
             const catsToRender = isAll ? categories : [selectedCategory];
 
+            // Calculate item sales count for popularity sorting (most used first)
+            const salesCounts = getItemSalesCountMap();
+
             catsToRender.forEach(cat => {
                 let catItems = menu.filter(item => {
                     const itmCat = (item.cat || item.category || "").trim().toLowerCase();
                     const targetCat = (cat || "").trim().toLowerCase();
                     return itmCat === targetCat;
+                });
+
+                // Sort items by popularity (highest sold first within category)
+                catItems.sort((a, b) => {
+                    const countA = getItemPopularityScore(a, salesCounts);
+                    const countB = getItemPopularityScore(b, salesCounts);
+                    if (countB !== countA) return countB - countA;
+                    return (a.name || "").localeCompare(b.name || "");
                 });
 
                 if (searchVal) {
@@ -3373,10 +3643,11 @@
                     header.innerText = cat;
                     grid.appendChild(header);
 
-                    catItems.forEach(item => {
+                    catItems.forEach((item, itemIdx) => {
                         let cartItem = currentOrder && currentOrder.items ? currentOrder.items.find(x => String(x.id) === String(item.id)) : null;
                         let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
                         let isOutOfStock = Number(item.stock) <= 0;
+                        let soldCount = getItemPopularityScore(item, salesCounts);
 
                         const card = document.createElement('div');
                         card.className = `menu-card ${isOutOfStock ? 'out-of-stock' : ''}`;
@@ -3387,9 +3658,17 @@
                             };
                         }
 
+                        let popBadgeHtml = '';
+                        if (soldCount > 0 && itemIdx === 0) {
+                            popBadgeHtml = `<div class="card-pop-tag">★ #1 Top Seller (${soldCount} sold)</div>`;
+                        } else if (soldCount >= 5 && itemIdx < 3) {
+                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);">★ Popular (${soldCount})</div>`;
+                        }
+
                         card.innerHTML = `
                             ${inCartQty > 0 ? `<div class="card-qty-badge">${inCartQty}</div>` : ''}
                             ${isOutOfStock ? '<div class="sold-out-badge">SOLD OUT</div>' : ''}
+                            ${popBadgeHtml}
                             <span class="card-code">${item.code || ''}</span>
                             <div class="card-title">${item.name}</div>
                             <div class="card-bottom">
@@ -3409,6 +3688,14 @@
                     const itmCat = (item.cat || item.category || "").trim().toLowerCase();
                     return !knownCats.includes(itmCat);
                 });
+
+                otherItems.sort((a, b) => {
+                    const countA = getItemPopularityScore(a, salesCounts);
+                    const countB = getItemPopularityScore(b, salesCounts);
+                    if (countB !== countA) return countB - countA;
+                    return (a.name || "").localeCompare(b.name || "");
+                });
+
                 if (searchVal) {
                     otherItems = otherItems.filter(item => 
                         (item.name && item.name.toLowerCase().includes(searchVal)) || 
@@ -3421,10 +3708,11 @@
                     header.innerText = "Other Items";
                     grid.appendChild(header);
 
-                    otherItems.forEach(item => {
+                    otherItems.forEach((item, itemIdx) => {
                         let cartItem = currentOrder && currentOrder.items ? currentOrder.items.find(x => String(x.id) === String(item.id)) : null;
                         let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
                         let isOutOfStock = Number(item.stock) <= 0;
+                        let soldCount = getItemPopularityScore(item, salesCounts);
 
                         const card = document.createElement('div');
                         card.className = `menu-card ${isOutOfStock ? 'out-of-stock' : ''}`;
@@ -3435,9 +3723,17 @@
                             };
                         }
 
+                        let popBadgeHtml = '';
+                        if (soldCount > 0 && itemIdx === 0) {
+                            popBadgeHtml = `<div class="card-pop-tag">★ #1 Top Seller (${soldCount} sold)</div>`;
+                        } else if (soldCount >= 5 && itemIdx < 3) {
+                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);">★ Popular (${soldCount})</div>`;
+                        }
+
                         card.innerHTML = `
                             ${inCartQty > 0 ? `<div class="card-qty-badge">${inCartQty}</div>` : ''}
                             ${isOutOfStock ? '<div class="sold-out-badge">SOLD OUT</div>' : ''}
+                            ${popBadgeHtml}
                             <span class="card-code">${item.code || ''}</span>
                             <div class="card-title">${item.name}</div>
                             <div class="card-bottom">
@@ -4746,10 +5042,33 @@
             });
         }
 
-        function calculateTotalExpenses() {
+        function isSaleInCurrentSession(s) {
+            if (!s) return false;
             const todayStr = new Date().toLocaleDateString('en-GB');
-            const totalExp = Object.values(expenses)
-                .filter(x => x.date === todayStr)
+            if (s.date !== todayStr) return false;
+            if (s.dayClosed === true) return false;
+            if (lastDayClose && lastDayClose.timestamp) {
+                const sTime = s.timestamp ? new Date(s.timestamp).getTime() : 0;
+                if (sTime && sTime <= lastDayClose.timestamp) return false;
+            }
+            return true;
+        }
+
+        function isExpenseInCurrentSession(e) {
+            if (!e) return false;
+            const todayStr = new Date().toLocaleDateString('en-GB');
+            if (e.date !== todayStr) return false;
+            if (e.dayClosed === true) return false;
+            if (lastDayClose && lastDayClose.timestamp) {
+                const eTime = e.timestamp ? new Date(e.timestamp).getTime() : 0;
+                if (eTime && eTime <= lastDayClose.timestamp) return false;
+            }
+            return true;
+        }
+
+        function calculateTotalExpenses() {
+            const totalExp = Object.values(expenses || {})
+                .filter(x => isExpenseInCurrentSession(x))
                 .reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
 
             const expElem = document.getElementById('stat-expenses');
@@ -4795,9 +5114,8 @@
 
         // Sales Calculations & Reports
         function calculateTotalSales() {
-            const todayStr = new Date().toLocaleDateString('en-GB');
-            const total = Object.values(salesHistory)
-                .filter(x => x.date === todayStr)
+            const total = Object.values(salesHistory || {})
+                .filter(x => isSaleInCurrentSession(x))
                 .reduce((acc, x) => acc + (Number(x.total) || 0), 0);
 
             totalSales = total;
@@ -4935,13 +5253,82 @@
             container.innerHTML = tableHtml;
         }
 
+        let itemReportScope = 'session'; // 'session' | 'date' | 'all'
+        let itemReportSortColumn = 'qty'; // 'name' | 'price' | 'qty' | 'amount'
+        let itemReportSortAsc = false;
+
+        function setItemReportScope(scope) {
+            itemReportScope = scope;
+            const dateWrap = document.getElementById('item-report-date-wrapper');
+            if (dateWrap) dateWrap.style.display = (scope === 'date') ? 'flex' : 'none';
+
+            // Update button active states
+            document.querySelectorAll('.item-rep-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-scope') === scope);
+            });
+
+            renderItemReportTable();
+        }
+
+        function populateItemReportCategoryFilter() {
+            const select = document.getElementById('item-report-cat-filter');
+            if (!select) return;
+            const currentVal = select.value || "All";
+            let html = '<option value="All">All Categories (அனைத்து வகைகள்)</option>';
+            categories.forEach(cat => {
+                html += `<option value="${cat}">${cat}</option>`;
+            });
+            select.innerHTML = html;
+            if (categories.includes(currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        function isSaleMatchingReportScope(sale) {
+            if (!sale) return false;
+            if (itemReportScope === 'all') return true;
+
+            if (itemReportScope === 'session') {
+                return isSaleInCurrentSession(sale);
+            }
+
+            if (itemReportScope === 'date') {
+                const dateInput = document.getElementById('item-report-date-filter');
+                if (!dateInput || !dateInput.value) return true;
+                const inputVal = dateInput.value; // "YYYY-MM-DD"
+                const parts = inputVal.split('-');
+                if (parts.length !== 3) return true;
+                const [yyyy, mm, dd] = parts;
+                const expectedDStrGB = `${parseInt(dd, 10).toString().padStart(2, '0')}/${parseInt(mm, 10).toString().padStart(2, '0')}/${yyyy}`;
+
+                // Check sale.date or sale.timestamp
+                if (sale.date && sale.date === expectedDStrGB) return true;
+                if (sale.date && (sale.date === inputVal || sale.date === `${yyyy}-${mm}-${dd}`)) return true;
+
+                if (sale.timestamp) {
+                    const saleD = new Date(sale.timestamp);
+                    if (!isNaN(saleD.getTime())) {
+                        const sYYYY = saleD.getFullYear();
+                        const sMM = String(saleD.getMonth() + 1).padStart(2, '0');
+                        const sDD = String(saleD.getDate()).padStart(2, '0');
+                        if (`${sYYYY}-${sMM}-${sDD}` === inputVal) return true;
+                    }
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         function openItemReportModal() {
             if (!hasPermission('sales_history')) {
                 alert("Permission denied: You do not have permission to view Daily Items Report.");
                 return;
             }
-            document.getElementById('item-report-date-filter').value = new Date().toISOString().split('T')[0];
-            renderItemReportTable();
+            const dateFilter = document.getElementById('item-report-date-filter');
+            if (dateFilter) dateFilter.value = new Date().toISOString().split('T')[0];
+            populateItemReportCategoryFilter();
+            setItemReportScope('session');
             document.getElementById('item-report-modal').style.display = 'flex';
         }
 
@@ -4949,34 +5336,190 @@
             document.getElementById('item-report-modal').style.display = 'none';
         }
 
+        function sortItemReport(column) {
+            if (itemReportSortColumn === column) {
+                itemReportSortAsc = !itemReportSortAsc;
+            } else {
+                itemReportSortColumn = column;
+                itemReportSortAsc = (column === 'name'); // name default asc, numbers default desc
+            }
+            renderItemReportTable();
+        }
+
         function renderItemReportTable() {
             const tbody = document.getElementById('item-report-tbody');
             if (!tbody) return;
             tbody.innerHTML = "";
 
-            let filterDate = document.getElementById('item-report-date-filter').value;
-            let targetDStr = filterDate ? new Date(filterDate).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
+            populateItemReportCategoryFilter();
 
-            let itemCounts = {};
-            Object.values(salesHistory || {}).filter(s => s.date === targetDStr).forEach(s => {
-                (s.items || []).forEach(it => {
-                    itemCounts[it.name] = (itemCounts[it.name] || 0) + it.qty;
+            const selectedCat = document.getElementById('item-report-cat-filter') ? document.getElementById('item-report-cat-filter').value : "All";
+            const searchVal = document.getElementById('item-report-search') ? document.getElementById('item-report-search').value.trim().toLowerCase() : "";
+
+            // Aggregate items
+            const itemMap = {}; // key -> { name, cat, unitPrice, qty, totalSales }
+
+            const matchingSales = Object.values(salesHistory || {}).filter(s => isSaleMatchingReportScope(s));
+
+            matchingSales.forEach(sale => {
+                if (!sale || !sale.items) return;
+                const itemsList = Array.isArray(sale.items) ? sale.items : Object.values(sale.items);
+                itemsList.forEach(it => {
+                    if (!it || !it.name) return;
+                    const itemName = String(it.name).trim();
+                    const qty = Number(it.qty) || 0;
+                    if (qty <= 0) return;
+
+                    // Match with menu item to find category and base price if not present
+                    const menuItem = menu.find(m => String(m.id) === String(it.id) || (m.name && m.name.trim().toLowerCase() === itemName.toLowerCase()));
+                    const itemCat = (it.cat || (menuItem ? (menuItem.cat || menuItem.category) : "") || "Other").trim();
+                    const unitPrice = Number(it.price) || (menuItem ? Number(menuItem.price) : 0);
+                    const itemTotal = Number(it.total) || (qty * unitPrice);
+
+                    const key = itemName.toLowerCase();
+                    if (!itemMap[key]) {
+                        itemMap[key] = {
+                            name: itemName,
+                            cat: itemCat,
+                            unitPrice: unitPrice,
+                            qty: 0,
+                            totalSales: 0
+                        };
+                    }
+
+                    itemMap[key].qty += qty;
+                    itemMap[key].totalSales += itemTotal;
+                    if (unitPrice > 0) itemMap[key].unitPrice = unitPrice;
                 });
             });
 
-            Object.keys(itemCounts).sort().forEach(name => {
-                let tr = document.createElement('tr');
+            let itemsArray = Object.values(itemMap);
+
+            // Filter by category
+            if (selectedCat && selectedCat !== "All") {
+                itemsArray = itemsArray.filter(it => it.cat.toLowerCase() === selectedCat.toLowerCase());
+            }
+
+            // Filter by search
+            if (searchVal) {
+                itemsArray = itemsArray.filter(it => 
+                    it.name.toLowerCase().includes(searchVal) || 
+                    it.cat.toLowerCase().includes(searchVal)
+                );
+            }
+
+            // Sort
+            itemsArray.sort((a, b) => {
+                let valA, valB;
+                if (itemReportSortColumn === 'name') {
+                    valA = a.name.toLowerCase();
+                    valB = b.name.toLowerCase();
+                    return itemReportSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else if (itemReportSortColumn === 'price') {
+                    valA = a.unitPrice;
+                    valB = b.unitPrice;
+                } else if (itemReportSortColumn === 'amount') {
+                    valA = a.totalSales;
+                    valB = b.totalSales;
+                } else { // 'qty'
+                    valA = a.qty;
+                    valB = b.qty;
+                }
+                return itemReportSortAsc ? (valA - valB) : (valB - valA);
+            });
+
+            // Update summary statistics
+            let grandQty = 0;
+            let grandAmt = 0;
+            itemsArray.forEach(it => {
+                grandQty += it.qty;
+                grandAmt += it.totalSales;
+            });
+
+            const qtyEl = document.getElementById('item-rep-total-qty');
+            if (qtyEl) qtyEl.innerText = grandQty;
+            const amtEl = document.getElementById('item-rep-total-amt');
+            if (amtEl) amtEl.innerText = grandAmt.toFixed(2);
+            const countEl = document.getElementById('item-rep-item-count');
+            if (countEl) countEl.innerText = itemsArray.length;
+
+            if (itemsArray.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:24px; color:#64748b; font-weight:700;">
+                            No sales records found for the selected scope/filters.<br>
+                            (தேர்ந்தெடுத்த தேதி அல்லது ஷிப்டில் விற்பனை எதுவும் இல்லை)
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            itemsArray.forEach((item, index) => {
+                const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight:bold;">${name}</td>
-                    <td style="text-align:right; font-weight:bold;">${itemCounts[name]}</td>
+                    <td style="text-align:center; color:#64748b; font-weight:800;">${index + 1}</td>
+                    <td>
+                        <div style="font-weight:900; font-size:14px; color:#0f172a;">${item.name}</div>
+                        <span style="display:inline-block; font-size:11px; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:6px; font-weight:700; margin-top:2px;">${item.cat}</span>
+                    </td>
+                    <td style="text-align:right; font-weight:700; color:#334155;">$${item.unitPrice.toFixed(2)}</td>
+                    <td style="text-align:right; font-weight:900; font-size:15px; color:#059669;">
+                        ${item.qty} <span style="font-size:11px; font-weight:700; color:#065f46;">pcs</span>
+                    </td>
+                    <td style="text-align:right; font-weight:900; font-size:15px; color:#1e40af;">
+                        $${item.totalSales.toFixed(2)}
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
         function printItemReport() {
+            const scopeLabel = itemReportScope === 'session' 
+                ? 'Active Session (Current Shift)' 
+                : (itemReportScope === 'date' ? ('Date: ' + (document.getElementById('item-report-date-filter').value || 'Today')) : 'All Time Records');
+            
+            const scopeEl = document.getElementById('print-item-report-scope');
+            if (scopeEl) scopeEl.innerText = scopeLabel;
+
+            const timeEl = document.getElementById('print-item-report-time');
+            if (timeEl) timeEl.innerText = new Date().toLocaleString();
+
             const tbody = document.getElementById('print-item-report-items');
-            tbody.innerHTML = document.getElementById('item-report-tbody').innerHTML;
+            if (tbody) {
+                tbody.innerHTML = "";
+                const rows = document.querySelectorAll('#item-report-tbody tr');
+                let totalQty = 0;
+                let totalAmt = 0;
+
+                rows.forEach(tr => {
+                    const cols = tr.querySelectorAll('td');
+                    if (cols.length >= 5) {
+                        const name = cols[1].querySelector('div') ? cols[1].querySelector('div').innerText : cols[1].innerText;
+                        const qtyText = cols[3].innerText.replace(/[^0-9.]/g, '');
+                        const amtText = cols[4].innerText.replace(/[^0-9.]/g, '');
+                        const qty = Number(qtyText) || 0;
+                        const amt = Number(amtText) || 0;
+                        totalQty += qty;
+                        totalAmt += amt;
+
+                        tbody.innerHTML += `
+                            <tr style="border-bottom: 1px dashed #ccc;">
+                                <td style="padding: 4px 0; font-weight: 900;">${name}</td>
+                                <td style="text-align: center; padding: 4px 0; font-weight: 900;">${qty}</td>
+                                <td style="text-align: right; padding: 4px 0; font-weight: 900;">$${amt.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                const pQty = document.getElementById('print-item-report-total-qty');
+                if (pQty) pQty.innerText = totalQty;
+                const pAmt = document.getElementById('print-item-report-total-amt');
+                if (pAmt) pAmt.innerText = totalAmt.toFixed(2);
+            }
+
             document.body.className = "print-item-report-mode";
             window.print();
             setTimeout(() => { document.body.className = ""; }, 1000);
@@ -4987,10 +5530,9 @@
                 alert("Permission denied: You do not have permission to view Payment Summary.");
                 return;
             }
-            const todayStr = new Date().toLocaleDateString('en-GB');
             let totals = { Cash: 0, Card: 0, "QR Pay": 0, Total: 0 };
 
-            Object.values(salesHistory || {}).filter(s => s.date === todayStr).forEach(s => {
+            Object.values(salesHistory || {}).filter(s => isSaleInCurrentSession(s)).forEach(s => {
                 let amt = Number(s.total) || 0;
                 let method = (s.paymentMethod || "Cash").trim();
                 if (/card/i.test(method)) {
@@ -5045,36 +5587,329 @@
             }
         }
 
-        function closeDay() {
+        // Day Close & Settlement System
+        function openDayCloseModal() {
             if (!hasPermission('day_close')) {
                 alert("Permission denied: You do not have permission to perform Day Close.");
                 return;
             }
-            if (!confirm("Are you sure you want to perform Day Close? This will generate the final report.")) return;
+            renderDayCloseModalData();
+            document.getElementById('day-close-modal').style.display = 'flex';
+        }
+
+        function closeDayCloseModal() {
+            document.getElementById('day-close-modal').style.display = 'none';
+        }
+
+        function renderDayCloseModalData() {
             const todayStr = new Date().toLocaleDateString('en-GB');
-            const totalS = Object.values(salesHistory || {}).filter(s => s.date === todayStr).reduce((a, b) => a + (Number(b.total) || 0), 0);
-            const totalE = Object.values(expenses || {}).filter(s => s.date === todayStr).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const net = totalS - totalE;
+            const dateBadge = document.getElementById('dc-modal-date-badge');
+            if (dateBadge) dateBadge.innerText = todayStr;
 
-            document.getElementById('dc-date').innerText = todayStr + " " + new Date().toLocaleTimeString();
-            document.getElementById('dc-sales').innerText = totalS.toFixed(2);
-            document.getElementById('dc-expenses').innerText = totalE.toFixed(2);
-            document.getElementById('dc-net').innerText = net.toFixed(2);
+            const curSalesEntries = Object.entries(salesHistory || {}).filter(([k, s]) => isSaleInCurrentSession(s));
+            const curExpEntries = Object.entries(expenses || {}).filter(([k, e]) => isExpenseInCurrentSession(e));
 
-            const expList = document.getElementById('dc-expenses-list');
-            expList.innerHTML = "";
-            Object.values(expenses || {}).filter(s => s.date === todayStr).forEach(e => {
-                expList.innerHTML += `<tr><td>${e.desc}</td><td style="text-align:right;">$${Number(e.amount).toFixed(2)}</td></tr>`;
+            let totalS = curSalesEntries.reduce((sum, [k, s]) => sum + (Number(s.total) || 0), 0);
+            let totalE = curExpEntries.reduce((sum, [k, e]) => sum + (Number(e.amount) || 0), 0);
+            let net = totalS - totalE;
+
+            let totals = { Cash: 0, Card: 0, "QR Pay": 0 };
+            curSalesEntries.forEach(([k, s]) => {
+                let amt = Number(s.total) || 0;
+                let method = (s.paymentMethod || "Cash").trim();
+                if (/card/i.test(method)) totals.Card += amt;
+                else if (/qr/i.test(method)) totals["QR Pay"] += amt;
+                else totals.Cash += amt;
             });
 
-            db.ref('isShopOnline').set(false);
+            const sEl = document.getElementById('dc-modal-sales');
+            if (sEl) sEl.innerText = totalS.toFixed(2);
+            const bEl = document.getElementById('dc-modal-bills');
+            if (bEl) bEl.innerText = curSalesEntries.length;
+
+            const eEl = document.getElementById('dc-modal-expenses');
+            if (eEl) eEl.innerText = totalE.toFixed(2);
+            const ecEl = document.getElementById('dc-modal-exp-count');
+            if (ecEl) ecEl.innerText = curExpEntries.length;
+
+            const nEl = document.getElementById('dc-modal-net');
+            if (nEl) nEl.innerText = net.toFixed(2);
+
+            const cEl = document.getElementById('dc-modal-cash');
+            if (cEl) cEl.innerText = totals.Cash.toFixed(2);
+            const cdEl = document.getElementById('dc-modal-card');
+            if (cdEl) cdEl.innerText = totals.Card.toFixed(2);
+            const qEl = document.getElementById('dc-modal-qr');
+            if (qEl) qEl.innerText = totals["QR Pay"].toFixed(2);
+
+            // Check active tables
+            const activeTables = Object.keys(activeOrders || {}).filter(k => activeOrders[k] && activeOrders[k].items && activeOrders[k].items.length > 0);
+            const warnEl = document.getElementById('dc-alert-tables-warning');
+            if (warnEl) {
+                if (activeTables.length > 0) {
+                    warnEl.style.display = 'block';
+                    warnEl.innerHTML = `⚠️ <b>Notice:</b> There are currently <b>${activeTables.length}</b> table(s) with active orders (${activeTables.join(', ')}).`;
+                } else {
+                    warnEl.style.display = 'none';
+                }
+            }
+        }
+
+        async function confirmExecuteDayClose(printReceipt = true) {
+            if (!hasPermission('day_close')) {
+                alert("Permission denied: You do not have permission to perform Day Close.");
+                return;
+            }
+
+            const curSalesEntries = Object.entries(salesHistory || {}).filter(([k, s]) => isSaleInCurrentSession(s));
+            const curExpEntries = Object.entries(expenses || {}).filter(([k, e]) => isExpenseInCurrentSession(e));
+            const totalS = curSalesEntries.reduce((sum, [k, s]) => sum + (Number(s.total) || 0), 0);
+            const totalE = curExpEntries.reduce((sum, [k, e]) => sum + (Number(e.amount) || 0), 0);
+
+            const confirmMsg = `Are you sure you want to ${printReceipt ? 'Print Report and ' : ''}perform Day Close?\n\n` +
+                `• Current Active Sales: $${totalS.toFixed(2)} (${curSalesEntries.length} bills)\n` +
+                `• Current Active Expenses: $${totalE.toFixed(2)}\n` +
+                `• Net Settlement: $${(totalS - totalE).toFixed(2)}\n\n` +
+                `This will save the records to Day Close History and RESET all Sales and Expense amounts back to $0.00.`;
+
+            if (!confirm(confirmMsg)) return;
+
+            await executeDayClose(printReceipt);
+        }
+
+        async function executeDayClose(printReceipt = true) {
+            const todayStr = new Date().toLocaleDateString('en-GB');
+            const closeTimestamp = Date.now();
+            const closeTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const curSalesEntries = Object.entries(salesHistory || {}).filter(([k, s]) => isSaleInCurrentSession(s));
+            const curExpEntries = Object.entries(expenses || {}).filter(([k, e]) => isExpenseInCurrentSession(e));
+
+            let totalS = curSalesEntries.reduce((sum, [k, s]) => sum + (Number(s.total) || 0), 0);
+            let totalE = curExpEntries.reduce((sum, [k, e]) => sum + (Number(e.amount) || 0), 0);
+            let net = totalS - totalE;
+
+            let totals = { Cash: 0, Card: 0, "QR Pay": 0 };
+            curSalesEntries.forEach(([k, s]) => {
+                let amt = Number(s.total) || 0;
+                let method = (s.paymentMethod || "Cash").trim();
+                if (/card/i.test(method)) totals.Card += amt;
+                else if (/qr/i.test(method)) totals["QR Pay"] += amt;
+                else totals.Cash += amt;
+            });
+
+            const dayCloseKey = "DC-" + closeTimestamp;
+            const dayCloseRecord = {
+                id: dayCloseKey,
+                timestamp: closeTimestamp,
+                dateStr: todayStr,
+                timeStr: closeTimeStr,
+                closedAt: new Date().toISOString(),
+                closedBy: loggedInDisplayName || "Admin",
+                totalSales: totalS,
+                totalExpenses: totalE,
+                netBalance: net,
+                salesCount: curSalesEntries.length,
+                expensesCount: curExpEntries.length,
+                paymentBreakdown: totals,
+                expensesList: curExpEntries.map(([k, e]) => ({ desc: e.desc || 'Expense', amount: Number(e.amount) || 0, time: e.time || '' }))
+            };
+
+            const updates = {};
+            updates['dayCloseHistory/' + dayCloseKey] = dayCloseRecord;
+            updates['lastDayClose'] = dayCloseRecord;
+            updates['isShopOnline'] = false;
+
+            // Mark all today's session sales as closed
+            curSalesEntries.forEach(([k, s]) => {
+                updates['salesHistory/' + k + '/dayClosed'] = true;
+                updates['salesHistory/' + k + '/dayClosedAt'] = closeTimestamp;
+                updates['salesHistory/' + k + '/dayCloseId'] = dayCloseKey;
+            });
+
+            // Also mark any past unclosed sales from today (fail-safe for previously stuck amounts!)
+            Object.entries(salesHistory || {}).forEach(([k, s]) => {
+                if (s && s.date === todayStr && !s.dayClosed) {
+                    updates['salesHistory/' + k + '/dayClosed'] = true;
+                    updates['salesHistory/' + k + '/dayClosedAt'] = closeTimestamp;
+                    updates['salesHistory/' + k + '/dayCloseId'] = dayCloseKey;
+                }
+            });
+
+            // Mark all today's session expenses as closed
+            curExpEntries.forEach(([k, e]) => {
+                updates['expenses/' + k + '/dayClosed'] = true;
+                updates['expenses/' + k + '/dayClosedAt'] = closeTimestamp;
+                updates['expenses/' + k + '/dayCloseId'] = dayCloseKey;
+            });
+
+            Object.entries(expenses || {}).forEach(([k, e]) => {
+                if (e && e.date === todayStr && !e.dayClosed) {
+                    updates['expenses/' + k + '/dayClosed'] = true;
+                    updates['expenses/' + k + '/dayClosedAt'] = closeTimestamp;
+                    updates['expenses/' + k + '/dayCloseId'] = dayCloseKey;
+                }
+            });
+
+            // Archive shift
+            if (activeShift) {
+                updates['shiftHistory/' + closeTimestamp] = activeShift;
+                updates['activeShift'] = null;
+            }
+
+            // Clear alerts
+            updates['newCustomerOrderAlerts'] = null;
+            updates['staffAlerts'] = null;
+
+            try {
+                await db.ref().update(updates);
+
+                // Instantly force local memory and UI counters to 0.00
+                totalSales = 0;
+                lastDayClose = dayCloseRecord;
+
+                const salesElem = document.getElementById('stat-sales');
+                if (salesElem) salesElem.innerText = "0.00";
+                const expElem = document.getElementById('stat-expenses');
+                if (expElem) expElem.innerText = "0.00";
+
+                calculateTotalSales();
+                calculateTotalExpenses();
+
+                // Prepare print receipt
+                const dcDate = document.getElementById('dc-date');
+                if (dcDate) dcDate.innerText = todayStr + " " + closeTimeStr;
+                const dcBy = document.getElementById('dc-closed-by');
+                if (dcBy) dcBy.innerText = "Closed By: " + (loggedInDisplayName || "Admin");
+                const dcSales = document.getElementById('dc-sales');
+                if (dcSales) dcSales.innerText = totalS.toFixed(2);
+                const dcExp = document.getElementById('dc-expenses');
+                if (dcExp) dcExp.innerText = totalE.toFixed(2);
+                const dcNet = document.getElementById('dc-net');
+                if (dcNet) dcNet.innerText = net.toFixed(2);
+                const dcCash = document.getElementById('dc-cash');
+                if (dcCash) dcCash.innerText = totals.Cash.toFixed(2);
+                const dcCard = document.getElementById('dc-card');
+                if (dcCard) dcCard.innerText = totals.Card.toFixed(2);
+                const dcQr = document.getElementById('dc-qr');
+                if (dcQr) dcQr.innerText = totals["QR Pay"].toFixed(2);
+                const dcCount = document.getElementById('dc-bills-count');
+                if (dcCount) dcCount.innerText = curSalesEntries.length;
+
+                const expList = document.getElementById('dc-expenses-list');
+                if (expList) {
+                    expList.innerHTML = "";
+                    dayCloseRecord.expensesList.forEach(e => {
+                        expList.innerHTML += `<tr><td>${e.desc}</td><td style="text-align:right;">$${Number(e.amount).toFixed(2)}</td></tr>`;
+                    });
+                    if (dayCloseRecord.expensesList.length === 0) {
+                        expList.innerHTML = `<tr><td colspan="2" style="color:#64748b; text-align:center;">No expenses recorded</td></tr>`;
+                    }
+                }
+
+                closeDayCloseModal();
+
+                if (printReceipt) {
+                    document.body.className = "print-day-close-mode";
+                    window.print();
+                    setTimeout(() => {
+                        document.body.className = "";
+                        if (confirm("✓ Day Close successfully processed!\n\nAll counters have been reset to $0.00.\nWould you like to log out now?")) {
+                            logout();
+                        }
+                    }, 1200);
+                } else {
+                    alert("✓ Day Close completed!\n\nSales and Expense amounts have been successfully reset to $0.00 for the new session.");
+                }
+            } catch (err) {
+                console.error("Day close error:", err);
+                alert("Failed to complete Day Close: " + err.message);
+            }
+        }
+
+        function toggleDayCloseHistoryView() {
+            const container = document.getElementById('dc-history-container');
+            if (!container) return;
+            if (container.style.display === 'none' || container.style.display === '') {
+                renderDayCloseHistoryList();
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function renderDayCloseHistoryList() {
+            const listEl = document.getElementById('dc-history-list');
+            if (!listEl) return;
+            listEl.innerHTML = "";
+
+            const records = Object.values(dayCloseHistory || {}).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            if (records.length === 0) {
+                listEl.innerHTML = '<div style="color:#64748b; font-size:12px; padding:8px; text-align:center;">No previous Day Close records found.</div>';
+                return;
+            }
+
+            let html = '<table class="admin-table" style="font-size:12px;"><thead><tr><th>Date / Time</th><th>Closed By</th><th style="text-align:right;">Sales</th><th style="text-align:right;">Exp</th><th style="text-align:right;">Net</th><th style="text-align:center;">Reprint</th></tr></thead><tbody>';
+            records.forEach(r => {
+                html += `
+                    <tr>
+                        <td><b>${r.dateStr || ''}</b> ${r.timeStr || ''}</td>
+                        <td>${r.closedBy || 'Admin'}</td>
+                        <td style="text-align:right; font-weight:bold; color:var(--success);">$${Number(r.totalSales || 0).toFixed(2)}</td>
+                        <td style="text-align:right; font-weight:bold; color:var(--danger);">$${Number(r.totalExpenses || 0).toFixed(2)}</td>
+                        <td style="text-align:right; font-weight:900; color:var(--primary);">$${Number(r.netBalance || 0).toFixed(2)}</td>
+                        <td style="text-align:center;">
+                            <button type="button" class="btn-small" onclick='reprintPastDayClose(${JSON.stringify(r).replace(/'/g, "&apos;")})'>🖨️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            listEl.innerHTML = html;
+        }
+
+        function reprintPastDayClose(r) {
+            if (!r) return;
+            const dcDate = document.getElementById('dc-date');
+            if (dcDate) dcDate.innerText = (r.dateStr || '') + " " + (r.timeStr || '');
+            const dcBy = document.getElementById('dc-closed-by');
+            if (dcBy) dcBy.innerText = "Closed By: " + (r.closedBy || "Admin");
+            const dcSales = document.getElementById('dc-sales');
+            if (dcSales) dcSales.innerText = Number(r.totalSales || 0).toFixed(2);
+            const dcExp = document.getElementById('dc-expenses');
+            if (dcExp) dcExp.innerText = Number(r.totalExpenses || 0).toFixed(2);
+            const dcNet = document.getElementById('dc-net');
+            if (dcNet) dcNet.innerText = Number(r.netBalance || 0).toFixed(2);
+            const dcCash = document.getElementById('dc-cash');
+            if (dcCash) dcCash.innerText = Number(r.paymentBreakdown?.Cash || 0).toFixed(2);
+            const dcCard = document.getElementById('dc-card');
+            if (dcCard) dcCard.innerText = Number(r.paymentBreakdown?.Card || 0).toFixed(2);
+            const dcQr = document.getElementById('dc-qr');
+            if (dcQr) dcQr.innerText = Number(r.paymentBreakdown?.["QR Pay"] || 0).toFixed(2);
+            const dcCount = document.getElementById('dc-bills-count');
+            if (dcCount) dcCount.innerText = r.salesCount || 0;
+
+            const expList = document.getElementById('dc-expenses-list');
+            if (expList) {
+                expList.innerHTML = "";
+                (r.expensesList || []).forEach(e => {
+                    expList.innerHTML += `<tr><td>${e.desc}</td><td style="text-align:right;">$${Number(e.amount).toFixed(2)}</td></tr>`;
+                });
+                if (!r.expensesList || r.expensesList.length === 0) {
+                    expList.innerHTML = `<tr><td colspan="2" style="color:#64748b; text-align:center;">No expenses recorded</td></tr>`;
+                }
+            }
 
             document.body.className = "print-day-close-mode";
             window.print();
             setTimeout(() => {
                 document.body.className = "";
-                logout();
             }, 1000);
+        }
+
+        // Backward compatibility
+        function closeDay() {
+            openDayCloseModal();
         }
 
         // Dynamic Supplier, Staff & Login Credentials Management with Permissions

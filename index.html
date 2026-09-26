@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Al Hussain Restaurant - POS System</title>
     
-    <!-- Instant Customer QR Detection to prevent any login screen flash -->
+    <!-- Instant Customer QR Detection to prevent any login or table selection screen flash -->
     <script>
       (function() {
         var p = new URLSearchParams(window.location.search);
-        if (p.has('table') || p.get('order') === 'takeaway') {
+        var hasTable = p.has('table') && p.get('table').trim() !== '';
+        var isTk = p.get('order') === 'takeaway' || p.get('type') === 'takeaway';
+        if (hasTable || isTk) {
           document.documentElement.classList.add('is-customer-qr');
         }
       })();
@@ -17,6 +19,34 @@
     <style>
       html.is-customer-qr #login-screen {
         display: none !important;
+      }
+      html.is-customer-qr #table-selection-view {
+        display: none !important;
+      }
+      html.is-customer-qr #admin-dashboard-section {
+        display: none !important;
+      }
+      html.is-customer-qr #header-home-btn,
+      html.is-customer-qr .header-home-btn,
+      html.is-customer-qr #btn-menu-home-elem,
+      html.is-customer-qr .btn-menu-home,
+      html.is-customer-qr #mob-home-btn,
+      html.is-customer-qr .mob-home-btn,
+      html.is-customer-qr .btn-back-tables,
+      html.is-customer-qr .table-link-controls,
+      html.is-customer-qr #btn-sound-test,
+      html.is-customer-qr #btn-logout-elem,
+      html.is-customer-qr #staff-action-buttons,
+      html.is-customer-qr #payment-method-row,
+      html.is-customer-qr #discount-row-elem,
+      html.is-customer-qr .price-input {
+        display: none !important;
+      }
+      html.is-customer-qr .mobile-tab-bar {
+        display: flex !important;
+      }
+      html.is-customer-qr .mob-tab-btn {
+        flex: 1 !important;
       }
     </style>
 
@@ -621,17 +651,25 @@
 <script src="/_aistudio-iframe.js?v=2c34bde1"></script></head>
 <body>
 
-    <div id="takeaway-details-modal" class="timeout-overlay" style="display: none; z-index: 5000; background: rgba(15, 23, 42, 0.85);">
-        <div class="timeout-box" style="text-align: left; max-width: 380px;">
-            <h2 style="color: #4f46e5; text-align: center; margin-bottom: 20px;">Takeaway Details</h2>
+    <div id="takeaway-details-modal" class="timeout-overlay" style="display: none; z-index: 9999; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(8px);">
+        <div class="timeout-box" style="text-align: left; max-width: 420px; width: 92%; padding: 26px 22px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);">
+            <div style="text-align: center; margin-bottom: 18px;">
+                <div style="font-size: 38px; margin-bottom: 6px;">🥡</div>
+                <h2 style="color: #4f46e5; margin: 0; font-size: 21px; font-weight: 900;">Takeaway Order (பார்சல் ஆர்டர்)</h2>
+                <p style="margin: 4px 0 0; color: #64748b; font-size: 13px; font-weight: 700;">Please enter your name & mobile number to start ordering</p>
+            </div>
             <form onsubmit="saveTakeawayCustomerDetails(event)">
-                <label style="font-size: 13px; font-weight: 800; color: #475569;">Your Name:</label>
-                <input type="text" id="tk-cust-name" placeholder="Enter your name" required style="width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-family: inherit;">
-                
-                <label style="font-size: 13px; font-weight: 800; color: #475569;">Phone Number:</label>
-                <input type="tel" id="tk-cust-phone" placeholder="Enter your phone number" required style="width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-family: inherit;">
-                
-                <button type="submit" class="btn-login" style="width: 100%; padding: 14px;">Continue to Menu</button>
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 13px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px;">Customer Name (பெயர்):</label>
+                    <input type="text" id="tk-cust-name" placeholder="e.g. Mohamed / Anvar" required style="width: 100%; padding: 12px 14px; border: 2px solid #cbd5e1; border-radius: 12px; box-sizing: border-box; font-size: 15px; font-weight: 700; font-family: inherit; outline: none;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 13px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px;">Phone Number (மொபைல் எண்):</label>
+                    <input type="tel" id="tk-cust-phone" placeholder="e.g. 81234567" required style="width: 100%; padding: 12px 14px; border: 2px solid #cbd5e1; border-radius: 12px; box-sizing: border-box; font-size: 15px; font-weight: 700; font-family: inherit; outline: none;">
+                </div>
+                <button type="submit" class="btn-login" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 900; border-radius: 12px; background: linear-gradient(135deg, #7c3aed, #4f46e5); box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);">
+                    🍽️ Start Ordering / மெனுவிற்குச் செல்க
+                </button>
             </form>
         </div>
     </div>
@@ -1576,6 +1614,16 @@
             return false;
         }
 
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return "";
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
         function renderLoginAccountsPreview() {
             const chipsContainer = document.getElementById('login-accounts-chips');
             if (!chipsContainer) return;
@@ -2493,7 +2541,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const rawTableParam = urlParams.get('table');
-            const orderParam = urlParams.get('order');
+            const orderParam = urlParams.get('order') || urlParams.get('type');
 
             let tableParam = null;
             if (rawTableParam && rawTableParam.trim() !== "") {
@@ -2508,20 +2556,31 @@
                 }
             }
 
-            // Instantly hide login screen if customer is arriving via QR
+            // Instantly hide login screen and table selection if arriving via customer QR
             if (tableParam || orderParam === "takeaway") {
-                document.getElementById('login-screen').style.display = 'none';
+                isCustomerMode = true;
+                document.documentElement.classList.add('is-customer-qr');
+                const loginEl = document.getElementById('login-screen');
+                if (loginEl) loginEl.style.display = 'none';
+                const tblView = document.getElementById('table-selection-view');
+                if (tblView) tblView.style.display = 'none';
             }
 
             if (orderParam && orderParam === "takeaway") {
+                isTakeawayCustomer = true;
                 let storedTkKey = sessionStorage.getItem('myTakeawayKey');
-                if (storedTkKey && sessionStorage.getItem('paid_' + storedTkKey) === 'true') {
-                    initializeCustomerSession(storedTkKey, true);
-                    return;
-                }
+                let storedName = sessionStorage.getItem('myTkName');
+                let storedPhone = sessionStorage.getItem('myTkPhone');
 
-                // Instantly show the takeaway modal or customer session
-                if (!storedTkKey) {
+                // If already paid or no existing active session name, prompt for details
+                if (!storedTkKey || !storedName || !storedPhone || sessionStorage.getItem('paid_' + storedTkKey) === 'true') {
+                    // Reset old session
+                    sessionStorage.removeItem('myTakeawayKey');
+                    const nameInput = document.getElementById('tk-cust-name');
+                    if (nameInput) nameInput.value = storedName || "";
+                    const phoneInput = document.getElementById('tk-cust-phone');
+                    if (phoneInput) phoneInput.value = storedPhone || "";
+                    
                     document.getElementById('takeaway-details-modal').style.display = 'flex';
                 } else {
                     initializeCustomerSession(storedTkKey, true);
@@ -2537,7 +2596,7 @@
                 });
                 return;
             } else if (tableParam && tableParam.trim() !== "") {
-                // Instantly open the table menu without waiting!
+                // Table QR Order: open table menu directly without any table selection view!
                 initializeCustomerSession(tableParam, false);
 
                 // Check online status in background
@@ -2556,12 +2615,12 @@
             }
         });
 
-        // Fixed Takeaway Race Condition: atomic transaction on counter + disable submit button
+        // Fixed Takeaway: atomic transaction on counter + attach customer name & phone to order
         function saveTakeawayCustomerDetails(event) {
             event.preventDefault();
             const name = document.getElementById('tk-cust-name').value.trim();
             const phone = document.getElementById('tk-cust-phone').value.trim();
-            if (!name || !phone) return alert("Please fill name and phone number!");
+            if (!name || !phone) return alert("Please fill name and phone number! (பெயர் மற்றும் போன் நம்பர் உள்ளிடவும்)");
 
             const submitBtn = event.target ? event.target.querySelector('button[type="submit"]') : null;
             if (submitBtn) {
@@ -2583,7 +2642,7 @@
                 if (error || !committed || assignedNum === null) {
                     if (submitBtn) {
                         submitBtn.disabled = false;
-                        submitBtn.textContent = "Continue to Menu";
+                        submitBtn.textContent = "🍽️ Start Ordering / மெனுவிற்குச் செல்க";
                     }
                     alert("Error generating order number. Please try again.");
                     return;
@@ -2594,11 +2653,24 @@
                 sessionStorage.setItem('myTakeawayKey', storedTkKey);
                 sessionStorage.setItem('myTkName', name);
                 sessionStorage.setItem('myTkPhone', phone);
+                sessionStorage.removeItem('paid_' + storedTkKey);
+
+                // Initialize empty order with customer details
+                if (!activeOrders[storedTkKey]) {
+                    activeOrders[storedTkKey] = {
+                        items: [],
+                        customerName: name,
+                        customerPhone: phone,
+                        takenBy: 'Customer QR',
+                        createdAt: Date.now()
+                    };
+                    db.ref('activeOrders/' + storedTkKey).set(activeOrders[storedTkKey]);
+                }
 
                 document.getElementById('takeaway-details-modal').style.display = 'none';
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = "Continue to Menu";
+                    submitBtn.textContent = "🍽️ Start Ordering / மெனுவிற்குச் செல்க";
                 }
                 initializeCustomerSession(storedTkKey, true);
             });
@@ -2609,24 +2681,71 @@
             isTakeawayCustomer = isTakeaway;
             currentTableKey = key;
 
-            document.getElementById('login-screen').style.display = 'none';
+            // Mark document element with customer QR class
+            document.documentElement.classList.add('is-customer-qr');
+
+            // Force hide login screen and table selection view
+            const loginEl = document.getElementById('login-screen');
+            if (loginEl) loginEl.style.display = 'none';
+
+            const tblView = document.getElementById('table-selection-view');
+            if (tblView) tblView.style.display = 'none';
+
             document.getElementById('main-app').style.display = 'flex';
-            document.getElementById('table-selection-view').style.display = 'none';
             document.getElementById('pos-main-view').style.display = 'flex';
 
-            document.getElementById('app-header-title').innerText = isTakeaway ? "Takeaway Self-Order" : "Customer Self-Order";
-            document.getElementById('display-user').innerText = key;
-            document.getElementById('btn-logout-elem').style.display = 'none';
-            const sndBtn = document.getElementById('btn-sound-test');
-            if (sndBtn) sndBtn.style.display = 'none';
-            document.getElementById('staff-action-buttons').style.display = 'none';
-            document.getElementById('payment-method-row').style.display = 'none';
-            document.getElementById('discount-row-elem').style.display = 'none';
+            // Hide all table navigation buttons
+            const navElementsToHide = [
+                'header-home-btn',
+                'btn-menu-home-elem',
+                'mob-home-btn',
+                'btn-logout-elem',
+                'btn-sound-test',
+                'staff-action-buttons',
+                'payment-method-row',
+                'discount-row-elem'
+            ];
+            navElementsToHide.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+
+            const classBtnsToHide = document.querySelectorAll('.header-home-btn, .btn-menu-home, .mob-home-btn, .btn-back-tables, .table-link-controls');
+            classBtnsToHide.forEach(el => el.style.display = 'none');
+
+            // Set customer header
+            let custName = isTakeaway ? (sessionStorage.getItem('myTkName') || '') : '';
+            if (isTakeaway) {
+                document.getElementById('app-header-title').innerText = "🥡 " + key + (custName ? (" (" + custName + ")") : "") + " - Takeaway";
+                document.getElementById('display-user').innerText = custName || key;
+            } else {
+                document.getElementById('app-header-title').innerText = "🍽️ " + key + " - Self-Order";
+                document.getElementById('display-user').innerText = key;
+            }
+
+            // Show the customer's own table/order name in the cart panel
+            const cartTitleSpan = document.querySelector('#cart-panel-title > span');
+            if (cartTitleSpan) {
+                cartTitleSpan.innerText = isTakeaway ? ("🥡 Takeaway: " + key) : ("🍽️ Order: " + key);
+            }
+
             document.getElementById('customer-action-div').style.display = 'flex';
 
             if (isTakeaway) {
-                document.getElementById('btn-call-waiter-elem').style.display = 'none';
+                const callBtn = document.getElementById('btn-call-waiter-elem');
+                if (callBtn) callBtn.style.display = 'none';
+                const sendBtn = document.querySelector('.btn-customer-send');
+                if (sendBtn) sendBtn.innerText = "🚀 Confirm & Send Takeaway Order";
+            } else {
+                const callBtn = document.getElementById('btn-call-waiter-elem');
+                if (callBtn) callBtn.style.display = 'block';
+                const sendBtn = document.querySelector('.btn-customer-send');
+                if (sendBtn) sendBtn.innerText = "Send Order to Kitchen";
             }
+
+            // Ensure mobile tab bar has only 2 tabs for customers (Menu Items & Cart)
+            const mobHome = document.getElementById('mob-home-btn');
+            if (mobHome) mobHome.style.display = 'none';
 
             renderMenuGrid();
             renderCart();
@@ -2964,6 +3083,10 @@
         }
 
         function showTableSelection() {
+            if (isCustomerMode) {
+                // Customer Mode Lock: Customers can NEVER see or access the tables grid!
+                return;
+            }
             document.getElementById('table-selection-view').style.display = 'flex';
             document.getElementById('pos-main-view').style.display = 'none';
             const headHomeBtn = document.getElementById('header-home-btn');
@@ -2973,6 +3096,10 @@
         }
 
         function backToTableSelection() {
+            if (isCustomerMode) {
+                // Customer Mode Lock: Customers can NEVER see or access the tables grid!
+                return;
+            }
             if (currentTableKey && activeOrders[currentTableKey]) {
                 const ord = activeOrders[currentTableKey];
                 if (ord && ord.items && ord.items.length > 0 && ord.lastDeviceId === posDeviceId) {
@@ -3079,8 +3206,8 @@
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <button type="button" class="btn-edit-seated-time" onclick="promptEditSeatedTime()" title="Edit seated time">✏️ Edit Time</button>
-                        ${(!order.items || order.items.length === 0) ? `<button type="button" class="btn-edit-seated-time" style="color:#e11d48; border-color:#fecdd3;" onclick="cancelTableSeating()" title="Clear table">Clear Table</button>` : ''}
+                        ${isCustomerMode ? '' : `<button type="button" class="btn-edit-seated-time" onclick="promptEditSeatedTime()" title="Edit seated time">✏️ Edit Time</button>`}
+                        ${(!isCustomerMode && (!order.items || order.items.length === 0)) ? `<button type="button" class="btn-edit-seated-time" style="color:#e11d48; border-color:#fecdd3;" onclick="cancelTableSeating()" title="Clear table">Clear Table</button>` : ''}
                     </div>
                 `;
             } else if (!currentTableKey.startsWith('Order-') && !isCustomerMode) {
@@ -3128,6 +3255,7 @@
         }
 
         function promptEditSeatedTime() {
+            if (isCustomerMode) return;
             if (!currentTableKey || !activeOrders[currentTableKey]) return;
             const order = activeOrders[currentTableKey];
             const curInfo = order.seatedAt ? getSeatedDurationInfo(order.seatedAt) : { totalMinutes: 0 };
@@ -3142,6 +3270,7 @@
         }
 
         function cancelTableSeating() {
+            if (isCustomerMode) return;
             if (!hasPermission('cancel_orders')) {
                 alert("Permission denied: You do not have permission to clear table or cancel seating.");
                 return;
@@ -3407,9 +3536,12 @@
         // Calculation helpers with Option prices accurately multiplied by item quantity
         function getItemOptionTotal(item) {
             let total = 0;
-            if (item && item.options && typeof item.options === 'object') {
-                Object.values(item.options).forEach(opt => {
-                    total += Math.max(0, Number(opt && opt.price) || 0);
+            if (item && item.options) {
+                const opts = Array.isArray(item.options) ? item.options : Object.values(item.options);
+                opts.forEach(opt => {
+                    if (opt && typeof opt === 'object') {
+                        total += Math.max(0, Number(opt.price !== undefined ? opt.price : (opt.extraPrice || 0)) || 0);
+                    }
                 });
             }
             return total;
@@ -3566,11 +3698,81 @@
             }
         }
 
-        function getItemSalesCountMap() {
+        function isRecordFromToday(dateStr, timestamp) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const todayISO = `${y}-${m}-${d}`;
+            const todayGB = `${d}/${m}/${y}`;
+
+            if (dateStr) {
+                const clean = String(dateStr).trim();
+                if (clean === todayGB || clean === todayISO) return true;
+                const parts = clean.includes('/') ? clean.split('/') : clean.includes('-') ? clean.split('-') : [];
+                if (parts.length === 3) {
+                    if (clean.includes('/')) {
+                        if (parseInt(parts[0], 10) === now.getDate() &&
+                            parseInt(parts[1], 10) === (now.getMonth() + 1) &&
+                            parseInt(parts[2], 10) === now.getFullYear()) {
+                            return true;
+                        }
+                    } else {
+                        if (parseInt(parts[0], 10) === now.getFullYear() &&
+                            parseInt(parts[1], 10) === (now.getMonth() + 1) &&
+                            parseInt(parts[2], 10) === now.getDate()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (timestamp) {
+                const tDate = new Date(timestamp);
+                if (!isNaN(tDate.getTime())) {
+                    return tDate.getFullYear() === now.getFullYear() &&
+                           tDate.getMonth() === now.getMonth() &&
+                           tDate.getDate() === now.getDate();
+                }
+            }
+            return false;
+        }
+
+        // Persistent all-time popularity map (NEVER resets - keeps popular items at the top)
+        function getAllTimeItemSalesMap() {
+            let counts = {};
+            try {
+                counts = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
+            } catch(e) {
+                counts = {};
+            }
+            const sales = Object.values(salesHistory || {});
+            sales.forEach(sale => {
+                if (!sale || !sale.items) return;
+                const items = Array.isArray(sale.items) ? sale.items : Object.values(sale.items);
+                items.forEach(it => {
+                    if (!it) return;
+                    const qty = Number(it.qty) || 1;
+                    if (it.id) {
+                        counts[String(it.id)] = Math.max(counts[String(it.id)] || 0, (counts[String(it.id)] || 0) + qty);
+                    }
+                    if (it.name) {
+                        const nameKey = String(it.name).trim().toLowerCase();
+                        counts[nameKey] = Math.max(counts[nameKey] || 0, (counts[nameKey] || 0) + qty);
+                    }
+                });
+            });
+            return counts;
+        }
+
+        // Today's sales counts only (RESETS to 0 each new day / session)
+        function getTodayItemSalesCountMap() {
             const counts = {};
             const sales = Object.values(salesHistory || {});
             sales.forEach(sale => {
                 if (!sale || !sale.items) return;
+                if (!isRecordFromToday(sale.date, sale.timestamp)) return;
+                if (typeof isSaleInCurrentSession === 'function' && !isSaleInCurrentSession(sale)) return;
+
                 const items = Array.isArray(sale.items) ? sale.items : Object.values(sale.items);
                 items.forEach(it => {
                     if (!it) return;
@@ -3605,8 +3807,11 @@
             const isAll = !selectedCategory || selectedCategory === "All";
             const catsToRender = isAll ? categories : [selectedCategory];
 
-            // Calculate item sales count for popularity sorting (most used first)
-            const salesCounts = getItemSalesCountMap();
+            // 1. All-time sales counts for permanent sorting (highest ordered items ALWAYS stay FIRST in each category)
+            const allTimeSalesCounts = getAllTimeItemSalesMap();
+
+            // 2. Today's sales counts (RESETS to 0 daily!)
+            const todaySalesCounts = getTodayItemSalesCountMap();
 
             catsToRender.forEach(cat => {
                 let catItems = menu.filter(item => {
@@ -3615,10 +3820,10 @@
                     return itmCat === targetCat;
                 });
 
-                // Sort items by popularity (highest sold first within category)
+                // Always sort items by ALL-TIME popularity (most ordered items stay first, never resets!)
                 catItems.sort((a, b) => {
-                    const countA = getItemPopularityScore(a, salesCounts);
-                    const countB = getItemPopularityScore(b, salesCounts);
+                    const countA = getItemPopularityScore(a, allTimeSalesCounts);
+                    const countB = getItemPopularityScore(b, allTimeSalesCounts);
                     if (countB !== countA) return countB - countA;
                     return (a.name || "").localeCompare(b.name || "");
                 });
@@ -3636,10 +3841,13 @@
                     header.innerText = cat;
                     grid.appendChild(header);
 
+                    const maxTodaySoldInCat = Math.max(0, ...catItems.map(it => getItemPopularityScore(it, todaySalesCounts)));
+
                     catItems.forEach((item, itemIdx) => {
                         let cartItem = currentOrder && currentOrder.items ? currentOrder.items.find(x => String(x.id) === String(item.id)) : null;
                         let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
-                        let soldCount = getItemPopularityScore(item, salesCounts);
+                        let todaySold = getItemPopularityScore(item, todaySalesCounts);
+                        let allTimeSold = getItemPopularityScore(item, allTimeSalesCounts);
 
                         const card = document.createElement('div');
                         card.className = 'menu-card';
@@ -3649,10 +3857,17 @@
                         };
 
                         let popBadgeHtml = '';
-                        if (soldCount > 0 && itemIdx === 0) {
-                            popBadgeHtml = `<div class="card-pop-tag">★ #1 Top Seller (${soldCount} sold)</div>`;
-                        } else if (soldCount >= 5 && itemIdx < 3) {
-                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);">★ Popular (${soldCount})</div>`;
+                        if (todaySold > 0) {
+                            if (todaySold === maxTodaySoldInCat && maxTodaySoldInCat > 0) {
+                                popBadgeHtml = `<div class="card-pop-tag" title="Today's top seller">★ #1 Today (${todaySold} sold)</div>`;
+                            } else if (todaySold >= 3) {
+                                popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);" title="Sold today">★ ${todaySold} sold today</div>`;
+                            } else {
+                                popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(16,185,129,0.92);" title="Sold today">★ ${todaySold} sold today</div>`;
+                            }
+                        } else if (itemIdx === 0 && allTimeSold >= 5) {
+                            // If 0 sold today, but item is an all-time bestseller, show clean tag without yesterday's numbers
+                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(79,70,229,0.85);" title="All-time popular item">★ Bestseller</div>`;
                         }
 
                         card.innerHTML = `
@@ -3679,8 +3894,8 @@
                 });
 
                 otherItems.sort((a, b) => {
-                    const countA = getItemPopularityScore(a, salesCounts);
-                    const countB = getItemPopularityScore(b, salesCounts);
+                    const countA = getItemPopularityScore(a, allTimeSalesCounts);
+                    const countB = getItemPopularityScore(b, allTimeSalesCounts);
                     if (countB !== countA) return countB - countA;
                     return (a.name || "").localeCompare(b.name || "");
                 });
@@ -3697,10 +3912,13 @@
                     header.innerText = "Other Items";
                     grid.appendChild(header);
 
+                    const maxTodaySoldOther = Math.max(0, ...otherItems.map(it => getItemPopularityScore(it, todaySalesCounts)));
+
                     otherItems.forEach((item, itemIdx) => {
                         let cartItem = currentOrder && currentOrder.items ? currentOrder.items.find(x => String(x.id) === String(item.id)) : null;
                         let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
-                        let soldCount = getItemPopularityScore(item, salesCounts);
+                        let todaySold = getItemPopularityScore(item, todaySalesCounts);
+                        let allTimeSold = getItemPopularityScore(item, allTimeSalesCounts);
 
                         const card = document.createElement('div');
                         card.className = 'menu-card';
@@ -3710,10 +3928,16 @@
                         };
 
                         let popBadgeHtml = '';
-                        if (soldCount > 0 && itemIdx === 0) {
-                            popBadgeHtml = `<div class="card-pop-tag">★ #1 Top Seller (${soldCount} sold)</div>`;
-                        } else if (soldCount >= 5 && itemIdx < 3) {
-                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);">★ Popular (${soldCount})</div>`;
+                        if (todaySold > 0) {
+                            if (todaySold === maxTodaySoldOther && maxTodaySoldOther > 0) {
+                                popBadgeHtml = `<div class="card-pop-tag" title="Today's top seller">★ #1 Today (${todaySold} sold)</div>`;
+                            } else if (todaySold >= 3) {
+                                popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(2,132,199,0.92);" title="Sold today">★ ${todaySold} sold today</div>`;
+                            } else {
+                                popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(16,185,129,0.92);" title="Sold today">★ ${todaySold} sold today</div>`;
+                            }
+                        } else if (itemIdx === 0 && allTimeSold >= 5) {
+                            popBadgeHtml = `<div class="card-pop-tag" style="background:rgba(79,70,229,0.85);" title="All-time popular item">★ Bestseller</div>`;
                         }
 
                         card.innerHTML = `
@@ -3811,7 +4035,7 @@
                     customPrice: Number(item.price) || 0,
                     cat: (item.cat || "").trim(),
                     qty: 1,
-                    notes: { spicy: false, noVeg: false, takeaway: false },
+                    notes: { takeaway: false },
                     options: {},
                     comment: ""
                 });
@@ -3825,6 +4049,7 @@
         }
 
         function changeQty(itemId, delta) {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items) return;
 
@@ -3845,6 +4070,8 @@
             item.qty += delta;
             if (item.qty <= 0) {
                 order.items = order.items.filter(x => String(x.id) !== String(itemId));
+            } else if (item.takeawayQty && item.takeawayQty > item.qty) {
+                item.takeawayQty = item.qty;
             }
 
             if (order.items.length === 0) {
@@ -3857,6 +4084,243 @@
             renderCart();
             renderMenuGrid();
             flashLiveSyncSuccess();
+        }
+
+        function syncCartInputsToMemory() {
+            if (!currentTableKey || !activeOrders[currentTableKey] || !activeOrders[currentTableKey].items) return;
+            const order = activeOrders[currentTableKey];
+
+            // 1. Sync any typed notes / instructions directly from DOM inputs
+            const commentInputs = document.querySelectorAll('#cart-items .comment-input');
+            commentInputs.forEach(input => {
+                const id = input.getAttribute('data-item-id');
+                if (id) {
+                    const it = order.items.find(x => String(x.id) === String(id));
+                    if (it) {
+                        it.comment = input.value;
+                    }
+                }
+            });
+
+            // 2. Sync any custom checkboxes directly from DOM
+            const customCheckboxes = document.querySelectorAll('#cart-items .custom-opt-checkbox');
+            customCheckboxes.forEach(cb => {
+                const itemId = cb.getAttribute('data-item-id');
+                const optName = cb.getAttribute('data-opt-name');
+                const optPrice = Number(cb.getAttribute('data-opt-price')) || 0;
+                if (itemId && optName) {
+                    const it = order.items.find(x => String(x.id) === String(itemId));
+                    if (it) {
+                        if (!it.options || typeof it.options !== 'object' || Array.isArray(it.options)) {
+                            it.options = {};
+                        }
+                        const resolvedName = optName.trim();
+                        const safeKey = resolvedName.replace(/[.#$\[\]\/]/g, '_');
+                        if (cb.checked) {
+                            it.options[safeKey] = { name: resolvedName, price: optPrice };
+                        } else {
+                            delete it.options[safeKey];
+                            delete it.options[resolvedName];
+                        }
+                    }
+                }
+            });
+
+            // 3. Sync any custom price inputs
+            const priceInputs = document.querySelectorAll('#cart-items .price-input');
+            priceInputs.forEach(input => {
+                const id = input.getAttribute('data-item-id');
+                if (id) {
+                    const it = order.items.find(x => String(x.id) === String(id));
+                    if (it) {
+                        it.customPrice = Math.max(0, Number(input.value) || 0);
+                    }
+                }
+            });
+        }
+
+        function splitItemDineAndTakeaway(itemId, targetTk) {
+            syncCartInputsToMemory();
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                const totalQty = Math.max(1, Number(item.qty) || 1);
+                let newTk = Math.max(0, Math.min(totalQty, Number(targetTk) || 0));
+                item.takeawayQty = newTk;
+                if (!item.notes || typeof item.notes !== 'object') item.notes = {};
+                item.notes.takeaway = (newTk > 0);
+                db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
+                flashLiveSyncSuccess();
+            }
+        }
+
+        let customQuickNotes = JSON.parse(localStorage.getItem('al_hussain_custom_quick_notes') || '[]');
+
+        function addCustomQuickNote() {
+            const note = prompt("Enter custom quick note tag / புதிய குறிப்பு (e.g. Gravy separate / Less spicy / No ice / Hot):");
+            if (!note || !note.trim()) return;
+            const clean = note.trim();
+            if (!customQuickNotes.includes(clean)) {
+                customQuickNotes.push(clean);
+                localStorage.setItem('al_hussain_custom_quick_notes', JSON.stringify(customQuickNotes));
+                renderCart();
+            }
+        }
+
+        function removeCustomQuickNote(e, noteToRemove) {
+            if (e) e.stopPropagation();
+            customQuickNotes = customQuickNotes.filter(n => n !== noteToRemove);
+            localStorage.setItem('al_hussain_custom_quick_notes', JSON.stringify(customQuickNotes));
+            renderCart();
+        }
+
+        function quickAppendItemNote(itemId, noteText) {
+            syncCartInputsToMemory();
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                let cur = (item.comment || "").trim();
+                if (!cur) {
+                    item.comment = noteText;
+                } else if (cur.toLowerCase().includes(noteText.toLowerCase())) {
+                    // Toggle off if already present
+                    item.comment = cur.split(',').map(s => s.trim()).filter(s => s && s.toLowerCase() !== noteText.toLowerCase()).join(', ');
+                } else {
+                    item.comment = cur + ", " + noteText;
+                }
+                db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
+                flashLiveSyncSuccess();
+            }
+        }
+
+        function getItemNotesList(item) {
+            if (!item) return [];
+            let list = [];
+
+            // 1. Takeaway & Dine-in portion breakdown (e.g. 2 Eat, 2 Takeaway)
+            const qty = Math.max(1, Number(item.qty) || 1);
+            const tkQty = Math.max(0, Math.min(qty, Number(item.takeawayQty) || 0));
+            if (tkQty > 0) {
+                if (tkQty === qty) {
+                    list.push(`🥡 All ${qty} Takeaway (பேக்)`);
+                } else {
+                    const dineInQty = qty - tkQty;
+                    list.push(`🍽️ ${dineInQty} Dine-In (சாப்பிட) + 🥡 ${tkQty} Takeaway (பேக்)`);
+                }
+            } else if (item.notes && item.notes.takeaway && !item.takeawayQty) {
+                list.push("🥡 Takeaway (பேக்)");
+            }
+
+            // 2. Custom category checkboxes in item.options (manually configured by user in Checkbox Manager)
+            if (item.options) {
+                if (Array.isArray(item.options)) {
+                    item.options.forEach(opt => {
+                        if (!opt) return;
+                        if (typeof opt === 'string' && opt.trim()) {
+                            list.push(opt.trim());
+                        } else if (typeof opt === 'object') {
+                            const name = opt.name || opt.label || opt.title;
+                            if (name && typeof name === 'string' && name.trim()) {
+                                list.push(name.trim());
+                            }
+                        }
+                    });
+                } else if (typeof item.options === 'object') {
+                    Object.entries(item.options).forEach(([k, v]) => {
+                        if (!v) return;
+                        if (v === true) {
+                            if (k && !k.match(/^\d+$/)) list.push(k.replace(/_/g, ' '));
+                        } else if (typeof v === 'string' && v.trim()) {
+                            list.push(v.trim());
+                        } else if (typeof v === 'object') {
+                            const name = v.name || v.label || (k && !k.match(/^\d+$/) ? k.replace(/_/g, ' ') : '');
+                            if (name && typeof name === 'string' && name.trim()) {
+                                list.push(name.trim());
+                            }
+                        }
+                    });
+                }
+            }
+
+            // 3. Any other manual custom notes in item.notes (excluding legacy spicy/noVeg/takeaway)
+            if (item.notes && typeof item.notes === 'object') {
+                Object.entries(item.notes).forEach(([k, v]) => {
+                    if (['takeaway', 'spicy', 'noVeg'].includes(k)) return;
+                    if (v === true) {
+                        list.push(k.replace(/_/g, ' '));
+                    } else if (typeof v === 'string' && v.trim()) {
+                        list.push(v.trim());
+                    }
+                });
+            }
+
+            // 4. Custom typed text from note input
+            if (item.comment && typeof item.comment === 'string' && item.comment.trim()) {
+                list.push(item.comment.trim());
+            }
+
+            // 5. item.note or other variations
+            if (item.note && typeof item.note === 'string' && item.note.trim()) {
+                const val = item.note.trim();
+                if (!list.includes(val)) list.push(val);
+            }
+
+            return [...new Set(list)];
+        }
+
+        function adjustItemTakeawayQty(itemId, delta) {
+            syncCartInputsToMemory();
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                const totalQty = Math.max(1, Number(item.qty) || 1);
+                let currentTk = Math.max(0, Number(item.takeawayQty) || 0);
+                let newTk = Math.max(0, Math.min(totalQty, currentTk + delta));
+                item.takeawayQty = newTk;
+                if (!item.notes || typeof item.notes !== 'object') item.notes = {};
+                item.notes.takeaway = (newTk > 0);
+                db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
+                flashLiveSyncSuccess();
+            }
+        }
+
+        function clearItemTakeawayQty(itemId) {
+            syncCartInputsToMemory();
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                item.takeawayQty = 0;
+                if (item.notes && typeof item.notes === 'object') {
+                    item.notes.takeaway = false;
+                }
+                db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
+                flashLiveSyncSuccess();
+            }
+        }
+
+        function setItemTakeawayQty(itemId, targetQty) {
+            syncCartInputsToMemory();
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                const totalQty = Math.max(1, Number(item.qty) || 1);
+                let newTk = Math.max(0, Math.min(totalQty, Number(targetQty) || 0));
+                item.takeawayQty = newTk;
+                if (!item.notes || typeof item.notes !== 'object') item.notes = {};
+                item.notes.takeaway = (newTk > 0);
+                db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
+                flashLiveSyncSuccess();
+            }
         }
 
         function updateItemPrice(itemId, newPrice) {
@@ -3876,27 +4340,34 @@
         }
 
         function toggleItemNote(itemId, noteType, checked) {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items) return;
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
-                if (!item.notes) item.notes = {};
-                item.notes[noteType] = checked;
+                if (!item.notes || typeof item.notes !== 'object') item.notes = {};
+                item.notes[noteType] = Boolean(checked);
                 db.ref('activeOrders/' + currentTableKey).set(order);
+                renderCart();
                 flashLiveSyncSuccess();
             }
         }
 
         function toggleItemCustomOption(itemId, optName, checked, optPrice) {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items) return;
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
-                if (!item.options) item.options = {};
-                const resolvedName = String(optName).replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+                if (!item.options || typeof item.options !== 'object' || Array.isArray(item.options)) {
+                    item.options = {};
+                }
+                const resolvedName = String(optName).replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim();
+                const safeKey = resolvedName.replace(/[.#$\[\]\/]/g, '_');
                 if (checked) {
-                    item.options[resolvedName] = { name: resolvedName, price: Number(optPrice) || 0 };
+                    item.options[safeKey] = { name: resolvedName, price: Number(optPrice) || 0 };
                 } else {
+                    delete item.options[safeKey];
                     delete item.options[resolvedName];
                     delete item.options[optName];
                 }
@@ -3906,12 +4377,28 @@
             }
         }
 
+        let commentDebounceTimers = {};
+        function onCartItemCommentInput(itemId, value) {
+            let order = activeOrders[currentTableKey];
+            if (!order || !order.items) return;
+            let item = order.items.find(x => String(x.id) === String(itemId));
+            if (item) {
+                item.comment = value;
+                clearTimeout(commentDebounceTimers[itemId]);
+                commentDebounceTimers[itemId] = setTimeout(() => {
+                    db.ref('activeOrders/' + currentTableKey).set(order);
+                    flashLiveSyncSuccess();
+                }, 300);
+            }
+        }
+
         function updateItemComment(itemId, comment) {
             let order = activeOrders[currentTableKey];
             if (!order || !order.items) return;
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
                 item.comment = comment;
+                clearTimeout(commentDebounceTimers[itemId]);
                 db.ref('activeOrders/' + currentTableKey).set(order);
                 flashLiveSyncSuccess();
             }
@@ -3944,6 +4431,24 @@
         function renderCart() {
             const tbody = document.getElementById('cart-items');
             if (!tbody) return;
+
+            // Preserve any text currently typed into DOM inputs before clearing
+            syncCartInputsToMemory();
+
+            const activeEl = document.activeElement;
+            let focusedItemId = null;
+            let cursorPos = null;
+            let isCommentFocused = false;
+            let isPriceFocused = false;
+            if (activeEl && activeEl.classList.contains('comment-input')) {
+                focusedItemId = activeEl.getAttribute('data-item-id');
+                cursorPos = activeEl.selectionStart;
+                isCommentFocused = true;
+            } else if (activeEl && activeEl.classList.contains('price-input')) {
+                focusedItemId = activeEl.getAttribute('data-item-id');
+                isPriceFocused = true;
+            }
+
             tbody.innerHTML = "";
 
             const order = activeOrders[currentTableKey];
@@ -3977,27 +4482,102 @@
 
                 const catOpts = getOptionsForItem(item);
 
-                let optionsHtml = "";
+                let customOptsHtml = "";
                 if (catOpts.length > 0) {
-                    optionsHtml = '<div class="note-checkboxes" style="margin-top:4px;">';
+                    customOptsHtml = '<div class="note-checkboxes" style="margin-top:4px;">';
                     catOpts.forEach(opt => {
-                        let isChecked = Boolean(item.options && item.options[opt.name]);
+                        let isChecked = false;
+                        if (item.options) {
+                            if (Array.isArray(item.options)) {
+                                isChecked = item.options.some(o => (o && (o.name === opt.name || o === opt.name)));
+                            } else if (typeof item.options === 'object') {
+                                const safeKey = String(opt.name).replace(/[.#$\[\]\/]/g, '_');
+                                isChecked = Boolean(item.options[safeKey] || item.options[opt.name] || Object.values(item.options).some(o => o && o.name === opt.name));
+                            }
+                        }
                         const safeOptName = String(opt.name).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-                        optionsHtml += `
+                        customOptsHtml += `
                             <label class="note-label">
-                                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCustomOption('${item.id}', '${safeOptName}', this.checked, ${Number(opt.price) || 0})">
+                                <input type="checkbox" class="custom-opt-checkbox" data-item-id="${item.id}" data-opt-name="${safeOptName}" data-opt-price="${Number(opt.price) || 0}" ${isChecked ? 'checked' : ''} onchange="toggleItemCustomOption('${item.id}', '${safeOptName}', this.checked, ${Number(opt.price) || 0})">
                                 ${opt.name} (+$ ${Number(opt.price).toFixed(2)})
                             </label>
                         `;
                     });
-                    optionsHtml += '</div>';
+                    customOptsHtml += '</div>';
                 }
+
+                const totalQty = Math.max(1, Number(item.qty) || 1);
+                const tkQty = Math.max(0, Math.min(totalQty, Number(item.takeawayQty) || 0));
+
+                let splitBadgeText = "";
+                if (tkQty === 0) {
+                    splitBadgeText = `(🍽️ All ${totalQty} Dine-In / சாப்பிட)`;
+                } else if (tkQty === totalQty) {
+                    splitBadgeText = `(🥡 All ${totalQty} Takeaway / பேக்)`;
+                } else {
+                    splitBadgeText = `(🍽️ ${totalQty - tkQty} Dine-In, 🥡 ${tkQty} Takeaway)`;
+                }
+
+                const itemCommentVal = item.comment ? String(item.comment).replace(/"/g, '&quot;') : '';
 
                 tr.innerHTML = `
                     <td>
                         <div class="cart-item-name">${item.name}</div>
-                        ${optionsHtml}
-                        <input type="text" class="comment-input" placeholder="Notes..." value="${item.comment || ''}" onchange="updateItemComment('${item.id}', this.value)">
+                        ${customOptsHtml}
+                        <div style="margin-top: 6px; margin-bottom: 6px; background: ${tkQty > 0 ? '#fffbeb' : '#f8fafc'}; border: 1.5px solid ${tkQty > 0 ? '#f59e0b' : '#e2e8f0'}; padding: 6px 10px; border-radius: 10px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800;">
+                                    <span style="color: #0284c7; background: #e0f2fe; padding: 2px 7px; border-radius: 6px;">
+                                        🍽️ Dine-In: <b>${totalQty - tkQty}</b>
+                                    </span>
+                                    <span style="color: ${tkQty > 0 ? '#b45309' : '#64748b'}; background: ${tkQty > 0 ? '#fef3c7' : '#f1f5f9'}; padding: 2px 7px; border-radius: 6px;">
+                                        🥡 Takeaway: <b>${tkQty}</b>
+                                    </span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="font-size: 11px; font-weight: 700; color: #64748b;">Takeaway (பேக்):</span>
+                                    <button type="button" style="width: 26px; height: 26px; border: 1px solid #cbd5e1; background: white; color: #1e293b; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="adjustItemTakeawayQty('${item.id}', -1)">-</button>
+                                    <span style="min-width: 20px; text-align: center; font-size: 13px; font-weight: 900; color: ${tkQty > 0 ? '#b45309' : '#1e293b'};">${tkQty}</span>
+                                    <button type="button" style="width: 26px; height: 26px; border: 1px solid #cbd5e1; background: white; color: #1e293b; border-radius: 6px; font-weight: 900; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="adjustItemTakeawayQty('${item.id}', 1)">+</button>
+                                </div>
+                            </div>
+                            ${totalQty > 1 ? `
+                            <div style="margin-top: 6px; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 5px;">
+                                <span style="font-size: 11px; font-weight: 700; color: #64748b;">Quick Split:</span>
+                                ${totalQty >= 2 ? `
+                                <button type="button" style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; border: 1px solid ${tkQty === Math.floor(totalQty/2) && tkQty > 0 ? '#f59e0b' : '#cbd5e1'}; background: ${tkQty === Math.floor(totalQty/2) && tkQty > 0 ? '#fef3c7' : 'white'}; color: ${tkQty === Math.floor(totalQty/2) && tkQty > 0 ? '#b45309' : '#334155'}; cursor: pointer;" onclick="splitItemDineAndTakeaway('${item.id}', ${Math.floor(totalQty/2)})">
+                                    ⚡ ${totalQty - Math.floor(totalQty/2)} Dine / ${Math.floor(totalQty/2)} Pack
+                                </button>` : ''}
+                                <button type="button" style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; border: 1px solid ${tkQty === totalQty ? '#f59e0b' : '#cbd5e1'}; background: ${tkQty === totalQty ? '#fef3c7' : 'white'}; color: ${tkQty === totalQty ? '#b45309' : '#334155'}; cursor: pointer;" onclick="splitItemDineAndTakeaway('${item.id}', ${totalQty})">
+                                    🥡 All ${totalQty} Pack
+                                </button>
+                                <button type="button" style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; border: 1px solid ${tkQty === 0 ? '#0284c7' : '#cbd5e1'}; background: ${tkQty === 0 ? '#e0f2fe' : 'white'}; color: ${tkQty === 0 ? '#0284c7' : '#334155'}; cursor: pointer;" onclick="splitItemDineAndTakeaway('${item.id}', 0)">
+                                    🍽️ All ${totalQty} Dine-In
+                                </button>
+                            </div>` : ''}
+                        </div>
+                        <div style="margin-top: 4px;">
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; align-items: center;">
+                                <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Quick Notes:</span>
+                                ${(tkQty > 0 && tkQty < totalQty) ? `
+                                <button type="button" style="font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; border: 1px dashed #f59e0b; background: #fffbeb; color: #b45309; cursor: pointer;" onclick="quickAppendItemNote('${item.id}', '${totalQty - tkQty} Dine, ${tkQty} Pack')">
+                                    ➕ ${totalQty - tkQty} Dine, ${tkQty} Pack
+                                </button>` : ''}
+                                ${customQuickNotes.map(cn => {
+                                    const safeCn = cn.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                                    return `
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; color: #334155;">
+                                        <span style="cursor: pointer;" onclick="quickAppendItemNote('${item.id}', '${safeCn}')">${cn}</span>
+                                        <span style="cursor: pointer; color: #ef4444; font-size: 12px; margin-left: 2px; font-weight: 900;" onclick="removeCustomQuickNote(event, '${safeCn}')" title="Delete tag">×</span>
+                                    </span>
+                                    `;
+                                }).join('')}
+                                <button type="button" style="font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; border: 1px dashed #0284c7; background: #f0f9ff; color: #0284c7; cursor: pointer;" onclick="addCustomQuickNote()" title="Add custom quick note tag">
+                                    ➕ Add Tag
+                                </button>
+                            </div>
+                            <input type="text" class="comment-input" data-item-id="${item.id}" placeholder="Notes / Special instructions (e.g. 2 Dine, 2 Pack)..." value="${itemCommentVal}" oninput="onCartItemCommentInput('${item.id}', this.value)" onchange="updateItemComment('${item.id}', this.value)">
+                        </div>
                     </td>
                     <td>
                         <div class="qty-controls">
@@ -4009,13 +4589,29 @@
                     <td style="text-align: right;">
                         ${isCustomerMode ? 
                             `<div style="font-size:14px; font-weight:800; color:var(--text);">$${Number(item.customPrice).toFixed(2)}</div>` : 
-                            `<input type="number" class="price-input" value="${Number(item.customPrice).toFixed(2)}" step="0.50" min="0" onchange="updateItemPrice('${item.id}', this.value)">`
+                            `<input type="number" class="price-input" data-item-id="${item.id}" value="${Number(item.customPrice).toFixed(2)}" step="0.50" min="0" onchange="updateItemPrice('${item.id}', this.value)">`
                         }
                         <div style="font-size:12px; font-weight:bold; color:var(--text-muted); margin-top:3px;">Tot: $${lineTotal.toFixed(2)}</div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            // Restore focus and cursor position if user was typing in this input
+            if (focusedItemId) {
+                if (isCommentFocused) {
+                    const newInput = document.querySelector(`.comment-input[data-item-id="${focusedItemId}"]`);
+                    if (newInput) {
+                        newInput.focus();
+                        if (cursorPos !== null) {
+                            newInput.setSelectionRange(cursorPos, cursorPos);
+                        }
+                    }
+                } else if (isPriceFocused) {
+                    const newPriceInput = document.querySelector(`.price-input[data-item-id="${focusedItemId}"]`);
+                    if (newPriceInput) newPriceInput.focus();
+                }
+            }
 
             const sub = getOrderSubtotal(order);
             const disc = Math.max(0, Number(order.discount) || 0);
@@ -4058,9 +4654,15 @@
         }
 
         function customerSendOrder() {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) {
-                return alert("Cart is empty! Please add items first.");
+                return alert("Cart is empty! Please add items first. (கார்ட் காலியாக உள்ளது, உணவுகளைச் சேர்க்கவும்)");
+            }
+
+            if (isTakeawayCustomer) {
+                order.customerName = sessionStorage.getItem('myTkName') || order.customerName || "Takeaway Customer";
+                order.customerPhone = sessionStorage.getItem('myTkPhone') || order.customerPhone || "";
             }
 
             const isUpdate = !!(order.customerSent && order.customerSentAt);
@@ -4083,7 +4685,13 @@
                 const modalTitle = document.querySelector('#customer-success-screen h2');
                 const modalDesc = document.querySelector('#customer-success-screen p');
                 if (modalTitle) modalTitle.innerText = isUpdate ? "Order Updated Successfully!" : "Order Sent Successfully!";
-                if (modalDesc) modalDesc.innerText = isUpdate ? "Your additional items have been sent to the kitchen." : "The kitchen has received your order and is preparing it right now.";
+                if (modalDesc) {
+                    if (isTakeawayCustomer) {
+                        modalDesc.innerHTML = `Your takeaway order <b>${currentTableKey}</b> has been received by the kitchen.<br>Customer: <b>${order.customerName}</b> (${order.customerPhone})<br>Please proceed to the counter when ready.`;
+                    } else {
+                        modalDesc.innerText = isUpdate ? "Your additional items have been sent to the kitchen." : `Your order for ${currentTableKey} has been sent to the kitchen and is being prepared!`;
+                    }
+                }
 
                 document.getElementById('customer-success-screen').style.display = 'flex';
                 renderCart();
@@ -4137,6 +4745,7 @@
         }
 
         function staffSendOrderToKitchen(printKOT = false) {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) {
                 return alert("No items in cart to send! Please add items first.");
@@ -4156,9 +4765,12 @@
                 showToast(isUpdate ? `✓ ${currentTableKey} update sent to Kitchen & Counter!` : `✓ ${currentTableKey} order sent to Kitchen & Counter!`);
 
                 if (printKOT) {
-                    printKitchenKOT();
+                    printKitchenKOT(() => {
+                        backToTableSelection();
+                    });
+                } else {
+                    backToTableSelection();
                 }
-                backToTableSelection();
             }).catch(err => {
                 alert("Error sending order to kitchen: " + err.message);
             });
@@ -4168,11 +4780,43 @@
             staffSendOrderToKitchen(!skipPrint);
         }
 
-        function printKitchenKOT() {
+        function triggerPrint(modeClass, onComplete) {
+            document.body.classList.add(modeClass);
+            let finished = false;
+            const cleanup = () => {
+                if (finished) return;
+                finished = true;
+                document.body.classList.remove(modeClass);
+                window.removeEventListener('afterprint', cleanup);
+                if (typeof onComplete === 'function') {
+                    try { onComplete(); } catch (err) { console.error(err); }
+                }
+            };
+            window.addEventListener('afterprint', cleanup);
+            // Fallback safety timeout if afterprint is unsupported or cancelled
+            setTimeout(cleanup, 6000);
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    try {
+                        window.print();
+                    } catch (err) {
+                        console.error("Print error:", err);
+                        cleanup();
+                    }
+                }, 60);
+            });
+        }
+
+        function printKitchenKOT(onComplete) {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) {
                 return alert("Cart is empty!");
             }
+
+            // Immediately persist latest notes to DB
+            db.ref('activeOrders/' + currentTableKey).set(order);
 
             document.getElementById('k-order-type').innerText = currentTableKey.startsWith("Order-") ? "TAKEAWAY" : "DINE-IN";
             document.getElementById('k-table').innerText = currentTableKey;
@@ -4194,46 +4838,41 @@
 
             order.items.forEach(item => {
                 let tr = document.createElement('tr');
-                let notesArr = [];
-                if (item.notes && item.notes.spicy) notesArr.push("Spicy");
-                if (item.notes && item.notes.noVeg) notesArr.push("No Veg");
-                if (item.notes && item.notes.takeaway) notesArr.push("Takeaway");
-                if (item.options) Object.keys(item.options).forEach(k => notesArr.push(k));
-                if (item.comment) notesArr.push(item.comment);
-
-                let notesStr = notesArr.length > 0 ? `<br><small style="font-size:15px; color:#333;">[${notesArr.join(', ')}]</small>` : '';
+                let notesArr = getItemNotesList(item);
+                let notesStr = notesArr.length > 0 ? `<br><div style="font-size:16px; font-weight:900; color:#000 !important; margin-top:3px; line-height:1.3; background:#f1f5f9; padding:3px 6px; border-radius:4px; border:1px solid #000;">[ ${notesArr.join(' | ')} ]</div>` : '';
                 tr.innerHTML = `
-                    <td style="padding: 6px 0; font-size:20px; font-weight:900;">${item.name}${notesStr}</td>
-                    <td style="text-align: center; padding: 6px 0; font-size:22px; font-weight:900;">${item.qty}</td>
+                    <td style="padding: 6px 0; font-size:20px; font-weight:900; color:#000 !important;">${item.name}${notesStr}</td>
+                    <td style="text-align: center; padding: 6px 0; font-size:22px; font-weight:900; color:#000 !important;">${item.qty}</td>
                 `;
                 ktbody.appendChild(tr);
             });
 
-            document.body.className = "print-kitchen-mode";
-            window.print();
-            setTimeout(() => { document.body.className = ""; }, 1000);
+            triggerPrint("print-kitchen-mode", onComplete);
         }
 
-        function printCustomerBillOnly() {
+        function printCustomerBillOnly(onComplete) {
             if (!hasPermission('billing')) {
                 alert("Permission denied: You do not have permission to print customer bills. (பில் போட அனுமதி இல்லை)");
                 return;
             }
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
+            // Immediately persist latest notes to DB
+            db.ref('activeOrders/' + currentTableKey).set(order);
+
             populateCustomerReceipt(order, 0, 0);
-            document.body.className = "print-customer";
-            window.print();
-            setTimeout(() => { document.body.className = ""; }, 1000);
+            triggerPrint("print-customer", onComplete);
         }
 
         function populateCustomerReceipt(order, paidAmount, changeAmount) {
-            document.getElementById('p-order-type').innerText = currentTableKey.startsWith("Order-") ? "TAKEAWAY" : "DINE-IN";
-            document.getElementById('p-table').innerText = currentTableKey;
+            const tableSource = order.source || currentTableKey || "-";
+            document.getElementById('p-order-type').innerText = tableSource.startsWith("Order-") ? "TAKEAWAY" : "DINE-IN";
+            document.getElementById('p-table').innerText = tableSource;
             const pTakenByEl = document.getElementById('p-taken-by');
             if (pTakenByEl) {
-                pTakenByEl.innerText = order.takenBy === 'Customer' ? 'Customer (Self-Order)' : (order.takenBy || document.getElementById('display-user').innerText);
+                pTakenByEl.innerText = order.takenBy === 'Customer' ? 'Customer (Self-Order)' : (order.takenBy || (document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff'));
             }
 
             const custInfoElem = document.getElementById('p-cust-info');
@@ -4246,7 +4885,7 @@
             }
 
             document.getElementById('p-method').innerText = order.paymentMethod || "Cash";
-            document.getElementById('p-time').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('p-time').innerText = order.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             const pSeatedElem = document.getElementById('p-seated-info');
             if (pSeatedElem) {
@@ -4264,18 +4903,12 @@
 
             order.items.forEach(item => {
                 let tr = document.createElement('tr');
-                let notesArr = [];
-                if (item.notes && item.notes.spicy) notesArr.push("Spicy");
-                if (item.notes && item.notes.noVeg) notesArr.push("No Veg");
-                if (item.notes && item.notes.takeaway) notesArr.push("Takeaway");
-                if (item.options) Object.keys(item.options).forEach(k => notesArr.push(k));
-                if (item.comment) notesArr.push(item.comment);
-
-                let notesStr = notesArr.length > 0 ? `<br><small style="font-size:12px; color:#555;">[${notesArr.join(', ')}]</small>` : '';
+                let notesArr = getItemNotesList(item);
+                let notesStr = notesArr.length > 0 ? `<br><div style="font-size:13px; font-weight:900; color:#000 !important; margin-top:2px; line-height:1.2;">[ ${notesArr.join(', ')} ]</div>` : '';
                 tr.innerHTML = `
-                    <td style="padding: 4px 0; font-size:16px;">${item.name}${notesStr}</td>
-                    <td style="text-align: center; padding: 4px 0; font-size:16px;">${item.qty}</td>
-                    <td style="text-align: right; padding: 4px 0; font-size:16px;">$${getItemLineTotal(item).toFixed(2)}</td>
+                    <td style="padding: 4px 0; font-size:16px; font-weight:900; color:#000 !important;">${item.name}${notesStr}</td>
+                    <td style="text-align: center; padding: 4px 0; font-size:16px; font-weight:900; color:#000 !important;">${item.qty}</td>
+                    <td style="text-align: right; padding: 4px 0; font-size:16px; font-weight:900; color:#000 !important;">$${getItemLineTotal(item).toFixed(2)}</td>
                 `;
                 ptbody.appendChild(tr);
             });
@@ -4295,9 +4928,7 @@
                 alert("Permission denied: You do not have permission to open the cash drawer.");
                 return;
             }
-            document.body.className = "print-drawer-mode";
-            window.print();
-            setTimeout(() => { document.body.className = ""; }, 1000);
+            triggerPrint("print-drawer-mode");
         }
 
         function openPaymentModal() {
@@ -4305,8 +4936,11 @@
                 alert("Permission denied: You do not have permission for billing and payment. (பில்லிங் செய்ய அனுமதி இல்லை)");
                 return;
             }
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
+
+            db.ref('activeOrders/' + currentTableKey).set(order);
 
             let grand = getOrderGrandTotal(order);
             document.getElementById('modal-grand-total').innerText = grand.toFixed(2);
@@ -4390,19 +5024,41 @@
         }
 
         function confirmPaymentProcess() {
+            syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
             if (!order) return;
 
-            let grand = getOrderGrandTotal(order);
-            let paid = Number(document.getElementById('modal-paid-input').value) || 0;
-            if (paid < grand) {
+            let grand = Math.round(getOrderGrandTotal(order) * 100) / 100;
+            let paid = Math.round((Number(document.getElementById('modal-paid-input').value) || 0) * 100) / 100;
+            if (paid < (grand - 0.001)) {
                 return alert("Paid amount is less than total due!");
             }
 
-            let change = paid - grand;
+            let change = Math.max(0, Math.round((paid - grand) * 100) / 100);
             let shouldPrint = document.getElementById('modal-print-checkbox').checked;
             let invRef = "INV-" + Date.now().toString().slice(-6);
             let chosenPaymentMethod = activeModalPaymentMethod || (document.getElementById('payment-method') ? document.getElementById('payment-method').value : 'Cash');
+
+            // Accumulate all-time item sales counts so most ordered items permanently stay first in menu categories
+            try {
+                let allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(it => {
+                        if (!it) return;
+                        let q = Number(it.qty) || 1;
+                        if (it.id) allTimeMap[String(it.id)] = (allTimeMap[String(it.id)] || 0) + q;
+                        if (it.name) {
+                            let nk = String(it.name).trim().toLowerCase();
+                            allTimeMap[nk] = (allTimeMap[nk] || 0) + q;
+                        }
+                    });
+                }
+                localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
+            } catch(e) {
+                console.error("All time sales storage error", e);
+            }
+
+            let clonedItems = JSON.parse(JSON.stringify(order.items || []));
 
             let saleRecord = {
                 timestamp: new Date().toISOString(),
@@ -4410,7 +5066,7 @@
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 ref: invRef,
                 source: currentTableKey,
-                items: order.items,
+                items: clonedItems,
                 subtotal: getOrderSubtotal(order),
                 discount: order.discount || 0,
                 total: grand,
@@ -4478,12 +5134,9 @@
 
             if (shouldPrint) {
                 populateCustomerReceipt(order, paid, change);
-                document.body.className = "print-customer";
-                window.print();
-                setTimeout(() => {
-                    document.body.className = "";
+                triggerPrint("print-customer", () => {
                     backToTableSelection();
-                }, 1000);
+                });
             } else {
                 backToTableSelection();
             }
@@ -5006,8 +5659,7 @@
 
         function isSaleInCurrentSession(s) {
             if (!s) return false;
-            const todayStr = new Date().toLocaleDateString('en-GB');
-            if (s.date !== todayStr) return false;
+            if (!isRecordFromToday(s.date, s.timestamp)) return false;
             if (s.dayClosed === true) return false;
             if (lastDayClose && lastDayClose.timestamp) {
                 const sTime = s.timestamp ? new Date(s.timestamp).getTime() : 0;
@@ -5018,8 +5670,7 @@
 
         function isExpenseInCurrentSession(e) {
             if (!e) return false;
-            const todayStr = new Date().toLocaleDateString('en-GB');
-            if (e.date !== todayStr) return false;
+            if (!isRecordFromToday(e.date, e.timestamp)) return false;
             if (e.dayClosed === true) return false;
             if (lastDayClose && lastDayClose.timestamp) {
                 const eTime = e.timestamp ? new Date(e.timestamp).getTime() : 0;
@@ -5126,7 +5777,9 @@
             const body = document.getElementById('history-view-body');
             let itemsHtml = "";
             (sale.items || []).forEach(it => {
-                itemsHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>${it.qty}x ${it.name}</span><span>$${getItemLineTotal(it).toFixed(2)}</span></div>`;
+                const nList = getItemNotesList(it);
+                const nStr = nList.length > 0 ? `<div style="font-size:12px; color:var(--primary); font-weight:bold; margin-top:1px;">[ ${nList.join(', ')} ]</div>` : '';
+                itemsHtml += `<div style="margin-bottom:6px;"><div style="display:flex; justify-content:space-between;"><span>${it.qty}x ${it.name}</span><span>$${getItemLineTotal(it).toFixed(2)}</span></div>${nStr}</div>`;
             });
 
             body.innerHTML = `
@@ -5155,9 +5808,7 @@
         function printViewedSale() {
             if (!currentViewingSale) return;
             populateCustomerReceipt(currentViewingSale, currentViewingSale.paid || currentViewingSale.total, currentViewingSale.change || 0);
-            document.body.className = "print-customer";
-            window.print();
-            setTimeout(() => { document.body.className = ""; }, 1000);
+            triggerPrint("print-customer");
         }
 
         function printSalesHistory() {
